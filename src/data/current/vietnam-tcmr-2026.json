@@ -1,0 +1,61 @@
+{
+  "datasetId": "vietnam-tcmr-rota-2026",
+  "title": "Lịch uống vắc xin Rota trong Chương trình Tiêm chủng mở rộng",
+  "effectiveFrom": "2026-01-01",
+  "reviewedAt": "2026-10-08",
+  "sourceName": "Văn phòng Chương trình Tiêm chủng Quốc gia – Viện Vệ sinh dịch tễ Trung ương",
+  "sourceUrl": "https://tiemchungmorong.vn/news/in-country-news/vac-xin-phong-tieu-chay-cap-do-vi-rut-rota-da-duoc-trien-khai-dong-bo-tren-toan-quoc-trong-chuong-trinh-tiem-chung-mo-rong-tu-nam-2026",
+  "replacesLegacyGroup": "Rota",
+  "items": [
+    {
+      "id": "tcqg-2026-rota-1",
+      "type": "vaccination",
+      "conditionType": "age_in_months",
+      "targetType": "baby",
+      "title": "Tiêu chảy do vi rút Rota",
+      "shortTitle": "Rota",
+      "description": "Liều 1 của lịch 2 liều Rotavin trong Chương trình Tiêm chủng mở rộng năm 2026.",
+      "valueFrom": 2,
+      "valueTo": 2,
+      "displayValue": "Khi trẻ đủ 2 tháng tuổi",
+      "task": true,
+      "taskRequired": true,
+      "enabled": true,
+      "extraItems": [
+        {
+          "name": "Đến lịch uống",
+          "value": "Liều 1 khi trẻ đủ 2 tháng tuổi."
+        },
+        {
+          "name": "Nguồn hiện hành",
+          "value": "Chương trình Tiêm chủng Quốc gia, công bố ngày 06/01/2026."
+        }
+      ]
+    },
+    {
+      "id": "tcqg-2026-rota-2",
+      "type": "vaccination",
+      "conditionType": "age_in_months",
+      "targetType": "baby",
+      "title": "Tiêu chảy do vi rút Rota",
+      "shortTitle": "Rota",
+      "description": "Liều 2 cách liều 1 tối thiểu một tháng; cần hoàn thành trước 6 tháng tuổi.",
+      "valueFrom": 3,
+      "valueTo": 5.9,
+      "displayValue": "Từ 3 tháng, cách liều 1 ≥ 1 tháng; hoàn thành trước 6 tháng",
+      "task": true,
+      "taskRequired": true,
+      "enabled": true,
+      "extraItems": [
+        {
+          "name": "Đến lịch uống",
+          "value": "Liều 2 cách liều 1 tối thiểu 1 tháng. Nếu trễ, uống bù càng sớm càng tốt và hoàn thành trước 6 tháng tuổi."
+        },
+        {
+          "name": "Lưu ý",
+          "value": "Lịch cá nhân cần được cơ sở tiêm chủng xác nhận theo loại vắc xin thực tế và tiền sử của trẻ."
+        }
+      ]
+    }
+  ]
+}

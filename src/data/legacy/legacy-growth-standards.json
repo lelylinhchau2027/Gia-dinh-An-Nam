@@ -1,0 +1,1104 @@
+{
+  "sourceFormat": "values selected by the legacy app from embedded tables",
+  "girls": [
+    {
+      "ageMonths": 0,
+      "heightCm": {
+        "min": 45.4,
+        "max": 52.9
+      },
+      "weightKg": {
+        "min": 2.4,
+        "max": 4.2
+      },
+      "headCircumferenceCm": {
+        "min": 31.5,
+        "max": 36.2
+      }
+    },
+    {
+      "ageMonths": 1,
+      "heightCm": {
+        "min": 49.8,
+        "max": 57.6
+      },
+      "weightKg": {
+        "min": 3.2,
+        "max": 5.5
+      },
+      "headCircumferenceCm": {
+        "min": 34.2,
+        "max": 38.9
+      }
+    },
+    {
+      "ageMonths": 2,
+      "heightCm": {
+        "min": 53,
+        "max": 61.1
+      },
+      "weightKg": {
+        "min": 3.9,
+        "max": 6.6
+      },
+      "headCircumferenceCm": {
+        "min": 35.8,
+        "max": 40.7
+      }
+    },
+    {
+      "ageMonths": 3,
+      "heightCm": {
+        "min": 55.6,
+        "max": 64
+      },
+      "weightKg": {
+        "min": 4.5,
+        "max": 7.5
+      },
+      "headCircumferenceCm": {
+        "min": 37.1,
+        "max": 42
+      }
+    },
+    {
+      "ageMonths": 4,
+      "heightCm": {
+        "min": 57.8,
+        "max": 66.4
+      },
+      "weightKg": {
+        "min": 5,
+        "max": 8.2
+      },
+      "headCircumferenceCm": {
+        "min": 38.1,
+        "max": 43.1
+      }
+    },
+    {
+      "ageMonths": 5,
+      "heightCm": {
+        "min": 59.6,
+        "max": 68.5
+      },
+      "weightKg": {
+        "min": 5.4,
+        "max": 8.8
+      },
+      "headCircumferenceCm": {
+        "min": 38.9,
+        "max": 44
+      }
+    },
+    {
+      "ageMonths": 6,
+      "heightCm": {
+        "min": 61.2,
+        "max": 70.3
+      },
+      "weightKg": {
+        "min": 5.7,
+        "max": 9.3
+      },
+      "headCircumferenceCm": {
+        "min": 39.6,
+        "max": 44.8
+      }
+    },
+    {
+      "ageMonths": 7,
+      "heightCm": {
+        "min": 62.7,
+        "max": 71.9
+      },
+      "weightKg": {
+        "min": 6,
+        "max": 9.8
+      },
+      "headCircumferenceCm": {
+        "min": 40.2,
+        "max": 45.5
+      }
+    },
+    {
+      "ageMonths": 8,
+      "heightCm": {
+        "min": 64,
+        "max": 73.5
+      },
+      "weightKg": {
+        "min": 6.3,
+        "max": 10.2
+      },
+      "headCircumferenceCm": {
+        "min": 40.7,
+        "max": 46
+      }
+    },
+    {
+      "ageMonths": 9,
+      "heightCm": {
+        "min": 65.3,
+        "max": 75
+      },
+      "weightKg": {
+        "min": 6.5,
+        "max": 10.5
+      },
+      "headCircumferenceCm": {
+        "min": 41.2,
+        "max": 46.5
+      }
+    },
+    {
+      "ageMonths": 10,
+      "heightCm": {
+        "min": 66.5,
+        "max": 76.4
+      },
+      "weightKg": {
+        "min": 6.7,
+        "max": 10.9
+      },
+      "headCircumferenceCm": {
+        "min": 41.5,
+        "max": 46.9
+      }
+    },
+    {
+      "ageMonths": 11,
+      "heightCm": {
+        "min": 67.7,
+        "max": 77.8
+      },
+      "weightKg": {
+        "min": 6.9,
+        "max": 11.2
+      },
+      "headCircumferenceCm": {
+        "min": 41.9,
+        "max": 47.3
+      }
+    },
+    {
+      "ageMonths": 12,
+      "heightCm": {
+        "min": 68.9,
+        "max": 79.2
+      },
+      "weightKg": {
+        "min": 7,
+        "max": 11.5
+      },
+      "headCircumferenceCm": {
+        "min": 42.2,
+        "max": 47.6
+      }
+    },
+    {
+      "ageMonths": 13,
+      "heightCm": {
+        "min": 70,
+        "max": 80.5
+      },
+      "weightKg": {
+        "min": 7.2,
+        "max": 11.8
+      },
+      "headCircumferenceCm": {
+        "min": 42.4,
+        "max": 47.9
+      }
+    },
+    {
+      "ageMonths": 14,
+      "heightCm": {
+        "min": 71,
+        "max": 81.7
+      },
+      "weightKg": {
+        "min": 7.4,
+        "max": 12.1
+      },
+      "headCircumferenceCm": {
+        "min": 42.7,
+        "max": 48.2
+      }
+    },
+    {
+      "ageMonths": 15,
+      "heightCm": {
+        "min": 72,
+        "max": 83
+      },
+      "weightKg": {
+        "min": 7.6,
+        "max": 12.4
+      },
+      "headCircumferenceCm": {
+        "min": 42.9,
+        "max": 48.4
+      }
+    },
+    {
+      "ageMonths": 16,
+      "heightCm": {
+        "min": 73,
+        "max": 84.2
+      },
+      "weightKg": {
+        "min": 7.7,
+        "max": 12.6
+      },
+      "headCircumferenceCm": {
+        "min": 43.1,
+        "max": 48.6
+      }
+    },
+    {
+      "ageMonths": 17,
+      "heightCm": {
+        "min": 74,
+        "max": 85.4
+      },
+      "weightKg": {
+        "min": 7.9,
+        "max": 12.9
+      },
+      "headCircumferenceCm": {
+        "min": 43.3,
+        "max": 48.8
+      }
+    },
+    {
+      "ageMonths": 18,
+      "heightCm": {
+        "min": 74.9,
+        "max": 86.5
+      },
+      "weightKg": {
+        "min": 8.1,
+        "max": 13.2
+      },
+      "headCircumferenceCm": {
+        "min": 43.5,
+        "max": 49
+      }
+    },
+    {
+      "ageMonths": 19,
+      "heightCm": {
+        "min": 75.8,
+        "max": 87.6
+      },
+      "weightKg": {
+        "min": 8.2,
+        "max": 13.5
+      },
+      "headCircumferenceCm": {
+        "min": 43.6,
+        "max": 49.2
+      }
+    },
+    {
+      "ageMonths": 20,
+      "heightCm": {
+        "min": 76.7,
+        "max": 88.7
+      },
+      "weightKg": {
+        "min": 8.4,
+        "max": 13.7
+      },
+      "headCircumferenceCm": {
+        "min": 43.8,
+        "max": 49.4
+      }
+    },
+    {
+      "ageMonths": 21,
+      "heightCm": {
+        "min": 77.5,
+        "max": 89.8
+      },
+      "weightKg": {
+        "min": 8.6,
+        "max": 14
+      },
+      "headCircumferenceCm": {
+        "min": 44,
+        "max": 49.5
+      }
+    },
+    {
+      "ageMonths": 22,
+      "heightCm": {
+        "min": 78.4,
+        "max": 90.8
+      },
+      "weightKg": {
+        "min": 8.7,
+        "max": 14.3
+      },
+      "headCircumferenceCm": {
+        "min": 44.1,
+        "max": 49.7
+      }
+    },
+    {
+      "ageMonths": 23,
+      "heightCm": {
+        "min": 79.2,
+        "max": 91.9
+      },
+      "weightKg": {
+        "min": 8.9,
+        "max": 14.6
+      },
+      "headCircumferenceCm": {
+        "min": 44.3,
+        "max": 49.8
+      }
+    },
+    {
+      "ageMonths": 24,
+      "heightCm": {
+        "min": 80,
+        "max": 92.9
+      },
+      "weightKg": {
+        "min": 9,
+        "max": 14.8
+      },
+      "headCircumferenceCm": {
+        "min": 44.4,
+        "max": 50
+      }
+    },
+    {
+      "ageMonths": 30,
+      "heightCm": {
+        "min": 83.6,
+        "max": 97.7
+      },
+      "weightKg": {
+        "min": 10,
+        "max": 16.5
+      },
+      "headCircumferenceCm": {
+        "min": 45.1,
+        "max": 50.7
+      }
+    },
+    {
+      "ageMonths": 36,
+      "heightCm": {
+        "min": 87.4,
+        "max": 102.7
+      },
+      "weightKg": {
+        "min": 10.8,
+        "max": 18.1
+      },
+      "headCircumferenceCm": {
+        "min": 45.7,
+        "max": 51.3
+      }
+    },
+    {
+      "ageMonths": 42,
+      "heightCm": {
+        "min": 90.9,
+        "max": 107.2
+      },
+      "weightKg": {
+        "min": 11.6,
+        "max": 19.8
+      },
+      "headCircumferenceCm": {
+        "min": 46.1,
+        "max": 51.8
+      }
+    },
+    {
+      "ageMonths": 48,
+      "heightCm": {
+        "min": 94.1,
+        "max": 111.3
+      },
+      "weightKg": {
+        "min": 12.3,
+        "max": 21.5
+      },
+      "headCircumferenceCm": {
+        "min": 46.5,
+        "max": 52.2
+      }
+    },
+    {
+      "ageMonths": 54,
+      "heightCm": {
+        "min": 97.1,
+        "max": 115.2
+      },
+      "weightKg": {
+        "min": 13,
+        "max": 23.2
+      },
+      "headCircumferenceCm": {
+        "min": 46.8,
+        "max": 52.5
+      }
+    },
+    {
+      "ageMonths": 60,
+      "heightCm": {
+        "min": 99.9,
+        "max": 118.9
+      },
+      "weightKg": {
+        "min": 13.7,
+        "max": 24.9
+      },
+      "headCircumferenceCm": {
+        "min": 47.1,
+        "max": 52.8
+      }
+    }
+  ],
+  "boys": [
+    {
+      "ageMonths": 0,
+      "heightCm": {
+        "min": 46.1,
+        "max": 53.7
+      },
+      "weightKg": {
+        "min": 2.5,
+        "max": 4.4
+      },
+      "headCircumferenceCm": {
+        "min": 31.9,
+        "max": 37
+      }
+    },
+    {
+      "ageMonths": 1,
+      "heightCm": {
+        "min": 50.8,
+        "max": 58.6
+      },
+      "weightKg": {
+        "min": 3.4,
+        "max": 5.8
+      },
+      "headCircumferenceCm": {
+        "min": 34.9,
+        "max": 39.8
+      }
+    },
+    {
+      "ageMonths": 2,
+      "heightCm": {
+        "min": 54.4,
+        "max": 62.4
+      },
+      "weightKg": {
+        "min": 4.3,
+        "max": 7.1
+      },
+      "headCircumferenceCm": {
+        "min": 36.8,
+        "max": 41.5
+      }
+    },
+    {
+      "ageMonths": 3,
+      "heightCm": {
+        "min": 57.3,
+        "max": 65.5
+      },
+      "weightKg": {
+        "min": 5,
+        "max": 8
+      },
+      "headCircumferenceCm": {
+        "min": 38.1,
+        "max": 42.9
+      }
+    },
+    {
+      "ageMonths": 4,
+      "heightCm": {
+        "min": 59.7,
+        "max": 68
+      },
+      "weightKg": {
+        "min": 5.6,
+        "max": 8.7
+      },
+      "headCircumferenceCm": {
+        "min": 39.2,
+        "max": 44
+      }
+    },
+    {
+      "ageMonths": 5,
+      "heightCm": {
+        "min": 61.7,
+        "max": 70.1
+      },
+      "weightKg": {
+        "min": 6,
+        "max": 9.3
+      },
+      "headCircumferenceCm": {
+        "min": 40.1,
+        "max": 45
+      }
+    },
+    {
+      "ageMonths": 6,
+      "heightCm": {
+        "min": 63.3,
+        "max": 71.9
+      },
+      "weightKg": {
+        "min": 6.4,
+        "max": 9.8
+      },
+      "headCircumferenceCm": {
+        "min": 40.9,
+        "max": 45.8
+      }
+    },
+    {
+      "ageMonths": 7,
+      "heightCm": {
+        "min": 64.8,
+        "max": 73.5
+      },
+      "weightKg": {
+        "min": 6.7,
+        "max": 10.3
+      },
+      "headCircumferenceCm": {
+        "min": 41.5,
+        "max": 46.4
+      }
+    },
+    {
+      "ageMonths": 8,
+      "heightCm": {
+        "min": 66.2,
+        "max": 75
+      },
+      "weightKg": {
+        "min": 6.9,
+        "max": 10.7
+      },
+      "headCircumferenceCm": {
+        "min": 42,
+        "max": 47
+      }
+    },
+    {
+      "ageMonths": 9,
+      "heightCm": {
+        "min": 67.5,
+        "max": 76.5
+      },
+      "weightKg": {
+        "min": 7.1,
+        "max": 11
+      },
+      "headCircumferenceCm": {
+        "min": 42.5,
+        "max": 47.5
+      }
+    },
+    {
+      "ageMonths": 10,
+      "heightCm": {
+        "min": 68.7,
+        "max": 77.9
+      },
+      "weightKg": {
+        "min": 7.4,
+        "max": 11.4
+      },
+      "headCircumferenceCm": {
+        "min": 42.9,
+        "max": 47.9
+      }
+    },
+    {
+      "ageMonths": 11,
+      "heightCm": {
+        "min": 69.9,
+        "max": 79.2
+      },
+      "weightKg": {
+        "min": 7.6,
+        "max": 11.7
+      },
+      "headCircumferenceCm": {
+        "min": 43.2,
+        "max": 48.3
+      }
+    },
+    {
+      "ageMonths": 12,
+      "heightCm": {
+        "min": 71,
+        "max": 80.5
+      },
+      "weightKg": {
+        "min": 7.7,
+        "max": 12
+      },
+      "headCircumferenceCm": {
+        "min": 43.5,
+        "max": 48.6
+      }
+    },
+    {
+      "ageMonths": 13,
+      "heightCm": {
+        "min": 72.1,
+        "max": 81.8
+      },
+      "weightKg": {
+        "min": 7.9,
+        "max": 12.3
+      },
+      "headCircumferenceCm": {
+        "min": 43.8,
+        "max": 48.9
+      }
+    },
+    {
+      "ageMonths": 14,
+      "heightCm": {
+        "min": 73.1,
+        "max": 83
+      },
+      "weightKg": {
+        "min": 8.1,
+        "max": 12.6
+      },
+      "headCircumferenceCm": {
+        "min": 44,
+        "max": 49.2
+      }
+    },
+    {
+      "ageMonths": 15,
+      "heightCm": {
+        "min": 74.1,
+        "max": 84.2
+      },
+      "weightKg": {
+        "min": 8.3,
+        "max": 12.8
+      },
+      "headCircumferenceCm": {
+        "min": 44.2,
+        "max": 49.4
+      }
+    },
+    {
+      "ageMonths": 16,
+      "heightCm": {
+        "min": 75,
+        "max": 85.4
+      },
+      "weightKg": {
+        "min": 8.4,
+        "max": 13.1
+      },
+      "headCircumferenceCm": {
+        "min": 44.4,
+        "max": 49.6
+      }
+    },
+    {
+      "ageMonths": 17,
+      "heightCm": {
+        "min": 76,
+        "max": 86.5
+      },
+      "weightKg": {
+        "min": 8.6,
+        "max": 13.4
+      },
+      "headCircumferenceCm": {
+        "min": 44.6,
+        "max": 49.8
+      }
+    },
+    {
+      "ageMonths": 18,
+      "heightCm": {
+        "min": 76.9,
+        "max": 87.7
+      },
+      "weightKg": {
+        "min": 8.8,
+        "max": 13.7
+      },
+      "headCircumferenceCm": {
+        "min": 44.7,
+        "max": 50
+      }
+    },
+    {
+      "ageMonths": 19,
+      "heightCm": {
+        "min": 77.7,
+        "max": 88.8
+      },
+      "weightKg": {
+        "min": 8.9,
+        "max": 13.9
+      },
+      "headCircumferenceCm": {
+        "min": 44.9,
+        "max": 50.2
+      }
+    },
+    {
+      "ageMonths": 20,
+      "heightCm": {
+        "min": 78.6,
+        "max": 89.8
+      },
+      "weightKg": {
+        "min": 9.1,
+        "max": 14.2
+      },
+      "headCircumferenceCm": {
+        "min": 45,
+        "max": 50.4
+      }
+    },
+    {
+      "ageMonths": 21,
+      "heightCm": {
+        "min": 79.4,
+        "max": 90.9
+      },
+      "weightKg": {
+        "min": 9.2,
+        "max": 14.5
+      },
+      "headCircumferenceCm": {
+        "min": 45.2,
+        "max": 50.5
+      }
+    },
+    {
+      "ageMonths": 22,
+      "heightCm": {
+        "min": 80.2,
+        "max": 91.9
+      },
+      "weightKg": {
+        "min": 9.4,
+        "max": 14.7
+      },
+      "headCircumferenceCm": {
+        "min": 45.3,
+        "max": 50.7
+      }
+    },
+    {
+      "ageMonths": 23,
+      "heightCm": {
+        "min": 81,
+        "max": 92.9
+      },
+      "weightKg": {
+        "min": 9.5,
+        "max": 15
+      },
+      "headCircumferenceCm": {
+        "min": 45.4,
+        "max": 50.8
+      }
+    },
+    {
+      "ageMonths": 24,
+      "heightCm": {
+        "min": 81.7,
+        "max": 93.9
+      },
+      "weightKg": {
+        "min": 9.7,
+        "max": 15.3
+      },
+      "headCircumferenceCm": {
+        "min": 45.5,
+        "max": 51
+      }
+    },
+    {
+      "ageMonths": 30,
+      "heightCm": {
+        "min": 85.1,
+        "max": 98.7
+      },
+      "weightKg": {
+        "min": 10.5,
+        "max": 16.9
+      },
+      "headCircumferenceCm": {
+        "min": 46.1,
+        "max": 51.7
+      }
+    },
+    {
+      "ageMonths": 36,
+      "heightCm": {
+        "min": 88.7,
+        "max": 103.5
+      },
+      "weightKg": {
+        "min": 11.3,
+        "max": 18.3
+      },
+      "headCircumferenceCm": {
+        "min": 46.6,
+        "max": 52.3
+      }
+    },
+    {
+      "ageMonths": 42,
+      "heightCm": {
+        "min": 91.9,
+        "max": 107.8
+      },
+      "weightKg": {
+        "min": 12,
+        "max": 19.7
+      },
+      "headCircumferenceCm": {
+        "min": 47,
+        "max": 52.8
+      }
+    },
+    {
+      "ageMonths": 48,
+      "heightCm": {
+        "min": 94.9,
+        "max": 111.7
+      },
+      "weightKg": {
+        "min": 12.7,
+        "max": 21.2
+      },
+      "headCircumferenceCm": {
+        "min": 47.3,
+        "max": 53.1
+      }
+    },
+    {
+      "ageMonths": 54,
+      "heightCm": {
+        "min": 97.8,
+        "max": 115.5
+      },
+      "weightKg": {
+        "min": 13.4,
+        "max": 22.7
+      },
+      "headCircumferenceCm": {
+        "min": 47.5,
+        "max": 53.5
+      }
+    },
+    {
+      "ageMonths": 60,
+      "heightCm": {
+        "min": 100.7,
+        "max": 119.2
+      },
+      "weightKg": {
+        "min": 14.1,
+        "max": 24.2
+      },
+      "headCircumferenceCm": {
+        "min": 47.7,
+        "max": 53.7
+      }
+    }
+  ],
+  "fetal": [
+    {
+      "gestationalWeek": 8,
+      "averageLengthCm": 1.6,
+      "averageWeightG": 1
+    },
+    {
+      "gestationalWeek": 9,
+      "averageLengthCm": 2.3,
+      "averageWeightG": 2
+    },
+    {
+      "gestationalWeek": 10,
+      "averageLengthCm": 3.1,
+      "averageWeightG": 4
+    },
+    {
+      "gestationalWeek": 11,
+      "averageLengthCm": 4.1,
+      "averageWeightG": 7
+    },
+    {
+      "gestationalWeek": 12,
+      "averageLengthCm": 5.4,
+      "averageWeightG": 14
+    },
+    {
+      "gestationalWeek": 13,
+      "averageLengthCm": 7.4,
+      "averageWeightG": 23
+    },
+    {
+      "gestationalWeek": 14,
+      "averageLengthCm": 8.7,
+      "averageWeightG": 43
+    },
+    {
+      "gestationalWeek": 15,
+      "averageLengthCm": 10.1,
+      "averageWeightG": 70
+    },
+    {
+      "gestationalWeek": 16,
+      "averageLengthCm": 11.6,
+      "averageWeightG": 100
+    },
+    {
+      "gestationalWeek": 17,
+      "averageLengthCm": 13,
+      "averageWeightG": 140
+    },
+    {
+      "gestationalWeek": 18,
+      "averageLengthCm": 14.2,
+      "averageWeightG": 190
+    },
+    {
+      "gestationalWeek": 19,
+      "averageLengthCm": 15.3,
+      "averageWeightG": 240
+    },
+    {
+      "gestationalWeek": 20,
+      "averageLengthCm": 16.4,
+      "averageWeightG": 300
+    },
+    {
+      "gestationalWeek": 21,
+      "averageLengthCm": 25.6,
+      "averageWeightG": 360
+    },
+    {
+      "gestationalWeek": 22,
+      "averageLengthCm": 27.8,
+      "averageWeightG": 430
+    },
+    {
+      "gestationalWeek": 23,
+      "averageLengthCm": 28.9,
+      "averageWeightG": 501
+    },
+    {
+      "gestationalWeek": 24,
+      "averageLengthCm": 30,
+      "averageWeightG": 600
+    },
+    {
+      "gestationalWeek": 25,
+      "averageLengthCm": 34.6,
+      "averageWeightG": 660
+    },
+    {
+      "gestationalWeek": 26,
+      "averageLengthCm": 35.6,
+      "averageWeightG": 760
+    },
+    {
+      "gestationalWeek": 27,
+      "averageLengthCm": 36.6,
+      "averageWeightG": 875
+    },
+    {
+      "gestationalWeek": 28,
+      "averageLengthCm": 37.6,
+      "averageWeightG": 1005
+    },
+    {
+      "gestationalWeek": 29,
+      "averageLengthCm": 38.6,
+      "averageWeightG": 1153
+    },
+    {
+      "gestationalWeek": 30,
+      "averageLengthCm": 39.9,
+      "averageWeightG": 1319
+    },
+    {
+      "gestationalWeek": 31,
+      "averageLengthCm": 41.1,
+      "averageWeightG": 1502
+    },
+    {
+      "gestationalWeek": 32,
+      "averageLengthCm": 42.4,
+      "averageWeightG": 1702
+    },
+    {
+      "gestationalWeek": 33,
+      "averageLengthCm": 43.7,
+      "averageWeightG": 1918
+    },
+    {
+      "gestationalWeek": 34,
+      "averageLengthCm": 45,
+      "averageWeightG": 2146
+    },
+    {
+      "gestationalWeek": 35,
+      "averageLengthCm": 46.2,
+      "averageWeightG": 2383
+    },
+    {
+      "gestationalWeek": 36,
+      "averageLengthCm": 47.4,
+      "averageWeightG": 2622
+    },
+    {
+      "gestationalWeek": 37,
+      "averageLengthCm": 48.6,
+      "averageWeightG": 2859
+    },
+    {
+      "gestationalWeek": 38,
+      "averageLengthCm": 49.8,
+      "averageWeightG": 3083
+    },
+    {
+      "gestationalWeek": 39,
+      "averageLengthCm": 50.7,
+      "averageWeightG": 3288
+    },
+    {
+      "gestationalWeek": 40,
+      "averageLengthCm": 51.2,
+      "averageWeightG": 3462
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "Gia Đình An Nam",
+    "slug": "gia-dinh-an-nam",
+    "scheme": "giadinhannam",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/an-nam-icon-v1.png",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#FFF8F0",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "vn.giadinhanam.family",
+      "buildNumber": "1",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FFF8F0",
+        "foregroundImage": "./assets/an-nam-android-foreground-v1.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/an-nam-favicon-v1.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "sounds": []
+        }
+      ],
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FFF8F0",
+          "image": "./assets/an-nam-splash-v1.png",
+          "imageWidth": 220,
+          "resizeMode": "contain"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "bcd4d9e2-80c3-4c37-8d75-3fb60395ef90"
+      }
+    },
+    "owner": "kingltnn"
+  }
+}

@@ -1,0 +1,502 @@
+{
+  "measurement": [
+    {
+      "code": "weight",
+      "label": "Cân nặng"
+    },
+    {
+      "code": "height",
+      "label": "Chiều cao"
+    },
+    {
+      "code": "length",
+      "label": "Chiều dài"
+    },
+    {
+      "code": "head_circumference",
+      "label": "Chu vi đầu"
+    },
+    {
+      "code": "milk",
+      "label": "Lượng sữa"
+    },
+    {
+      "code": "sleep",
+      "label": "Thời gian ngủ"
+    },
+    {
+      "code": "breast_pump",
+      "label": "Hút sữa"
+    },
+    {
+      "code": "diaper",
+      "label": "Thay bỉm"
+    },
+    {
+      "code": "weaning",
+      "label": "Ăn dặm"
+    },
+    {
+      "code": "activity",
+      "label": "Hoạt động"
+    },
+    {
+      "code": "condition",
+      "label": "Ốm"
+    },
+    {
+      "code": "medicine",
+      "label": "Uống thuốc"
+    },
+    {
+      "code": "doctor",
+      "label": "Bác sĩ"
+    },
+    {
+      "code": "temperature",
+      "label": "Nhiệt độ"
+    },
+    {
+      "code": "spit_up",
+      "label": "Nôn"
+    }
+  ],
+  "activity": [
+    {
+      "code": "walking",
+      "label": "Đi dạo"
+    },
+    {
+      "code": "bathing",
+      "label": "Tắm"
+    },
+    {
+      "code": "sunbathing",
+      "label": "Tắm nắng"
+    },
+    {
+      "code": "massage",
+      "label": "Mát-xa"
+    },
+    {
+      "code": "play",
+      "label": "Chơi"
+    },
+    {
+      "code": "flashcard",
+      "label": "Học thẻ bài"
+    },
+    {
+      "code": "read_book",
+      "label": "Đọc sách"
+    },
+    {
+      "code": "music",
+      "label": "Nghe nhạc"
+    }
+  ],
+  "color": [
+    {
+      "code": "white",
+      "label": "Trắng"
+    },
+    {
+      "code": "yellow",
+      "label": "Vàng"
+    },
+    {
+      "code": "green",
+      "label": "Xanh"
+    },
+    {
+      "code": "brown",
+      "label": "Nâu"
+    },
+    {
+      "code": "light_brown",
+      "label": "Nâu nhạt"
+    },
+    {
+      "code": "black",
+      "label": "Đen"
+    }
+  ],
+  "consistency": [
+    {
+      "code": "watery",
+      "label": "Chảy nước"
+    },
+    {
+      "code": "like_porridge",
+      "label": "Như cháo"
+    },
+    {
+      "code": "like_lotion",
+      "label": "Như kem dưỡng da"
+    },
+    {
+      "code": "like_pebbles",
+      "label": "Như đá cuội"
+    }
+  ],
+  "diaper_changing_reason": [
+    {
+      "code": "dirty",
+      "label": "Bé ị"
+    },
+    {
+      "code": "wet",
+      "label": "Bé tè"
+    },
+    {
+      "code": "both",
+      "label": "Vừa tè, vừa ị"
+    },
+    {
+      "code": "dry",
+      "label": "Bỉm khô, thích thì thay"
+    }
+  ],
+  "feeding": [
+    {
+      "code": "breast",
+      "label": "Bú mẹ"
+    },
+    {
+      "code": "formula",
+      "label": "Bú bình"
+    }
+  ],
+  "food_processing_method": [
+    {
+      "code": "puree",
+      "label": "Xay nhuyễn"
+    },
+    {
+      "code": "crushed",
+      "label": "Rây, nghiền nhỏ"
+    },
+    {
+      "code": "soft",
+      "label": "Mềm, nhừ"
+    },
+    {
+      "code": "raw",
+      "label": "Thô"
+    }
+  ],
+  "impurity": [
+    {
+      "code": "bloody",
+      "label": "Máu"
+    },
+    {
+      "code": "foamy",
+      "label": "Bọt"
+    },
+    {
+      "code": "mucusy",
+      "label": "Chất nhầy"
+    },
+    {
+      "code": "curdled_milk",
+      "label": "Sữa đặc"
+    }
+  ],
+  "ingredient": [
+    {
+      "code": "rice",
+      "label": "Gạo"
+    },
+    {
+      "code": "flour",
+      "label": "Bột mì"
+    },
+    {
+      "code": "bread",
+      "label": "Bánh mì"
+    },
+    {
+      "code": "noodle",
+      "label": "Mì"
+    },
+    {
+      "code": "potato",
+      "label": "Khoai tây"
+    },
+    {
+      "code": "pork",
+      "label": "Lợn"
+    },
+    {
+      "code": "beef",
+      "label": "Bò"
+    },
+    {
+      "code": "chicken",
+      "label": "Gà"
+    },
+    {
+      "code": "dove",
+      "label": "Bồ câu"
+    },
+    {
+      "code": "eel",
+      "label": "Lươn"
+    },
+    {
+      "code": "frog",
+      "label": "Ếch"
+    },
+    {
+      "code": "fish",
+      "label": "Cá"
+    },
+    {
+      "code": "shrimp",
+      "label": "Tôm"
+    },
+    {
+      "code": "crab",
+      "label": "Cua"
+    },
+    {
+      "code": "other_seafood",
+      "label": "Đồ biển khác"
+    },
+    {
+      "code": "egg",
+      "label": "Trứng"
+    },
+    {
+      "code": "carrot",
+      "label": "Cà rốt"
+    },
+    {
+      "code": "cauliflower",
+      "label": "Súp lơ"
+    },
+    {
+      "code": "corn",
+      "label": "Ngô"
+    },
+    {
+      "code": "cucumber",
+      "label": "Dưa chuột"
+    },
+    {
+      "code": "peas",
+      "label": "Đậu Hà Lan"
+    },
+    {
+      "code": "radish",
+      "label": "Củ cải"
+    },
+    {
+      "code": "apple",
+      "label": "Táo"
+    },
+    {
+      "code": "avocado",
+      "label": "Bơ"
+    },
+    {
+      "code": "banana",
+      "label": "Chuối"
+    },
+    {
+      "code": "cherry",
+      "label": "Cherry"
+    },
+    {
+      "code": "dragon",
+      "label": "Thanh long"
+    },
+    {
+      "code": "durian",
+      "label": "Sầu riêng"
+    },
+    {
+      "code": "eggplant",
+      "label": "Cà tím"
+    },
+    {
+      "code": "grape",
+      "label": "Nho"
+    },
+    {
+      "code": "guava",
+      "label": "Ổi"
+    },
+    {
+      "code": "kiwi",
+      "label": "Kiwi"
+    },
+    {
+      "code": "lemon",
+      "label": "Chanh"
+    },
+    {
+      "code": "mango",
+      "label": "Xoài"
+    },
+    {
+      "code": "melon",
+      "label": "Dưa bở"
+    },
+    {
+      "code": "orange",
+      "label": "Cam"
+    },
+    {
+      "code": "papaya",
+      "label": "Đu đủ"
+    },
+    {
+      "code": "peach",
+      "label": "Đào"
+    },
+    {
+      "code": "pear",
+      "label": "Lê"
+    },
+    {
+      "code": "pineapple",
+      "label": "Dứa"
+    },
+    {
+      "code": "pomegranate",
+      "label": "Lựu"
+    },
+    {
+      "code": "pumpkin",
+      "label": "Bí ngô"
+    },
+    {
+      "code": "rambutan",
+      "label": "Chôm chôm"
+    },
+    {
+      "code": "strawberry",
+      "label": "Dâu tây"
+    },
+    {
+      "code": "tomato",
+      "label": "Cà chua"
+    },
+    {
+      "code": "watermelon",
+      "label": "Dưa hấu"
+    },
+    {
+      "code": "butter",
+      "label": "Bơ"
+    },
+    {
+      "code": "yogurt",
+      "label": "Sữa chua"
+    },
+    {
+      "code": "whey",
+      "label": "Váng sữa"
+    },
+    {
+      "code": "cheese",
+      "label": "Phô mai"
+    },
+    {
+      "code": "sesame_oil",
+      "label": "Dầu mè"
+    },
+    {
+      "code": "soybean_oil",
+      "label": "Dầu đậu nành"
+    },
+    {
+      "code": "sunflower_oil",
+      "label": "Dầu hướng dương"
+    },
+    {
+      "code": "animal_oil",
+      "label": "Mỡ động vật"
+    }
+  ],
+  "like_level": [
+    {
+      "code": "like_so_much",
+      "label": "Rất thích"
+    },
+    {
+      "code": "like",
+      "label": "Hơi Thích"
+    },
+    {
+      "code": "normal",
+      "label": "Bình thường"
+    },
+    {
+      "code": "dislike",
+      "label": "Không thích"
+    }
+  ],
+  "medicine_unit": [
+    {
+      "code": "pill",
+      "label": "viên"
+    },
+    {
+      "code": "gram",
+      "label": "gram"
+    },
+    {
+      "code": "milligram",
+      "label": "milligram"
+    },
+    {
+      "code": "ml",
+      "label": "ml"
+    },
+    {
+      "code": "drop",
+      "label": "giọt"
+    }
+  ],
+  "milk": [
+    {
+      "code": "breast_milk",
+      "label": "Sữa mẹ"
+    },
+    {
+      "code": "formula_milk",
+      "label": "Sữa công thức"
+    }
+  ],
+  "smell": [
+    {
+      "code": "sour",
+      "label": "Chua"
+    },
+    {
+      "code": "putrid",
+      "label": "Thối"
+    },
+    {
+      "code": "rancid",
+      "label": "Khét"
+    }
+  ],
+  "weaning_unit": [
+    {
+      "code": "bowl",
+      "label": "bát"
+    },
+    {
+      "code": "gram",
+      "label": "gram"
+    },
+    {
+      "code": "ml",
+      "label": "ml"
+    }
+  ]
+}

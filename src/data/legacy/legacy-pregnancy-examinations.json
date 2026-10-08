@@ -1,0 +1,296 @@
+[
+  {
+    "id": "100",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 1: Tuần 5-7",
+    "shortTitle": null,
+    "description": "Kiểm tra túi phôi trong buồng tử cung: \n• SA Đầu dò âm đạo hoặc bụng đen trắng",
+    "valueFrom": 5,
+    "valueTo": 5,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "• SA Đầu dò âm đạo hoặc bụng đen trắng\n\n• Siêu âm lúc này để xem có thai hay không, thai nằm trong hay ngoài tử cung, thai bình thường hay bệnh lý, số lượng thai. "
+      }
+    ]
+  },
+  {
+    "id": "101",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 2: Tuần 7-10",
+    "shortTitle": null,
+    "description": "Siêu âm 2D kiểm tra tim thai\nKiểm tra tim thai",
+    "valueFrom": 7,
+    "valueTo": 10,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "Siêu âm 2D kiểm tra xem đã có tim thai hay chưa, biết được chiều dài, cân nặng của thai nhi. Đặc biệt, đối với những chị em quên ngày kinh cuối hoặc ngày kinh không đều, bác sĩ có thể dựa vào siêu âm 3 tháng đầu để tính tuổi thai, từ đó, biết được ngày dự sinh với sai số là +- 3 ngày. "
+      }
+    ]
+  },
+  {
+    "id": "102",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 3: Tuần 12-13",
+    "shortTitle": null,
+    "description": "Tầm soát dị tật thai:\n• Siêu âm 4D đo độ mờ da gáy\n• Xét nghiệm Double test",
+    "valueFrom": 12,
+    "valueTo": 13,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "• SA 4D đo độ mờ da gáy để phát hiện sớm bệnh lý toàn thân và phát hiện những hội chứng bất thường hay gặp ở cấp độ nhiễm sắc thể như Down, dị tật ống thần kinh, hội chứng Edward,…\n\n• Xét nghiệm Double test: Đánh giá mức độ nguy cơ dị tật thai"
+      }
+    ]
+  },
+  {
+    "id": "103",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 4: Tuần 16-18",
+    "shortTitle": null,
+    "description": "Khảo sát hình thái thai nhi và phát hiện bất thường thai nhi:\n• Siêu âm 4D hoặc 2D\n• Xét nghiệm Triple test",
+    "valueFrom": 16,
+    "valueTo": 18,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "• SA 4D hoặc 2D hình thái học\n\n• Xét nghiệm Triple test (nếu chưa thực hiện Double test/ thai 15 đến 20 tuần): Đánh giá mức độ nguy cơ dị tật thai\n(chú ý sứt môi hở hàm ếch, thai 16-22 tuần chú ý dấu bàn tay mở)\n\n• Uống sắt, canxi"
+      }
+    ]
+  },
+  {
+    "id": "104",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 5: Tuần 20",
+    "shortTitle": null,
+    "description": "Khảo sát hình thái thai nhi và phát hiện bất thường thai nhi: \n• Siêu âm 2D kiểm tra các bất thường về thể chất",
+    "valueFrom": 20,
+    "valueTo": 20,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "• SA 2D kiểm tra các bất thường về thể chất ở bé, kiểm tra tử cung của mẹ bầu, mức nước ối và tình trạng nhau thai\n\n• Uống sắt, canxi"
+      }
+    ]
+  },
+  {
+    "id": "105",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 6: Tuần 22",
+    "shortTitle": null,
+    "description": "Phát hiện bất thường thai nhi:\n• Siêu âm 4D\n• Xét nghiệm\n• Tiêm phòng uốn ván",
+    "valueFrom": 22,
+    "valueTo": 22,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "• SA 4D phát hiện dị tật thai nhi (chú ý dị tật tim)\n\n• Bộ xét nghiệm cơ bản (CTM, chức năng gan thận, Fe, Ca, đường huyết, kiểm tra tình trạng sức khỏe và đánh giá bệnh lí (nếu có) OGTT…)\nPhòng ngừa uốn ván mẹ con:\nMũi VAT 1: con so lúc 22-24 tuần\nMũi VAT 2: sau mũi 1 bốn tuần\n\n• Nghiệm pháp dung nạp đường khuyến cáo làm sớm cho những thai phụ nguy cơ cao (có thể làm ở tuần thai 24-28):\n– ĐTĐ thai kỳ trước.\n– Người thân trực hệ ĐTĐ.\n– Tiền căn sinh con to > 4000g\n– Tiền căn sinh thai lưu, thai dị tật, sẩy thai liên tiếp.\n\n• Uống sắt, canxi"
+      }
+    ]
+  },
+  {
+    "id": "106",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 7: Tuần 30",
+    "shortTitle": null,
+    "description": "Theo dõi sự phát triển của thai nhi, làm thủ tục đăng kí sinh:\n• Siêu âm 4D hoặc 2D\n• Làm thủ tục đăng kí sinh",
+    "valueFrom": 30,
+    "valueTo": 30,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": false,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "• SA 4D hoặc 2D, xét nghiệm máu, thử tiểu\n\n• Làm thủ tục đăng kí sinh\n\n• Uống sắt, canxi, bắt đầu ăn nhạt cho đến khi sinh"
+      }
+    ]
+  },
+  {
+    "id": "107",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 8: Tuần 32",
+    "shortTitle": null,
+    "description": "Theo dõi sự phát triển của thai, tình trạng ối, xác định vị trí rau bám:\n• Siêu âm 4D hoặc 2D",
+    "valueFrom": 32,
+    "valueTo": 32,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "SA 4D hoặc 2D, có thể kết hợp Doppler màu, xác định ngôi thai"
+      }
+    ]
+  },
+  {
+    "id": "108",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 9: Tuần 34",
+    "shortTitle": null,
+    "description": "Theo dõi sự phát triển của thai, tình trạng ối, xác định vị trí rau bám:\n• Siêu âm 4D hoặc 2D",
+    "valueFrom": 34,
+    "valueTo": 34,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "SA 4D hoặc 2D, xác định ngôi thai"
+      }
+    ]
+  },
+  {
+    "id": "109",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 10: Tuần 36",
+    "shortTitle": null,
+    "description": "Theo dõi sự phát triển của thai, tình trạng ối, xác định vị trí rau bám:\n• Siêu âm 4D hoặc 2D",
+    "valueFrom": 36,
+    "valueTo": 36,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": false,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "SA 4D hoặc 2D"
+      }
+    ]
+  },
+  {
+    "id": "110",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 11: Tuần 37",
+    "shortTitle": null,
+    "description": "Theo dõi sự phát triển của thai, tình trạng ối, xác định vị trí rau bám:\n• Siêu âm 4D hoặc 2D",
+    "valueFrom": 37,
+    "valueTo": 37,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "SA 4D hoặc 2D"
+      }
+    ]
+  },
+  {
+    "id": "111",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 12: Tuần 38",
+    "shortTitle": null,
+    "description": "Theo dõi sự phát triển của thai, tình trạng ối, xác định vị trí rau bám:\n• Siêu âm 4D hoặc 2D",
+    "valueFrom": 38,
+    "valueTo": 38,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "SA 4D hoặc 2D"
+      }
+    ]
+  },
+  {
+    "id": "112",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 13: Tuần 39",
+    "shortTitle": null,
+    "description": "Theo dõi sự phát triển của thai, tình trạng ối, xác định vị trí rau bám:\n• Siêu âm 4D hoặc 2D",
+    "valueFrom": 39,
+    "valueTo": 39,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "SA 4D hoặc 2D"
+      }
+    ]
+  },
+  {
+    "id": "113",
+    "type": "pregnancy_exam",
+    "conditionType": "age_in_weeks",
+    "targetType": "fetus",
+    "title": "Lần 14: Tuần 40",
+    "shortTitle": null,
+    "description": "Theo dõi sự phát triển của thai, tình trạng ối, xác định vị trí rau bám:\n• Siêu âm 4D hoặc 2D",
+    "valueFrom": 40,
+    "valueTo": 40,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Nội dung",
+        "value": "SA 4D hoặc 2D"
+      }
+    ]
+  }
+]

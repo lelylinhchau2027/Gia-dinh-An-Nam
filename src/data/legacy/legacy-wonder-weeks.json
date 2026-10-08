@@ -1,0 +1,117 @@
+[
+  {
+    "fromWeek": 0.0,
+    "toWeek": 4.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 4.5,
+    "toWeek": 5.5,
+    "type": "fussy"
+  },
+  {
+    "fromWeek": 5.5,
+    "toWeek": 7.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 7.5,
+    "toWeek": 9.5,
+    "type": "fussy"
+  },
+  {
+    "fromWeek": 9.5,
+    "toWeek": 11.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 11.5,
+    "toWeek": 12.5,
+    "type": "fussy"
+  },
+  {
+    "fromWeek": 12.5,
+    "toWeek": 14.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 14.5,
+    "toWeek": 19.5,
+    "type": "fussy"
+  },
+  {
+    "fromWeek": 19.5,
+    "toWeek": 22.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 22.5,
+    "toWeek": 26.5,
+    "type": "fussy"
+  },
+  {
+    "fromWeek": 26.5,
+    "toWeek": 28.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 28.5,
+    "toWeek": 30.5,
+    "type": "very_fussy"
+  },
+  {
+    "fromWeek": 30.5,
+    "toWeek": 33.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 33.5,
+    "toWeek": 37.5,
+    "type": "fussy"
+  },
+  {
+    "fromWeek": 37.5,
+    "toWeek": 41.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 41.5,
+    "toWeek": 46.5,
+    "type": "fussy"
+  },
+  {
+    "fromWeek": 46.5,
+    "toWeek": 50.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 50.5,
+    "toWeek": 54.5,
+    "type": "fussy"
+  },
+  {
+    "fromWeek": 54.5,
+    "toWeek": 59.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 59.5,
+    "toWeek": 64.5,
+    "type": "fussy"
+  },
+  {
+    "fromWeek": 64.5,
+    "toWeek": 70.5,
+    "type": "easy_going"
+  },
+  {
+    "fromWeek": 70.5,
+    "toWeek": 75.5,
+    "type": "fussy"
+  },
+  {
+    "fromWeek": 75.5,
+    "toWeek": 84.0,
+    "type": "easy_going"
+  }
+]

@@ -1,0 +1,1334 @@
+[
+  {
+    "id": "150",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm gan B (HBV)",
+    "shortTitle": "Viêm gan B (HBV)",
+    "description": "Cho trẻ từ sơ sinh\n• Lịch tiêm thông thường 3 mũi",
+    "valueFrom": 0,
+    "valueTo": 0.03,
+    "displayValue": "0 - 24h sau sinh",
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 1: tốt nhất tiêm trong vòng 24 giờ sau sinh"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Viêm gan B là bệnh rất dễ lây qua đường tiêm chích (dùng chung bơm kim tiêm), quan hệ tình dục, lây truyền từ mẹ sang con (trong quá trình chuyển dạ đẻ).\n\nBệnh thường gây nên xơ gan, ung thư gan, ảnh hướng lớn đến sức khỏe cộng đồng."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 3 tên sau:\n• Engerix B\n• Euvax B\n• Hepavax"
+      },
+      {
+        "name": "Nội dung",
+        "value": " Cho trẻ từ sơ sinh\n\n• Lịch tiêm thông thường 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1 tháng sau mũi một\n– Mũi 3: 6 tháng sau mũi một\n\n• Lịch tiêm đặc biệt 4 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1 tháng sau mũi một\n– Mũi 3: 2 tháng sau mũi một\n– Mũi 4: 12 tháng sau mũi một\n\nLịch tiêm này dùng khi phối hợp với các vắc xin khác, trẻ có mẹ nhiễm viêm gan B, người mới tiếp xúc với nguồn bệnh, người di trú hoặc không thể tuân thủ phác đồ thông thường. Tiêm nhắc một mũi sau 5 năm"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Sưng nóng đỏ tại chỗ tiêm 1-2 ngày"
+      }
+    ]
+  },
+  {
+    "id": "151",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm gan B (HBV)",
+    "shortTitle": "Viêm gan B (HBV)",
+    "description": "Cho trẻ từ sơ sinh\n• Lịch tiêm thông thường 3 mũi",
+    "valueFrom": 2,
+    "valueTo": 2,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Viêm gan B là bệnh rất dễ lây qua đường tiêm chích (dùng chung bơm kim tiêm), quan hệ tình dục, lây truyền từ mẹ sang con (trong quá trình chuyển dạ đẻ).\n\nBệnh thường gây nên xơ gan, ung thư gan, ảnh hướng lớn đến sức khỏe cộng đồng."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 3 tên sau:\n• Engerix B\n• Euvax B\n• Hepavax"
+      },
+      {
+        "name": "Nội dung",
+        "value": " Cho trẻ từ sơ sinh\n\n• Lịch tiêm thông thường 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1 tháng sau mũi một\n– Mũi 3: 6 tháng sau mũi một\n\n• Lịch tiêm đặc biệt 4 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1 tháng sau mũi một\n– Mũi 3: 2 tháng sau mũi một\n– Mũi 4: 12 tháng sau mũi một\n\nLịch tiêm này dùng khi phối hợp với các vắc xin khác, trẻ có mẹ nhiễm viêm gan B, người mới tiếp xúc với nguồn bệnh, người di trú hoặc không thể tuân thủ phác đồ thông thường. Tiêm nhắc một mũi sau 5 năm"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Sưng nóng đỏ tại chỗ tiêm 1-2 ngày"
+      }
+    ]
+  },
+  {
+    "id": "152",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm gan B (HBV)",
+    "shortTitle": "Viêm gan B (HBV)",
+    "description": "Cho trẻ từ sơ sinh\n• Lịch tiêm thông thường 3 mũi",
+    "valueFrom": 3,
+    "valueTo": 3,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 3"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Viêm gan B là bệnh rất dễ lây qua đường tiêm chích (dùng chung bơm kim tiêm), quan hệ tình dục, lây truyền từ mẹ sang con (trong quá trình chuyển dạ đẻ).\n\nBệnh thường gây nên xơ gan, ung thư gan, ảnh hướng lớn đến sức khỏe cộng đồng."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 3 tên sau:\n• Engerix B\n• Euvax B\n• Hepavax"
+      },
+      {
+        "name": "Nội dung",
+        "value": " Cho trẻ từ sơ sinh\n\n• Lịch tiêm thông thường 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1 tháng sau mũi một\n– Mũi 3: 6 tháng sau mũi một\n\n• Lịch tiêm đặc biệt 4 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1 tháng sau mũi một\n– Mũi 3: 2 tháng sau mũi một\n– Mũi 4: 12 tháng sau mũi một\n\nLịch tiêm này dùng khi phối hợp với các vắc xin khác, trẻ có mẹ nhiễm viêm gan B, người mới tiếp xúc với nguồn bệnh, người di trú hoặc không thể tuân thủ phác đồ thông thường. Tiêm nhắc một mũi sau 5 năm"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Sưng nóng đỏ tại chỗ tiêm 1-2 ngày"
+      }
+    ]
+  },
+  {
+    "id": "153",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm gan B (HBV)",
+    "shortTitle": "Viêm gan B (HBV)",
+    "description": "Cho trẻ từ sơ sinh\n• Lịch tiêm thông thường 3 mũi",
+    "valueFrom": 16,
+    "valueTo": 16,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Nhắc lại"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Viêm gan B là bệnh rất dễ lây qua đường tiêm chích (dùng chung bơm kim tiêm), quan hệ tình dục, lây truyền từ mẹ sang con (trong quá trình chuyển dạ đẻ).\n\nBệnh thường gây nên xơ gan, ung thư gan, ảnh hướng lớn đến sức khỏe cộng đồng."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 3 tên sau:\n• Engerix B\n• Euvax B\n• Hepavax"
+      },
+      {
+        "name": "Nội dung",
+        "value": " Cho trẻ từ sơ sinh\n\n• Lịch tiêm thông thường 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1 tháng sau mũi một\n– Mũi 3: 6 tháng sau mũi một\n\n• Lịch tiêm đặc biệt 4 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1 tháng sau mũi một\n– Mũi 3: 2 tháng sau mũi một\n– Mũi 4: 12 tháng sau mũi một\n\nLịch tiêm này dùng khi phối hợp với các vắc xin khác, trẻ có mẹ nhiễm viêm gan B, người mới tiếp xúc với nguồn bệnh, người di trú hoặc không thể tuân thủ phác đồ thông thường. Tiêm nhắc một mũi sau 5 năm"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Sưng nóng đỏ tại chỗ tiêm 1-2 ngày"
+      }
+    ]
+  },
+  {
+    "id": "154",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm gan B (HBV)",
+    "shortTitle": null,
+    "description": "Cho trẻ từ sơ sinh\n• Lịch tiêm thông thường 3 mũi",
+    "valueFrom": 60,
+    "valueTo": 60,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Nhắc lại"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Viêm gan B là bệnh rất dễ lây qua đường tiêm chích (dùng chung bơm kim tiêm), quan hệ tình dục, lây truyền từ mẹ sang con (trong quá trình chuyển dạ đẻ).\n\nBệnh thường gây nên xơ gan, ung thư gan, ảnh hướng lớn đến sức khỏe cộng đồng."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 3 tên sau:\n• Engerix B\n• Euvax B\n• Hepavax"
+      },
+      {
+        "name": "Nội dung",
+        "value": " Cho trẻ từ sơ sinh\n\n• Lịch tiêm thông thường 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1 tháng sau mũi một\n– Mũi 3: 6 tháng sau mũi một\n\n• Lịch tiêm đặc biệt 4 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1 tháng sau mũi một\n– Mũi 3: 2 tháng sau mũi một\n– Mũi 4: 12 tháng sau mũi một\n\nLịch tiêm này dùng khi phối hợp với các vắc xin khác, trẻ có mẹ nhiễm viêm gan B, người mới tiếp xúc với nguồn bệnh, người di trú hoặc không thể tuân thủ phác đồ thông thường. Tiêm nhắc một mũi sau 5 năm"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Sưng nóng đỏ tại chỗ tiêm 1-2 ngày"
+      }
+    ]
+  },
+  {
+    "id": "155",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Lao",
+    "shortTitle": "Lao",
+    "description": "Cho trẻ sơ sinh\r\n• Lịch tiêm 1 mũi duy nhất. Tiêm càng sớm càng tốt trong tháng đầu tiên sau sinh",
+    "valueFrom": 0,
+    "valueTo": 0,
+    "displayValue": "0 - 1 tháng",
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Tiêm 01 mũi càng sớm càng tốt trong vòng 30 ngày sau sinh"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh lao là bệnh truyền nhiễm lây qua đường hô hấp, trẻ nhỏ có thể mắc lao kê, lao màng não rất nguy hiểm.\n"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "BCG"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ sơ sinh\n• Lịch tiêm 1 mũi duy nhất. Tiêm càng sớm càng tốt trong tháng đầu tiên sau sinh khi trẻ có cân nặng trên 2500 gram.\n• Liều dùng: 0.1 ml\n• Đường dùng: tiêm trong da, mặt ngoài phía trên cánh tay hoặc vai trái"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "• Vắc xin phòng lao sau khi tiêm từ 4- 6 tuần chỗ tiêm sẽ xuất hiện 1 vết mưng đỏ có kích thước bằng hạt đỗ xanh, sau khoảng vài tuần vết loét tự lành để lại sẹo có kích thước khoảng 5mm.\n\n• Có hạch cổ, nách, dưới đòn trái, mủ quá to (đường kính >1cm) cần khám lại ngay\n"
+      }
+    ]
+  },
+  {
+    "id": "156",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Bạch hầu,\nHo gà,\nUốn ván,\nBại liệt,\nHib,\nViêm gan B",
+    "shortTitle": "5in1 hoặc 6in1",
+    "description": "Cho trẻ từ 2 tháng tuổi trở lên\r\n• Lịch tiêm 4 mũi",
+    "valueFrom": 2,
+    "valueTo": 2,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 1"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh bạch hầu là bệnh truyền nhiễm lây qua đường hô hấp, bệnh có thể gây biến chứng nặng ở tim và thần kinh.\n\nBệnh ho gà là bệnh truyền nhiễm lây qua đường hô hấp, triệu chứng là ho thành cơn, thường nôn và kiệt sức sau cơn ho. Viêm phổi là biến chứng thường gặp và dễ gây tử vong.\n\nUốn ván là bệnh nhiễm trùng nhiễm độc do vi khuẩn xâm nhập qua vết thương hở gây co cứng, co giật, ngạt thở dẫn đến tử vong.\n\nBệnh bại liệt là bệnh truyền nhiễm lây qua đường tiêu hóa, trẻ bị bệnh thường có biểu hiện liệt chi, một số trường hợp liệt cơ hô hấp dẫn tới tử vong. Những trường hợp qua khỏi để lại di chứng liệt suốt đời.\n\nBệnh viêm phổi và viêm màng não mủ do HIB là những bệnh truyền nhiễm vi khuẩn Heamophilus influenzea týp B gây ra, bệnh lây qua đường hô hấp và thường gặp ở trẻ nhỏ. Viêm nàng não mủ do HIB có thể để lại di chứng thần kinh vĩnh viễn, tổn thương não, điếc, rối loạn tâm thần, tỷ lệ tử vong cao.\n\nViêm gan B là bệnh rất dễ lây qua đường tiêm chích (dùng chung bơm kim tiêm), quan hệ tình dục, lây truyền từ mẹ sang con (trong quá trình chuyển dạ đẻ).\nBệnh thường gây nên xơ gan, ung thư gan ảnh hướng lớn đến sức khỏe cộng đồng.\n"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể chọn 1 trong 3 loại Vắc xin sau:\n\n1. Vắc xin 6in1 ngừa 6 bệnh: \n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Bại liệt\n– Hib\n– Viêm gan B\nHiện nay, tại các trung tâm tiêm chủng dịch vụ đang có 2 loại vacxin 6in1, gồm Infanrix Hexa của Bỉ và Hexaxim của Pháp \n\n2. Vacxin 5in1 Pentaxim ngừa 5 bệnh:\n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Bại liệt\n– Hib\nĐược sử dụng trong tiêm chủng dịch vụ, sản xuất tại Pháp và Canada bởi công ty dược phẩm Sanofi Pasteur\n\n3. Vacxin 5in1 ComBE Five do Công ty Biological, Ấn Độ sản xuất ngừa 5 bệnh:\n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Hib\n– Viêm gan B"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 2 tháng tuổi trở lên\n• Lịch tiêm 4 mũi\n– Mũi 1,2,3: khi trẻ 2,3,4 tháng tuổi hoặc 2,4,6 tháng tuổi.\n– Mũi 4: khi trẻ 15 – 18 tháng tuổi\n• Liều dùng: 0.5 ml\n• Đường dùng: tiêm bắp"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C và sưng đau tại chỗ tiêm"
+      }
+    ]
+  },
+  {
+    "id": "157",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Bạch hầu,\nHo gà,\nUốn ván,\nBại liệt,\nHib,\nViêm gan B",
+    "shortTitle": "5in1 hoặc 6in1",
+    "description": "Cho trẻ từ 2 tháng tuổi trở lên\r\n• Lịch tiêm 4 mũi",
+    "valueFrom": 3,
+    "valueTo": 3,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh bạch hầu là bệnh truyền nhiễm lây qua đường hô hấp, bệnh có thể gây biến chứng nặng ở tim và thần kinh.\n\nBệnh ho gà là bệnh truyền nhiễm lây qua đường hô hấp, triệu chứng là ho thành cơn, thường nôn và kiệt sức sau cơn ho. Viêm phổi là biến chứng thường gặp và dễ gây tử vong.\n\nUốn ván là bệnh nhiễm trùng nhiễm độc do vi khuẩn xâm nhập qua vết thương hở gây co cứng, co giật, ngạt thở dẫn đến tử vong.\n\nBệnh bại liệt là bệnh truyền nhiễm lây qua đường tiêu hóa, trẻ bị bệnh thường có biểu hiện liệt chi, một số trường hợp liệt cơ hô hấp dẫn tới tử vong. Những trường hợp qua khỏi để lại di chứng liệt suốt đời.\n\nBệnh viêm phổi và viêm màng não mủ do HIB là những bệnh truyền nhiễm vi khuẩn Heamophilus influenzea týp B gây ra, bệnh lây qua đường hô hấp và thường gặp ở trẻ nhỏ. Viêm nàng não mủ do HIB có thể để lại di chứng thần kinh vĩnh viễn, tổn thương não, điếc, rối loạn tâm thần, tỷ lệ tử vong cao.\n\nViêm gan B là bệnh rất dễ lây qua đường tiêm chích (dùng chung bơm kim tiêm), quan hệ tình dục, lây truyền từ mẹ sang con (trong quá trình chuyển dạ đẻ).\nBệnh thường gây nên xơ gan, ung thư gan ảnh hướng lớn đến sức khỏe cộng đồng.\n"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể chọn 1 trong 3 loại Vắc xin sau:\n\n1. Vắc xin 6in1 ngừa 6 bệnh: \n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Bại liệt\n– Hib\n– Viêm gan B\nHiện nay, tại các trung tâm tiêm chủng dịch vụ đang có 2 loại vacxin 6in1, gồm Infanrix Hexa của Bỉ và Hexaxim của Pháp \n\n2. Vacxin 5in1 Pentaxim ngừa 5 bệnh:\n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Bại liệt\n– Hib\nĐược sử dụng trong tiêm chủng dịch vụ, sản xuất tại Pháp và Canada bởi công ty dược phẩm Sanofi Pasteur\n\n3. Vacxin 5in1 ComBE Five do Công ty Biological, Ấn Độ sản xuất ngừa 5 bệnh:\n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Hib\n– Viêm gan B"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 2 tháng tuổi trở lên\n• Lịch tiêm 4 mũi\n– Mũi 1,2,3: khi trẻ 2,3,4 tháng tuổi hoặc 2,4,6 tháng tuổi.\n– Mũi 4: khi trẻ 15 – 18 tháng tuổi\n• Liều dùng: 0.5 ml\n• Đường dùng: tiêm bắp"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C và sưng đau tại chỗ tiêm"
+      }
+    ]
+  },
+  {
+    "id": "158",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Bạch hầu,\nHo gà,\nUốn ván,\nBại liệt,\nHib,\nViêm gan B",
+    "shortTitle": "5in1 hoặc 6in1",
+    "description": "Cho trẻ từ 2 tháng tuổi trở lên\r\n• Lịch tiêm 4 mũi",
+    "valueFrom": 4,
+    "valueTo": 4,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 3"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh bạch hầu là bệnh truyền nhiễm lây qua đường hô hấp, bệnh có thể gây biến chứng nặng ở tim và thần kinh.\n\nBệnh ho gà là bệnh truyền nhiễm lây qua đường hô hấp, triệu chứng là ho thành cơn, thường nôn và kiệt sức sau cơn ho. Viêm phổi là biến chứng thường gặp và dễ gây tử vong.\n\nUốn ván là bệnh nhiễm trùng nhiễm độc do vi khuẩn xâm nhập qua vết thương hở gây co cứng, co giật, ngạt thở dẫn đến tử vong.\n\nBệnh bại liệt là bệnh truyền nhiễm lây qua đường tiêu hóa, trẻ bị bệnh thường có biểu hiện liệt chi, một số trường hợp liệt cơ hô hấp dẫn tới tử vong. Những trường hợp qua khỏi để lại di chứng liệt suốt đời.\n\nBệnh viêm phổi và viêm màng não mủ do HIB là những bệnh truyền nhiễm vi khuẩn Heamophilus influenzea týp B gây ra, bệnh lây qua đường hô hấp và thường gặp ở trẻ nhỏ. Viêm nàng não mủ do HIB có thể để lại di chứng thần kinh vĩnh viễn, tổn thương não, điếc, rối loạn tâm thần, tỷ lệ tử vong cao.\n\nViêm gan B là bệnh rất dễ lây qua đường tiêm chích (dùng chung bơm kim tiêm), quan hệ tình dục, lây truyền từ mẹ sang con (trong quá trình chuyển dạ đẻ).\nBệnh thường gây nên xơ gan, ung thư gan ảnh hướng lớn đến sức khỏe cộng đồng.\n"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể chọn 1 trong 3 loại Vắc xin sau:\n\n1. Vắc xin 6in1 ngừa 6 bệnh: \n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Bại liệt\n– Hib\n– Viêm gan B\nHiện nay, tại các trung tâm tiêm chủng dịch vụ đang có 2 loại vacxin 6in1, gồm Infanrix Hexa của Bỉ và Hexaxim của Pháp \n\n2. Vacxin 5in1 Pentaxim ngừa 5 bệnh:\n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Bại liệt\n– Hib\nĐược sử dụng trong tiêm chủng dịch vụ, sản xuất tại Pháp và Canada bởi công ty dược phẩm Sanofi Pasteur\n\n3. Vacxin 5in1 ComBE Five do Công ty Biological, Ấn Độ sản xuất ngừa 5 bệnh:\n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Hib\n– Viêm gan B"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 2 tháng tuổi trở lên\n• Lịch tiêm 4 mũi\n– Mũi 1,2,3: khi trẻ 2,3,4 tháng tuổi hoặc 2,4,6 tháng tuổi.\n– Mũi 4: khi trẻ 15 – 18 tháng tuổi\n• Liều dùng: 0.5 ml\n• Đường dùng: tiêm bắp"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C và sưng đau tại chỗ tiêm"
+      }
+    ]
+  },
+  {
+    "id": "159",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Bạch hầu,\nHo gà,\nUốn ván,\nBại liệt,\nHib,\nViêm gan B",
+    "shortTitle": "5in1 hoặc 6in1",
+    "description": "Cho trẻ từ 2 tháng tuổi trở lên\r\n• Lịch tiêm 4 mũi",
+    "valueFrom": 16,
+    "valueTo": 16,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 4"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh bạch hầu là bệnh truyền nhiễm lây qua đường hô hấp, bệnh có thể gây biến chứng nặng ở tim và thần kinh.\n\nBệnh ho gà là bệnh truyền nhiễm lây qua đường hô hấp, triệu chứng là ho thành cơn, thường nôn và kiệt sức sau cơn ho. Viêm phổi là biến chứng thường gặp và dễ gây tử vong.\n\nUốn ván là bệnh nhiễm trùng nhiễm độc do vi khuẩn xâm nhập qua vết thương hở gây co cứng, co giật, ngạt thở dẫn đến tử vong.\n\nBệnh bại liệt là bệnh truyền nhiễm lây qua đường tiêu hóa, trẻ bị bệnh thường có biểu hiện liệt chi, một số trường hợp liệt cơ hô hấp dẫn tới tử vong. Những trường hợp qua khỏi để lại di chứng liệt suốt đời.\n\nBệnh viêm phổi và viêm màng não mủ do HIB là những bệnh truyền nhiễm vi khuẩn Heamophilus influenzea týp B gây ra, bệnh lây qua đường hô hấp và thường gặp ở trẻ nhỏ. Viêm nàng não mủ do HIB có thể để lại di chứng thần kinh vĩnh viễn, tổn thương não, điếc, rối loạn tâm thần, tỷ lệ tử vong cao.\n\nViêm gan B là bệnh rất dễ lây qua đường tiêm chích (dùng chung bơm kim tiêm), quan hệ tình dục, lây truyền từ mẹ sang con (trong quá trình chuyển dạ đẻ).\nBệnh thường gây nên xơ gan, ung thư gan ảnh hướng lớn đến sức khỏe cộng đồng.\n"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể chọn 1 trong 3 loại Vắc xin sau:\n\n1. Vắc xin 6in1 ngừa 6 bệnh: \n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Bại liệt\n– Hib\n– Viêm gan B\nHiện nay, tại các trung tâm tiêm chủng dịch vụ đang có 2 loại vacxin 6in1, gồm Infanrix Hexa của Bỉ và Hexaxim của Pháp \n\n2. Vacxin 5in1 Pentaxim ngừa 5 bệnh:\n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Bại liệt\n– Hib\nĐược sử dụng trong tiêm chủng dịch vụ, sản xuất tại Pháp và Canada bởi công ty dược phẩm Sanofi Pasteur\n\n3. Vacxin 5in1 ComBE Five do Công ty Biological, Ấn Độ sản xuất ngừa 5 bệnh:\n– Bạch hầu\n– Ho gà\n– Uốn ván\n– Hib\n– Viêm gan B"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 2 tháng tuổi trở lên\n• Lịch tiêm 4 mũi\n– Mũi 1,2,3: khi trẻ 2,3,4 tháng tuổi hoặc 2,4,6 tháng tuổi.\n– Mũi 4: khi trẻ 15 – 18 tháng tuổi\n• Liều dùng: 0.5 ml\n• Đường dùng: tiêm bắp"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C và sưng đau tại chỗ tiêm"
+      }
+    ]
+  },
+  {
+    "id": "160",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Tiêu chảy do Rota vi rút",
+    "shortTitle": "Rota",
+    "description": "Cho trẻ từ 1,5 tháng tuổi trở lên\n• Lịch uống 2 liều: Rotarix (Bỉ) hai liều liên tiếp cách nhau tối thiểu 4 tuần\n• Lịch uống 3 liều: Rotateq (Mỹ) ba liều liên tiếp, các liều cách nhau tối thiểu 4 tuần",
+    "valueFrom": 1.5,
+    "valueTo": 2,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Uống liều 1"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Rota virut là nguyên nhân của khoảng 50% trẻ dưới 5 tuổi phải nhập viện vì viêm dạ dày ruột - tiêu chảy nặng. Trẻ mắc Rota virut thường biểu hiện sốt, nôn, tiêu chảy mất nước và phải truyền dịch bù nước.\n\nBệnh không có thuốc điều trị đặc hiệu. Trẻ cần được uống vắc xin càng sớm càng tốt."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 2 tên sau:\n• Rotarix\n• Rotateq"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 1,5 tháng tuổi trở lên\n\n• Lịch uống 2 liều: Rotarix (Bỉ) hai liều liên tiếp cách nhau tối thiểu 4 tuần\n– Liều đầu tiên có thể uống sớm lúc 1.5 tháng tuổi\n– Hoàn thành phác đồ trước 6 tháng tuổi\n– Liều dùng 1.5 ml\n– Đường dùng: đường uống\n\n• Lịch uống 3 liều: Rotateq (Mỹ) ba liều liên tiếp, các liều cách nhau tối thiểu 4 tuần\n– Liều đầu tiên khi trẻ được 7.5 – 12 tuần tuổi\n– Hoàn thành phác đồ trước 8 tháng tuổi\n– Liều dùng: 2 ml\n– Đường dùng: đường uống"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể rối loạn tiêu hóa. Thường tự khỏi sau vài ngày. Nếu đi ngoài phân nước nhiều lần, nôn nhiều, có dấu hiệu mất nước cần khám lại ngay"
+      }
+    ]
+  },
+  {
+    "id": "161",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Tiêu chảy do Rota vi rút",
+    "shortTitle": "Rota",
+    "description": "Cho trẻ từ 1,5 tháng tuổi trở lên\n• Lịch uống 2 liều: Rotarix (Bỉ) hai liều liên tiếp cách nhau tối thiểu 4 tuần\n• Lịch uống 3 liều: Rotateq (Mỹ) ba liều liên tiếp, các liều cách nhau tối thiểu 4 tuần",
+    "valueFrom": 3,
+    "valueTo": 3,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Uống liều 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Rota virut là nguyên nhân của khoảng 50% trẻ dưới 5 tuổi phải nhập viện vì viêm dạ dày ruột - tiêu chảy nặng. Trẻ mắc Rota virut thường biểu hiện sốt, nôn, tiêu chảy mất nước và phải truyền dịch bù nước.\n\nBệnh không có thuốc điều trị đặc hiệu. Trẻ cần được uống vắc xin càng sớm càng tốt."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 2 tên sau:\n• Rotarix\n• Rotateq"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 1,5 tháng tuổi trở lên\n\n• Lịch uống 2 liều: Rotarix (Bỉ) hai liều liên tiếp cách nhau tối thiểu 4 tuần\n– Liều đầu tiên có thể uống sớm lúc 1.5 tháng tuổi\n– Hoàn thành phác đồ trước 6 tháng tuổi\n– Liều dùng 1.5 ml\n– Đường dùng: đường uống\n\n• Lịch uống 3 liều: Rotateq (Mỹ) ba liều liên tiếp, các liều cách nhau tối thiểu 4 tuần\n– Liều đầu tiên khi trẻ được 7.5 – 12 tuần tuổi\n– Hoàn thành phác đồ trước 8 tháng tuổi\n– Liều dùng: 2 ml\n– Đường dùng: đường uống"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể rối loạn tiêu hóa. Thường tự khỏi sau vài ngày. Nếu đi ngoài phân nước nhiều lần, nôn nhiều, có dấu hiệu mất nước cần khám lại ngay"
+      }
+    ]
+  },
+  {
+    "id": "162",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Tiêu chảy do Rota vi rút",
+    "shortTitle": "Rota",
+    "description": "Cho trẻ từ 1,5 tháng tuổi trở lên\n• Lịch uống 2 liều: Rotarix (Bỉ) hai liều liên tiếp cách nhau tối thiểu 4 tuần\n• Lịch uống 3 liều: Rotateq (Mỹ) ba liều liên tiếp, các liều cách nhau tối thiểu 4 tuần",
+    "valueFrom": 4,
+    "valueTo": 4,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Uống liều 3"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Rota virut là nguyên nhân của khoảng 50% trẻ dưới 5 tuổi phải nhập viện vì viêm dạ dày ruột - tiêu chảy nặng. Trẻ mắc Rota virut thường biểu hiện sốt, nôn, tiêu chảy mất nước và phải truyền dịch bù nước.\n\nBệnh không có thuốc điều trị đặc hiệu. Trẻ cần được uống vắc xin càng sớm càng tốt."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 2 tên sau:\n• Rotarix\n• Rotateq"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 1,5 tháng tuổi trở lên\n\n• Lịch uống 2 liều: Rotarix (Bỉ) hai liều liên tiếp cách nhau tối thiểu 4 tuần\n– Liều đầu tiên có thể uống sớm lúc 1.5 tháng tuổi\n– Hoàn thành phác đồ trước 6 tháng tuổi\n– Liều dùng 1.5 ml\n– Đường dùng: đường uống\n\n• Lịch uống 3 liều: Rotateq (Mỹ) ba liều liên tiếp, các liều cách nhau tối thiểu 4 tuần\n– Liều đầu tiên khi trẻ được 7.5 – 12 tuần tuổi\n– Hoàn thành phác đồ trước 8 tháng tuổi\n– Liều dùng: 2 ml\n– Đường dùng: đường uống"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể rối loạn tiêu hóa. Thường tự khỏi sau vài ngày. Nếu đi ngoài phân nước nhiều lần, nôn nhiều, có dấu hiệu mất nước cần khám lại ngay"
+      }
+    ]
+  },
+  {
+    "id": "163",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Hội chứng nhiễm trùng,\nViêm màng não,\nViêm phổi,\nNhiễm khuẩn huyết,\nViêm tai giữa cấp tính do phế cầu và ngừa viêm tai giữa cấp tính do H.influenzae (Synflorix)",
+    "shortTitle": "Phế cầu",
+    "description": "Cho trẻ từ 2 tháng tuổi trở lên\n• Lịch tiêm 4 mũi cho trẻ từ 2 – 6 tháng tuổi\n• Lịch tiêm 3 mũi cho trẻ từ 7 – 11\ntháng tuổi\n• Lịch tiêm 2 mũi cho trẻ từ 1 đến 5 tuổi",
+    "valueFrom": 2,
+    "valueTo": 2,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 1"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Các bệnh viêm phổi, hội chứng nhiễm trùng, viêm màng não, nhiễm khuẩn huyết và viêm tai giữa cấp tính do phế cầu khuẩn gây nên là những bệnh nhiễm khuẩn cấp tính. Nếu không điều trị kịp thời tỷ lệ tử vong cao.\n\nVắc xin Synflorix là vắc xin phế cầu cộng hợp: dùng cho trẻ từ 6 tuần tuổi đến 5 tuổi."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể 1 trong 2 tên sau:\n• Synflorix\n• Prevenar 13"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 2 tháng tuổi trở lên\n\n• Lịch tiêm 4 mũi cho trẻ từ 2 – 6 tháng tuổi\n– Mũi 1: lúc 2 tháng tuổi\n– Mũi 2: 1 hoặc 2 tháng sau mũi 1\n– Mũi 3: 1 hoặc 2 tháng sau mũi 2\n– Mũi 4: 6 tháng sau mũi ba\n\n• Lịch tiêm 3 mũi cho trẻ từ 7 – 11 tháng tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: một tháng sau mũi 1\n– Mũi 3: hai tháng sau mũi 2 và tiêm sau 1 tuổi\n\n• Lịch tiêm 2 mũi cho trẻ từ 1 đến 5 tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: cách mũi 1 ít nhất hai tháng.\n\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm bắp\nKhông tiêm vắc xin này khi trẻ trên 5 tuổi"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C và sưng đau tại chỗ tiêm"
+      }
+    ]
+  },
+  {
+    "id": "164",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Hội chứng nhiễm trùng,\nViêm màng não,\nViêm phổi,\nNhiễm khuẩn huyết,\nViêm tai giữa cấp tính do phế cầu và ngừa viêm tai giữa cấp tính do H.influenzae (Synflorix)",
+    "shortTitle": "Phế cầu",
+    "description": "Cho trẻ từ 2 tháng tuổi trở lên\n• Lịch tiêm 4 mũi cho trẻ từ 2 – 6 tháng tuổi\n• Lịch tiêm 3 mũi cho trẻ từ 7 – 11\ntháng tuổi\n• Lịch tiêm 2 mũi cho trẻ từ 1 đến 5 tuổi",
+    "valueFrom": 3,
+    "valueTo": 4,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Các bệnh viêm phổi, hội chứng nhiễm trùng, viêm màng não, nhiễm khuẩn huyết và viêm tai giữa cấp tính do phế cầu khuẩn gây nên là những bệnh nhiễm khuẩn cấp tính. Nếu không điều trị kịp thời tỷ lệ tử vong cao.\n\nVắc xin Synflorix là vắc xin phế cầu cộng hợp: dùng cho trẻ từ 6 tuần tuổi đến 5 tuổi."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể 1 trong 2 tên sau:\n• Synflorix\n• Prevenar 13"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 2 tháng tuổi trở lên\n\n• Lịch tiêm 4 mũi cho trẻ từ 2 – 6 tháng tuổi\n– Mũi 1: lúc 2 tháng tuổi\n– Mũi 2: 1 hoặc 2 tháng sau mũi 1\n– Mũi 3: 1 hoặc 2 tháng sau mũi 2\n– Mũi 4: 6 tháng sau mũi ba\n\n• Lịch tiêm 3 mũi cho trẻ từ 7 – 11 tháng tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: một tháng sau mũi 1\n– Mũi 3: hai tháng sau mũi 2 và tiêm sau 1 tuổi\n\n• Lịch tiêm 2 mũi cho trẻ từ 1 đến 5 tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: cách mũi 1 ít nhất hai tháng.\n\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm bắp\nKhông tiêm vắc xin này khi trẻ trên 5 tuổi"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C và sưng đau tại chỗ tiêm"
+      }
+    ]
+  },
+  {
+    "id": "165",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Hội chứng nhiễm trùng,\nViêm màng não,\nViêm phổi,\nNhiễm khuẩn huyết,\nViêm tai giữa cấp tính do phế cầu và ngừa viêm tai giữa cấp tính do H.influenzae (Synflorix)",
+    "shortTitle": "Phế cầu",
+    "description": "Cho trẻ từ 2 tháng tuổi trở lên\n• Lịch tiêm 4 mũi cho trẻ từ 2 – 6 tháng tuổi\n• Lịch tiêm 3 mũi cho trẻ từ 7 – 11\ntháng tuổi\n• Lịch tiêm 2 mũi cho trẻ từ 1 đến 5 tuổi",
+    "valueFrom": 5,
+    "valueTo": 5,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 3"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Các bệnh viêm phổi, hội chứng nhiễm trùng, viêm màng não, nhiễm khuẩn huyết và viêm tai giữa cấp tính do phế cầu khuẩn gây nên là những bệnh nhiễm khuẩn cấp tính. Nếu không điều trị kịp thời tỷ lệ tử vong cao.\n\nVắc xin Synflorix là vắc xin phế cầu cộng hợp: dùng cho trẻ từ 6 tuần tuổi đến 5 tuổi."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể 1 trong 2 tên sau:\n• Synflorix\n• Prevenar 13"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 2 tháng tuổi trở lên\n\n• Lịch tiêm 4 mũi cho trẻ từ 2 – 6 tháng tuổi\n– Mũi 1: lúc 2 tháng tuổi\n– Mũi 2: 1 hoặc 2 tháng sau mũi 1\n– Mũi 3: 1 hoặc 2 tháng sau mũi 2\n– Mũi 4: 6 tháng sau mũi ba\n\n• Lịch tiêm 3 mũi cho trẻ từ 7 – 11 tháng tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: một tháng sau mũi 1\n– Mũi 3: hai tháng sau mũi 2 và tiêm sau 1 tuổi\n\n• Lịch tiêm 2 mũi cho trẻ từ 1 đến 5 tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: cách mũi 1 ít nhất hai tháng.\n\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm bắp\nKhông tiêm vắc xin này khi trẻ trên 5 tuổi"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C và sưng đau tại chỗ tiêm"
+      }
+    ]
+  },
+  {
+    "id": "166",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Hội chứng nhiễm trùng,\nViêm màng não,\nViêm phổi,\nNhiễm khuẩn huyết,\nViêm tai giữa cấp tính do phế cầu và ngừa viêm tai giữa cấp tính do H.influenzae (Synflorix)",
+    "shortTitle": "Phế cầu",
+    "description": "Cho trẻ từ 2 tháng tuổi trở lên\n• Lịch tiêm 4 mũi cho trẻ từ 2 – 6 tháng tuổi\n• Lịch tiêm 3 mũi cho trẻ từ 7 – 11\ntháng tuổi\n• Lịch tiêm 2 mũi cho trẻ từ 1 đến 5 tuổi",
+    "valueFrom": 11,
+    "valueTo": 11,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 4"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Các bệnh viêm phổi, hội chứng nhiễm trùng, viêm màng não, nhiễm khuẩn huyết và viêm tai giữa cấp tính do phế cầu khuẩn gây nên là những bệnh nhiễm khuẩn cấp tính. Nếu không điều trị kịp thời tỷ lệ tử vong cao.\n\nVắc xin Synflorix là vắc xin phế cầu cộng hợp: dùng cho trẻ từ 6 tuần tuổi đến 5 tuổi."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể 1 trong 2 tên sau:\n• Synflorix\n• Prevenar 13"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 2 tháng tuổi trở lên\n\n• Lịch tiêm 4 mũi cho trẻ từ 2 – 6 tháng tuổi\n– Mũi 1: lúc 2 tháng tuổi\n– Mũi 2: 1 hoặc 2 tháng sau mũi 1\n– Mũi 3: 1 hoặc 2 tháng sau mũi 2\n– Mũi 4: 6 tháng sau mũi ba\n\n• Lịch tiêm 3 mũi cho trẻ từ 7 – 11 tháng tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: một tháng sau mũi 1\n– Mũi 3: hai tháng sau mũi 2 và tiêm sau 1 tuổi\n\n• Lịch tiêm 2 mũi cho trẻ từ 1 đến 5 tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: cách mũi 1 ít nhất hai tháng.\n\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm bắp\nKhông tiêm vắc xin này khi trẻ trên 5 tuổi"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C và sưng đau tại chỗ tiêm"
+      }
+    ]
+  },
+  {
+    "id": "167",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Cúm mùa",
+    "shortTitle": "Cúm mùa",
+    "description": "Cho trẻ từ 6 tháng tuổi và người lớn",
+    "valueFrom": 6,
+    "valueTo": 6,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 1"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh cúm là bệnh truyền nhiễm cấp tính đường hô hấp do virut cúm với triệu chứng chủ yếu là sốt, đau đầu, đau cơ, mệt mỏi, đau họng và ho. Bệnh nguy hiểm là do lây lan nhanh gây thành dịch, biến chứng chủ yếu là viêm phổi hoặc bội nhiễm vi khuẩn.\n"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 2 tên sau:\n• Vaxigrip\n• Influvac"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 6 tháng tuổi và người lớn\n\n• Lịch tiêm 2 mũi: cho trẻ từ 6 tháng đến 9 tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: một tháng sau mũi 1\n\n• Lịch tiêm 1 mũi: cho trẻ dưới 9 tuổi đã từng tiêm vắc xin cúm, trẻ trên 9 tuổi và người lớn\n\n• Liều dùng:\n– Trẻ từ 6 – 36 tháng tuổi: 0.25ml\n– Trẻ từ 36 tháng tuổi trở lên và người lớn: 0.5 ml\n• Đường dùng: tiêm bắp\n\nTiêm nhắc một mũi hàng năm sau khi tiêm phác đồ chuẩn\nKhuyến cáo tiêm chủng cho phụ nữ có thai sau 3 tháng đầu thai kỳ"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C, hắt hơi, chảy nước mũi trong (giả cúm), sưng tại chỗ tiêm."
+      }
+    ]
+  },
+  {
+    "id": "168",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Cúm mùa",
+    "shortTitle": "Cúm mùa",
+    "description": "Cho trẻ từ 6 tháng tuổi và người lớn",
+    "valueFrom": 7,
+    "valueTo": 7,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh cúm là bệnh truyền nhiễm cấp tính đường hô hấp do virut cúm với triệu chứng chủ yếu là sốt, đau đầu, đau cơ, mệt mỏi, đau họng và ho. Bệnh nguy hiểm là do lây lan nhanh gây thành dịch, biến chứng chủ yếu là viêm phổi hoặc bội nhiễm vi khuẩn.\n"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 2 tên sau:\n• Vaxigrip\n• Influvac"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 6 tháng tuổi và người lớn\n\n• Lịch tiêm 2 mũi: cho trẻ từ 6 tháng đến 9 tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: một tháng sau mũi 1\n\n• Lịch tiêm 1 mũi: cho trẻ dưới 9 tuổi đã từng tiêm vắc xin cúm, trẻ trên 9 tuổi và người lớn\n\n• Liều dùng:\n– Trẻ từ 6 – 36 tháng tuổi: 0.25ml\n– Trẻ từ 36 tháng tuổi trở lên và người lớn: 0.5 ml\n• Đường dùng: tiêm bắp\n\nTiêm nhắc một mũi hàng năm sau khi tiêm phác đồ chuẩn\nKhuyến cáo tiêm chủng cho phụ nữ có thai sau 3 tháng đầu thai kỳ"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C, hắt hơi, chảy nước mũi trong (giả cúm), sưng tại chỗ tiêm."
+      }
+    ]
+  },
+  {
+    "id": "169",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Cúm mùa",
+    "shortTitle": "Cúm mùa",
+    "description": "Cho trẻ từ 6 tháng tuổi và người lớn",
+    "valueFrom": null,
+    "valueTo": null,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Nhắc lại"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh cúm là bệnh truyền nhiễm cấp tính đường hô hấp do virut cúm với triệu chứng chủ yếu là sốt, đau đầu, đau cơ, mệt mỏi, đau họng và ho. Bệnh nguy hiểm là do lây lan nhanh gây thành dịch, biến chứng chủ yếu là viêm phổi hoặc bội nhiễm vi khuẩn.\n"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 2 tên sau:\n• Vaxigrip\n• Influvac"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 6 tháng tuổi và người lớn\n\n• Lịch tiêm 2 mũi: cho trẻ từ 6 tháng đến 9 tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: một tháng sau mũi 1\n\n• Lịch tiêm 1 mũi: cho trẻ dưới 9 tuổi đã từng tiêm vắc xin cúm, trẻ trên 9 tuổi và người lớn\n\n• Liều dùng:\n– Trẻ từ 6 – 36 tháng tuổi: 0.25ml\n– Trẻ từ 36 tháng tuổi trở lên và người lớn: 0.5 ml\n• Đường dùng: tiêm bắp\n\nTiêm nhắc một mũi hàng năm sau khi tiêm phác đồ chuẩn\nKhuyến cáo tiêm chủng cho phụ nữ có thai sau 3 tháng đầu thai kỳ"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sốt >38,5°C, hắt hơi, chảy nước mũi trong (giả cúm), sưng tại chỗ tiêm."
+      }
+    ]
+  },
+  {
+    "id": "170",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Sởi – Quai bị - Rubella",
+    "shortTitle": "Sởi – Quai bị - Rubella",
+    "description": "Cho trẻ từ 12 tháng tuổi và người lớn\n• Lịch tiêm 2 mũi cho trẻ từ 12 tháng tuổi trở lên đến dưới 7 tuổi \n• Lịch tiêm 2 mũi cho trẻ từ 7 tuổi và người lớn",
+    "valueFrom": 12,
+    "valueTo": 12,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 1"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh sởi là bệnh truyền nhiễm lây qua đường hô hấp, ở trẻ em bệnh gây suy giảm miễn dịch nên dễ biến chứng viêm phổi, tiêu chảy, suy dinh dưỡng dẫn đến tử vong.\n\nBệnh quai bị là bệnh truyền nhiễm lây qua đường hô hấp. Biểu hiện sưng tuyến nước bọt phía dưới và trước tai là triệu chứng nổi bật của bệnh. Biến chứng thường gặp là viêm tinh hoàn hoặc buồng trứng dẫn đến vô sinh, ngoài ra còn có thể gặp biến chứng viêm não, viêm màng não, điếc... Bệnh không có thuốc điều trị đặc hiệu nên tiêm vắc xin là biện pháp tốt nhất để phòng bệnh."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "MMR II"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 12 tháng tuổi và người lớn\n\n• Lịch tiêm 2 mũi cho trẻ từ 12 tháng tuổi trở lên đến dưới 7 tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: khi trẻ 4 – 6 tuổi, cách mũi 1 ít nhất một tháng\n\n• Lịch tiêm 2 mũi cho trẻ từ 7 tuổi và người lớn\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: cách mũi 1 ít nhất 1 tháng\nPhụ nữ nên hoàn tất lịch tiêm trước khi có thai ít nhất 3 tháng\n\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm dưới da, nên tiêm mặt ngoài phía trên cánh tay."
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sưng đau tại chỗ tiêm, phát ban nhẹ, nôn, ít khi sốt."
+      }
+    ]
+  },
+  {
+    "id": "171",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Sởi – Quai bị - Rubella",
+    "shortTitle": "Sởi – Quai bị - Rubella",
+    "description": "Cho trẻ từ 12 tháng tuổi và người lớn\n• Lịch tiêm 2 mũi cho trẻ từ 12 tháng tuổi trở lên đến dưới 7 tuổi \n• Lịch tiêm 2 mũi cho trẻ từ 7 tuổi và người lớn",
+    "valueFrom": 13,
+    "valueTo": 14,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh sởi là bệnh truyền nhiễm lây qua đường hô hấp, ở trẻ em bệnh gây suy giảm miễn dịch nên dễ biến chứng viêm phổi, tiêu chảy, suy dinh dưỡng dẫn đến tử vong.\n\nBệnh quai bị là bệnh truyền nhiễm lây qua đường hô hấp. Biểu hiện sưng tuyến nước bọt phía dưới và trước tai là triệu chứng nổi bật của bệnh. Biến chứng thường gặp là viêm tinh hoàn hoặc buồng trứng dẫn đến vô sinh, ngoài ra còn có thể gặp biến chứng viêm não, viêm màng não, điếc... Bệnh không có thuốc điều trị đặc hiệu nên tiêm vắc xin là biện pháp tốt nhất để phòng bệnh."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "MMR II"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 12 tháng tuổi và người lớn\n\n• Lịch tiêm 2 mũi cho trẻ từ 12 tháng tuổi trở lên đến dưới 7 tuổi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: khi trẻ 4 – 6 tuổi, cách mũi 1 ít nhất một tháng\n\n• Lịch tiêm 2 mũi cho trẻ từ 7 tuổi và người lớn\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: cách mũi 1 ít nhất 1 tháng\nPhụ nữ nên hoàn tất lịch tiêm trước khi có thai ít nhất 3 tháng\n\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm dưới da, nên tiêm mặt ngoài phía trên cánh tay."
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sưng đau tại chỗ tiêm, phát ban nhẹ, nôn, ít khi sốt."
+      }
+    ]
+  },
+  {
+    "id": "172",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm não Nhật Bản B",
+    "shortTitle": "Viêm não Nhật Bản B",
+    "description": "Cho trẻ từ 12 tháng tuổi và người lớn\r\n• Lịch tiêm 3 mũi",
+    "valueFrom": 12,
+    "valueTo": 12,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 1"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh Viêm não Nhật Bản là bệnh truyền nhiễm do muỗi truyền, bệnh thường gặp ở trẻ em dưới 15 tuổi với biểu hiện viêm não, màng não, có thể để lại di chứng nặng nề về tinh thần và vận động (liệt, rối loạn tâm thần...)\n\nBệnh không có thuốc điều trị đặc hiệu nên tiêm vắc xin là biện pháp tốt nhất để phòng bệnh."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": " Jevax"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 12 tháng tuổi và người lớn\n\n• Lịch tiêm 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: một đến hai tuần sau mũi 1\n– Mũi 3: một năm sau mũi 1\nTiêm nhắc một mũi mỗi 3 năm\n\n• Liều dùng:\n– Trẻ dưới 3 tuổi: 0.5ml\n– Trẻ trên 3 tuổi và người lớn: 1ml\n\n• Đường dùng: tiêm dưới da, nên tiêm\nmặt ngoài phía trên cánh tay."
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sưng đau tại chỗ tiêm, nhức đầu."
+      }
+    ]
+  },
+  {
+    "id": "173",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm não Nhật Bản B",
+    "shortTitle": "Viêm não Nhật Bản B",
+    "description": "Cho trẻ từ 12 tháng tuổi và người lớn\r\n• Lịch tiêm 3 mũi",
+    "valueFrom": 13,
+    "valueTo": 14,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh Viêm não Nhật Bản là bệnh truyền nhiễm do muỗi truyền, bệnh thường gặp ở trẻ em dưới 15 tuổi với biểu hiện viêm não, màng não, có thể để lại di chứng nặng nề về tinh thần và vận động (liệt, rối loạn tâm thần...)\n\nBệnh không có thuốc điều trị đặc hiệu nên tiêm vắc xin là biện pháp tốt nhất để phòng bệnh."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": " Jevax"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 12 tháng tuổi và người lớn\n\n• Lịch tiêm 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: một đến hai tuần sau mũi 1\n– Mũi 3: một năm sau mũi 1\nTiêm nhắc một mũi mỗi 3 năm\n\n• Liều dùng:\n– Trẻ dưới 3 tuổi: 0.5ml\n– Trẻ trên 3 tuổi và người lớn: 1ml\n\n• Đường dùng: tiêm dưới da, nên tiêm\nmặt ngoài phía trên cánh tay."
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sưng đau tại chỗ tiêm, nhức đầu."
+      }
+    ]
+  },
+  {
+    "id": "174",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm não Nhật Bản B",
+    "shortTitle": "Viêm não Nhật Bản B",
+    "description": "Cho trẻ từ 12 tháng tuổi và người lớn\r\n• Lịch tiêm 3 mũi",
+    "valueFrom": 25,
+    "valueTo": 26,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Nhắc lại"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh Viêm não Nhật Bản là bệnh truyền nhiễm do muỗi truyền, bệnh thường gặp ở trẻ em dưới 15 tuổi với biểu hiện viêm não, màng não, có thể để lại di chứng nặng nề về tinh thần và vận động (liệt, rối loạn tâm thần...)\n\nBệnh không có thuốc điều trị đặc hiệu nên tiêm vắc xin là biện pháp tốt nhất để phòng bệnh."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": " Jevax"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 12 tháng tuổi và người lớn\n\n• Lịch tiêm 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: một đến hai tuần sau mũi 1\n– Mũi 3: một năm sau mũi 1\nTiêm nhắc một mũi mỗi 3 năm\n\n• Liều dùng:\n– Trẻ dưới 3 tuổi: 0.5ml\n– Trẻ trên 3 tuổi và người lớn: 1ml\n\n• Đường dùng: tiêm dưới da, nên tiêm\nmặt ngoài phía trên cánh tay."
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sưng đau tại chỗ tiêm, nhức đầu."
+      }
+    ]
+  },
+  {
+    "id": "175",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Thủy đậu",
+    "shortTitle": "Thủy đậu",
+    "description": "Cho trẻ từ 12 tháng tuổi và người lớn chưa từng mắc bệnh",
+    "valueFrom": 12,
+    "valueTo": 12,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 1"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Thủy đậu là bệnh truyền nhiễm lây qua đường hô hấp, tiếp xúc trực tiếp qua mụn nước trên da hoặc có thể truyền từ mẹ sang con. \n\nBệnh có thể có những biến chứng như bội nhiễm nốt phỏng rạ để lại sẹo vĩnh viễn hoặc biến chứng nhiễm trùng huyết, viêm mô tế bào, viêm phổi, viêm não..."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 3 tên sau:\n• Varivax\n• Varilrix\n• Varicella"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 12 tháng tuổi và người lớn chưa từng mắc bệnh\n\n• Lịch tiêm cho trẻ từ 12 tháng tuổi đến 12 tuổi: tiêm 2 mũi cách nhau ít nhất 3 tháng\nLịch tiêm khuyến cáo ở trẻ nhỏ dưới 4 tuổi:\n– Mũi 1: lúc 12 tháng tuổi\n– Mũi 2: lúc 4-6 tuổi\n\n• Lịch tiêm cho trẻ em từ 13 tuổi trở lên và người lớn: Tiêm 2 mũi cách nhau ít nhất 1.5 tháng\nPhụ nữ nên hoàn tất lịch tiêm trước khi có thai ít nhất 3 tháng\n\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm dưới da, nên tiêm mặt ngoài phía trên cánh tay.\n"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể gặp sốt kèm phát ban sau 1-3 tuần. Sưng quầng đỏ tại chỗ tiêm 1-2 ngày."
+      }
+    ]
+  },
+  {
+    "id": "176",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Thủy đậu",
+    "shortTitle": "Thủy đậu",
+    "description": "Cho trẻ từ 12 tháng tuổi và người lớn chưa từng mắc bệnh",
+    "valueFrom": 47,
+    "valueTo": 48,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Thủy đậu là bệnh truyền nhiễm lây qua đường hô hấp, tiếp xúc trực tiếp qua mụn nước trên da hoặc có thể truyền từ mẹ sang con. \n\nBệnh có thể có những biến chứng như bội nhiễm nốt phỏng rạ để lại sẹo vĩnh viễn hoặc biến chứng nhiễm trùng huyết, viêm mô tế bào, viêm phổi, viêm não..."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 3 tên sau:\n• Varivax\n• Varilrix\n• Varicella"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 12 tháng tuổi và người lớn chưa từng mắc bệnh\n\n• Lịch tiêm cho trẻ từ 12 tháng tuổi đến 12 tuổi: tiêm 2 mũi cách nhau ít nhất 3 tháng\nLịch tiêm khuyến cáo ở trẻ nhỏ dưới 4 tuổi:\n– Mũi 1: lúc 12 tháng tuổi\n– Mũi 2: lúc 4-6 tuổi\n\n• Lịch tiêm cho trẻ em từ 13 tuổi trở lên và người lớn: Tiêm 2 mũi cách nhau ít nhất 1.5 tháng\nPhụ nữ nên hoàn tất lịch tiêm trước khi có thai ít nhất 3 tháng\n\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm dưới da, nên tiêm mặt ngoài phía trên cánh tay.\n"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể gặp sốt kèm phát ban sau 1-3 tuần. Sưng quầng đỏ tại chỗ tiêm 1-2 ngày."
+      }
+    ]
+  },
+  {
+    "id": "177",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm gan A",
+    "shortTitle": "Viêm gan A",
+    "description": "Cho trẻ từ 12 tháng tuổi và người lớn\r\n• Lịch tiêm 2 mũi cách nhau ít nhất 6 – 12 tháng",
+    "valueFrom": 12,
+    "valueTo": 15,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 1"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh viêm gan A là bệnh truyền nhiễm cấp tính gây dịch. Bệnh lây qua đường tiêu hóa gây tổn thương chủ yếu ở nhu mô gan. \n\nBiến chứng cũng có thể dẫn đến xơ gan và ung thư gan."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể 1 trong 2 tên sau:\n• Avaxim\n• Havax"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 12 tháng tuổi và người lớn\n\n• Lịch tiêm 2 mũi cách nhau ít nhất 6 – 12 tháng\n• Liều dùng:\nAvaxim\n–  Trẻ em từ 12 tháng tuổi – 15 tuổi: Avaxim 80UI 0.5ml\n– Người từ 16 tuổi trở lên: Avaxim 160UI 0.5ml\nHavax\n– Trẻ em từ 24 tháng tuổi – dưới 18 tuổi: Havax 0,5ml\n– Người lớn từ 18 tuổi trở lên: Havax 1 ml\n• Đường dùng: tiêm bắp"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Ít tác dụng phụ, có thể sưng quầng đỏ tại chỗ tiêm 1-2 ngày."
+      }
+    ]
+  },
+  {
+    "id": "178",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm gan A",
+    "shortTitle": "Viêm gan A",
+    "description": "Cho trẻ từ 12 tháng tuổi và người lớn\r\n• Lịch tiêm 2 mũi cách nhau ít nhất 6 – 12 tháng",
+    "valueFrom": 18,
+    "valueTo": 24,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh viêm gan A là bệnh truyền nhiễm cấp tính gây dịch. Bệnh lây qua đường tiêu hóa gây tổn thương chủ yếu ở nhu mô gan. \n\nBiến chứng cũng có thể dẫn đến xơ gan và ung thư gan."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể 1 trong 2 tên sau:\n• Avaxim\n• Havax"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 12 tháng tuổi và người lớn\n\n• Lịch tiêm 2 mũi cách nhau ít nhất 6 – 12 tháng\n• Liều dùng:\nAvaxim\n–  Trẻ em từ 12 tháng tuổi – 15 tuổi: Avaxim 80UI 0.5ml\n– Người từ 16 tuổi trở lên: Avaxim 160UI 0.5ml\nHavax\n– Trẻ em từ 24 tháng tuổi – dưới 18 tuổi: Havax 0,5ml\n– Người lớn từ 18 tuổi trở lên: Havax 1 ml\n• Đường dùng: tiêm bắp"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Ít tác dụng phụ, có thể sưng quầng đỏ tại chỗ tiêm 1-2 ngày."
+      }
+    ]
+  },
+  {
+    "id": "179",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm màng não AC",
+    "shortTitle": "Viêm màng não AC",
+    "description": "Cho trẻ từ 2 tuổi và người lớn\r\n• Lịch tiêm 1 mũi",
+    "valueFrom": 24,
+    "valueTo": 24,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": ""
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh viêm màng não do não mô cầu là bệnh truyền nhiễm lây qua đường hô hấp, bệnh có tỷ lệ tử vong cao (đến 50% ở trẻ em), những trường hợp qua khỏi vẫn phải chịu biến chứng như: tâm thần, điếc, liệt, động kinh..."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Meningo A+C"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 2 tuổi và người lớn\n• Lịch tiêm 1 mũi\n• Liều dùng: 0.5 ml\n• Đường dùng: tiêm bắp\nTiêm nhắc một mũi mỗi 3 năm"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sưng đau tại chỗ tiêm, sốt nhẹ."
+      }
+    ]
+  },
+  {
+    "id": "180",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm màng não BC",
+    "shortTitle": "Viêm màng não BC",
+    "description": "Cho trẻ từ 6 tháng tuổi trở lên và người lớn đến 45 tuổi\r\n• Lịch tiêm: 2 mũi cách nhau 2 tháng",
+    "valueFrom": 6,
+    "valueTo": 6,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 1"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh viêm màng não do não mô cầu là bệnh truyền nhiễm lây qua đường hô hấp, bệnh có tỷ lệ tử vong cao (đến 50% ở trẻ em), những trường hợp qua khỏi vẫn phải chịu biến chứng như: tâm thần, điếc, liệt, động kinh..."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "VA-Mengoc-BC"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 6 tháng tuổi trở lên và người lớn đến 45 tuổi\n• Lịch tiêm: 2 mũi cách nhau 2 tháng\n• Liều dùng: 0.5 ml\n• Đường dùng: tiêm bắp sâu"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sưng đau tại chỗ tiêm, sốt nhẹ."
+      }
+    ]
+  },
+  {
+    "id": "181",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Viêm màng não BC",
+    "shortTitle": "Viêm màng não BC",
+    "description": "Cho trẻ từ 6 tháng tuổi trở lên và người lớn đến 45 tuổi\r\n• Lịch tiêm: 2 mũi cách nhau 2 tháng",
+    "valueFrom": 8,
+    "valueTo": 8,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh viêm màng não do não mô cầu là bệnh truyền nhiễm lây qua đường hô hấp, bệnh có tỷ lệ tử vong cao (đến 50% ở trẻ em), những trường hợp qua khỏi vẫn phải chịu biến chứng như: tâm thần, điếc, liệt, động kinh..."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "VA-Mengoc-BC"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 6 tháng tuổi trở lên và người lớn đến 45 tuổi\n• Lịch tiêm: 2 mũi cách nhau 2 tháng\n• Liều dùng: 0.5 ml\n• Đường dùng: tiêm bắp sâu"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": "Có thể sưng đau tại chỗ tiêm, sốt nhẹ."
+      }
+    ]
+  },
+  {
+    "id": "182",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Thương hàn",
+    "shortTitle": "Thương hàn",
+    "description": "Cho trẻ từ 2 tuổi trở lên và người lớn\r\n• Lịch tiêm 1 mũi",
+    "valueFrom": 24,
+    "valueTo": 24,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Tiêm 1 mũi"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Bệnh thương hàn là bệnh lây truyền qua đường tiêu hóa. Biểu hiện chính của bệnh là sốt tăng dần, rối loạn tiêu hóa, gan to. Chảy máu ruột và thủng ruột là biến chứng thường gặp và gây tử vong."
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Typhim VI"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ từ 2 tuổi trở lên và người lớn\n• Lịch tiêm 1 mũi\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm bắp hoặc dưới da\nTiêm nhắc: mỗi 3 năm nếu có nguy cơ nhiễm bệnh"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "183",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Ung thư cổ tử cung, u nhú do HPV",
+    "shortTitle": "Ung thư cổ tử cung, u nhú do HPV",
+    "description": "Cho trẻ gái từ 9 tuổi đến 26 tuổi\r\n• Lịch tiêm 3 mũi",
+    "valueFrom": 108,
+    "valueTo": 300,
+    "displayValue": "9 - 25 tuổi",
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 1"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Ung thư cổ tử cung là bệnh nguy hiểm. Số mắc cổ tử cung ở phụ nữ đứng hàng thứ 2 trên thế giới sau ung thư vú. Hàng năm, trên thế giới có khoảng 520.000 phụ nữ mắc mới ung thư cổ tử cung và hơn 274.000 người tử vong vì căn bệnh này, trong đó có Việt Nam. \n\nBệnh tiến triển âm thầm thường không có biểu hiện rõ, khi phát hiện được thường ở giai đoạn muộn (giai đoạn tiền ung thư hoặc ung thư)"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 2 tên sau:\n• Cervarix\n• Gardasil"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ gái từ 9 tuổi đến 26 tuổi\n• Lịch tiêm 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1-2 tháng sau mũi 1\n– Mũi 3: 6 tháng sau mũi 1\nKhi cần điều chỉnh lịch tiêm thì mũi 2 phải cách mũi 1 ít nhất một tháng và mũi 3 phải cách mũi 2 ít nhất ba tháng.\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm bắp"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": " Tại chỗ tiêm: có thể ban đỏ, sưng, đau, ngứa"
+      }
+    ]
+  },
+  {
+    "id": "184",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Ung thư cổ tử cung, u nhú do HPV",
+    "shortTitle": "Ung thư cổ tử cung, u nhú do HPV",
+    "description": "Cho trẻ gái từ 9 tuổi đến 26 tuổi\r\n• Lịch tiêm 3 mũi",
+    "valueFrom": null,
+    "valueTo": null,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "Mũi 2"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Ung thư cổ tử cung là bệnh nguy hiểm. Số mắc cổ tử cung ở phụ nữ đứng hàng thứ 2 trên thế giới sau ung thư vú. Hàng năm, trên thế giới có khoảng 520.000 phụ nữ mắc mới ung thư cổ tử cung và hơn 274.000 người tử vong vì căn bệnh này, trong đó có Việt Nam. \n\nBệnh tiến triển âm thầm thường không có biểu hiện rõ, khi phát hiện được thường ở giai đoạn muộn (giai đoạn tiền ung thư hoặc ung thư)"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 2 tên sau:\n• Cervarix\n• Gardasil"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ gái từ 9 tuổi đến 26 tuổi\n• Lịch tiêm 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1-2 tháng sau mũi 1\n– Mũi 3: 6 tháng sau mũi 1\nKhi cần điều chỉnh lịch tiêm thì mũi 2 phải cách mũi 1 ít nhất một tháng và mũi 3 phải cách mũi 2 ít nhất ba tháng.\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm bắp"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": " Tại chỗ tiêm: có thể ban đỏ, sưng, đau, ngứa"
+      }
+    ]
+  },
+  {
+    "id": "185",
+    "type": "vaccination",
+    "conditionType": "age_in_months",
+    "targetType": "baby",
+    "title": "Ung thư cổ tử cung, u nhú do HPV",
+    "shortTitle": "Ung thư cổ tử cung, u nhú do HPV",
+    "description": "Cho trẻ gái từ 9 tuổi đến 26 tuổi\r\n• Lịch tiêm 3 mũi",
+    "valueFrom": null,
+    "valueTo": null,
+    "displayValue": null,
+    "task": true,
+    "taskRequired": true,
+    "enabled": true,
+    "extraItems": [
+      {
+        "name": "Đến lịch tiêm",
+        "value": "mũi 3"
+      },
+      {
+        "name": "Bệnh",
+        "value": "Ung thư cổ tử cung là bệnh nguy hiểm. Số mắc cổ tử cung ở phụ nữ đứng hàng thứ 2 trên thế giới sau ung thư vú. Hàng năm, trên thế giới có khoảng 520.000 phụ nữ mắc mới ung thư cổ tử cung và hơn 274.000 người tử vong vì căn bệnh này, trong đó có Việt Nam. \n\nBệnh tiến triển âm thầm thường không có biểu hiện rõ, khi phát hiện được thường ở giai đoạn muộn (giai đoạn tiền ung thư hoặc ung thư)"
+      },
+      {
+        "name": "Tên vắc xin",
+        "value": "Có thể là 1 trong 2 tên sau:\n• Cervarix\n• Gardasil"
+      },
+      {
+        "name": "Nội dung",
+        "value": "Cho trẻ gái từ 9 tuổi đến 26 tuổi\n• Lịch tiêm 3 mũi\n– Mũi 1: lần tiêm đầu tiên\n– Mũi 2: 1-2 tháng sau mũi 1\n– Mũi 3: 6 tháng sau mũi 1\nKhi cần điều chỉnh lịch tiêm thì mũi 2 phải cách mũi 1 ít nhất một tháng và mũi 3 phải cách mũi 2 ít nhất ba tháng.\n• Liều dùng: 0.5ml\n• Đường dùng: tiêm bắp"
+      },
+      {
+        "name": "Phản ứng phụ",
+        "value": " Tại chỗ tiêm: có thể ban đỏ, sưng, đau, ngứa"
+      }
+    ]
+  }
+]

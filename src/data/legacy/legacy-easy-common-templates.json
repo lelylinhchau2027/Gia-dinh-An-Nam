@@ -1,0 +1,738 @@
+[
+  {
+    "id": "1",
+    "type": "common",
+    "name": "3",
+    "shortName": null,
+    "fromWeek": 0,
+    "toWeek": 6,
+    "conditions": "Độ tuổi được áp dụng: Khi bé được khoảng 0-6 tuần: Mẹ có thể bắt đầu áp dụng EASY 3 sau khi bé được khoảng 2 tuần tuổi và có cân nặng trung bình từ từ 2.9 kg trở lên. Các bé sinh non dưới 28 tuần sẽ cần đạt đủ số cân nặng trung bình, và cần đưa về tuổi hiệu chỉnh (tức tuổi trên ngày dự kiến sinh) thì mới áp dụng E.A.S.Y.",
+    "notes": "Ăn: Mỗi cữ bú cách nhau khoảng 2.5-3 giờ, bé được ăn ngay sau khi ngủ dậy, bé bú một cữ mất khoảng 20-40 phút.\n\nHoạt động: Sau khi ăn xong bé được ợ hơi kỹ, được thay bỉm và mẹ quan sát tín hiệu để thực hiện trình tự ngủ cho bé. Tổng thời gian để bé hoạt động, bao gồm cả thực hiện trình tự ngủ khá ngắn chỉ khoảng 20- 30 phút\n\nNgủ: Bé ngủ 4 giấc ngày bao gồm 3 giấc dài 1,5-2h và 1 giấc ngắn cuối ngày từ 30-40 phút. Bé ngủ đêm 11-13 giờ và thời gian thức trước các giấc ngủ của bé là 45-60 phút.",
+    "easyTimeGroups": [
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 7,
+            "to": 7.75,
+            "types": [
+              "E"
+            ],
+            "notes": "Ngủ dậy và ĂN"
+          },
+          {
+            "fakeId": null,
+            "from": 7.75,
+            "to": 8,
+            "types": [
+              "A"
+            ],
+            "notes": "Thay bỉm và CHƠI"
+          },
+          {
+            "fakeId": null,
+            "from": 8,
+            "to": 10,
+            "types": [
+              "S"
+            ],
+            "notes": "Bé NGỦ giấc ngày #1"
+          },
+          {
+            "fakeId": null,
+            "from": 8,
+            "to": 10,
+            "types": [
+              "Y"
+            ],
+            "notes": "Thời gian của mẹ"
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 10,
+            "to": 10.75,
+            "types": [
+              "E"
+            ],
+            "notes": "Ngủ dậy và ĂN"
+          },
+          {
+            "fakeId": null,
+            "from": 10.75,
+            "to": 11,
+            "types": [
+              "A"
+            ],
+            "notes": "Thay bỉm và CHƠI"
+          },
+          {
+            "fakeId": null,
+            "from": 11,
+            "to": 13,
+            "types": [
+              "S"
+            ],
+            "notes": "Bé NGỦ giấc ngày #2"
+          },
+          {
+            "fakeId": null,
+            "from": 11,
+            "to": 13,
+            "types": [
+              "Y"
+            ],
+            "notes": "Thời gian của mẹ"
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 13,
+            "to": 13.75,
+            "types": [
+              "E"
+            ],
+            "notes": "Ngủ dậy và ĂN"
+          },
+          {
+            "fakeId": null,
+            "from": 13.75,
+            "to": 14,
+            "types": [
+              "A"
+            ],
+            "notes": "Thay bỉm và CHƠI"
+          },
+          {
+            "fakeId": null,
+            "from": 14,
+            "to": 16,
+            "types": [
+              "S"
+            ],
+            "notes": "Bé NGỦ giấc ngày #3"
+          },
+          {
+            "fakeId": null,
+            "from": 14,
+            "to": 16,
+            "types": [
+              "Y"
+            ],
+            "notes": "Thời gian của mẹ"
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 16,
+            "to": 16.75,
+            "types": [
+              "E"
+            ],
+            "notes": "Ngủ dậy và ĂN"
+          },
+          {
+            "fakeId": null,
+            "from": 16.75,
+            "to": 17,
+            "types": [
+              "A"
+            ],
+            "notes": "Thay bỉm và CHƠI"
+          },
+          {
+            "fakeId": null,
+            "from": 17,
+            "to": 17.75,
+            "types": [
+              "S"
+            ],
+            "notes": "Bé NGỦ NAP NGẮN 30-45p"
+          },
+          {
+            "fakeId": null,
+            "from": 17,
+            "to": 17.75,
+            "types": [
+              "Y"
+            ],
+            "notes": "Thời gian của mẹ"
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 18,
+            "to": null,
+            "types": [
+              "NONE"
+            ],
+            "notes": "Bé đi tắm và thực hiện trình tự giấc ngủ đêm."
+          },
+          {
+            "fakeId": null,
+            "from": 19,
+            "to": null,
+            "types": [
+              "NONE"
+            ],
+            "notes": "Bé đi ngủ giấc đêm."
+          }
+        ]
+      }
+    ],
+    "useCount": 92521,
+    "published": false
+  },
+  {
+    "id": "2",
+    "type": "common",
+    "name": "3.5",
+    "shortName": null,
+    "fromWeek": 6,
+    "toWeek": 8,
+    "conditions": "Độ tuổi được áp dụng: Khi bé được khoảng 6-8 tuần và bé có tín hiệu chuyển dịch nếp sinh hoạt như ăn nhởn nhơ với cữ bú 3 giờ, ngủ siêu ngắn vào ban ngày, khó vào giấc ngày và đêm, đêm tỉnh giấc nhiều.",
+    "notes": "Ăn: Mỗi cữ bú cách nhau khoảng 3h15-3h30’, bé được ăn ngay sau khi ngủ dậy, bé bú một cữ mất khoảng 15-30 phút.\n\nHoạt động: Sau khi ăn xong bé được ợ hơi kỹ, được thay bỉm, được chơi tự lập và mẹ quan sát tín hiệu để thực hiện trình tự ngủ cho bé. Tổng thời gian để bé hoạt động, bao gồm cả thực hiện trình tự ngủ khoảng 45-60 phút.\n\nNgủ: bé ngủ 4 hoặc 3 giấc ngày bao gồm 2-3 giấc kéo dài 1,5-2 giờ và 1 giấc ngắn cuối ngày từ 30-40 phút. Bé ngủ đêm 11-12 giờ và thời gian thức trước các giấc ngủ của bé là 75-90 phút.",
+    "easyTimeGroups": [
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 7,
+            "to": 7.75,
+            "types": [
+              "E"
+            ],
+            "notes": "Ngủ dậy và ĂN"
+          },
+          {
+            "fakeId": null,
+            "from": 7.75,
+            "to": 8.5,
+            "types": [
+              "A"
+            ],
+            "notes": "Thay bỉm và CHƠI"
+          },
+          {
+            "fakeId": null,
+            "from": 8.5,
+            "to": 10.5,
+            "types": [
+              "S"
+            ],
+            "notes": "Bé NGỦ giấc ngày #1"
+          },
+          {
+            "fakeId": null,
+            "from": 8.5,
+            "to": 10.5,
+            "types": [
+              "Y"
+            ],
+            "notes": "Thời gian của mẹ"
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 10.5,
+            "to": 11.25,
+            "types": [
+              "E"
+            ],
+            "notes": "Ngủ dậy và ĂN"
+          },
+          {
+            "fakeId": null,
+            "from": 11.25,
+            "to": 12,
+            "types": [
+              "A"
+            ],
+            "notes": "Thay bỉm và CHƠI"
+          },
+          {
+            "fakeId": null,
+            "from": 12,
+            "to": 14,
+            "types": [
+              "S"
+            ],
+            "notes": "Bé NGỦ giấc ngày #2"
+          },
+          {
+            "fakeId": null,
+            "from": 12,
+            "to": 14,
+            "types": [
+              "Y"
+            ],
+            "notes": "Thời gian của mẹ"
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 14,
+            "to": 14.75,
+            "types": [
+              "E"
+            ],
+            "notes": "Ngủ dậy và ĂN"
+          },
+          {
+            "fakeId": null,
+            "from": 14.75,
+            "to": 15.5,
+            "types": [
+              "A"
+            ],
+            "notes": "Thay bỉm và CHƠI"
+          },
+          {
+            "fakeId": null,
+            "from": 15.5,
+            "to": 17,
+            "types": [
+              "S"
+            ],
+            "notes": "Bé NGỦ giấc ngày #3"
+          },
+          {
+            "fakeId": null,
+            "from": 15.5,
+            "to": 17,
+            "types": [
+              "Y"
+            ],
+            "notes": "Thời gian của mẹ"
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 17,
+            "to": 17.5,
+            "types": [
+              "E"
+            ],
+            "notes": "Ngủ dậy và ĂN"
+          },
+          {
+            "fakeId": null,
+            "from": 17.5,
+            "to": 18,
+            "types": [
+              "A"
+            ],
+            "notes": "Thay bỉm và CHƠI"
+          },
+          {
+            "fakeId": null,
+            "from": 18,
+            "to": 18.5,
+            "types": [
+              "S"
+            ],
+            "notes": "Bé NGỦ NAP NGẮN 20-30p"
+          },
+          {
+            "fakeId": null,
+            "from": 18,
+            "to": 18.5,
+            "types": [
+              "Y"
+            ],
+            "notes": "Thời gian của mẹ"
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 19.25,
+            "to": null,
+            "types": [
+              "NONE"
+            ],
+            "notes": "Bé đi tắm và thực hiện trình tự giấc ngủ đêm."
+          },
+          {
+            "fakeId": null,
+            "from": 19.5,
+            "to": null,
+            "types": [
+              "NONE"
+            ],
+            "notes": "Bé ăn bữa cuối và đi ngủ đêm."
+          }
+        ]
+      }
+    ],
+    "useCount": 42624,
+    "published": false
+  },
+  {
+    "id": "3",
+    "type": "common",
+    "name": "4",
+    "shortName": null,
+    "fromWeek": 8,
+    "toWeek": 19,
+    "conditions": "Độ tuổi được áp dụng: Khi bé được khoảng 8-19 tuần và bé có tín hiệu chuyển dịch nếp sinh hoạt.",
+    "notes": "Ăn: Mỗi cữ bú cách nhau khoảng  3h75’- 4h’.\n\nHoạt động: Tổng thời gian để bé hoạt động, bao gồm cả thực hiện trình tự ngủ khoảng 80-100 phút.\n\nNgủ: bé ngủ 3 giấc ngày bao gồm 2 giấc dài 1,5-2 giờ và 1 giấc ngắn cuối ngày từ 30-40 phút. Bé ngủ đêm 11-12 giờ và thời gian thức trước các giấc ngủ của bé là 110-120 phút.",
+    "easyTimeGroups": [
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 7,
+            "to": null,
+            "types": [
+              "E",
+              "A"
+            ],
+            "notes": "Bé (E). Sau đó bé được ợ hơi và được thực hiện các hoạt động (A)."
+          },
+          {
+            "fakeId": null,
+            "from": 9,
+            "to": 11,
+            "types": [
+              "S",
+              "Y"
+            ],
+            "notes": "Bé NGỦ (S) giấc ngắn #1 và mẹ có thời gian dành cho mình (Y)."
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 11,
+            "to": null,
+            "types": [
+              "E",
+              "A"
+            ],
+            "notes": "Bé (E). Sau đó bé được ợ hơi và được thực hiện các hoạt động (A)."
+          },
+          {
+            "fakeId": null,
+            "from": 13,
+            "to": 15,
+            "types": [
+              "S",
+              "Y"
+            ],
+            "notes": "Bé NGỦ (S) giấc ngắn #2 và mẹ có thời gian dành cho mình (Y)."
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 15,
+            "to": null,
+            "types": [
+              "E",
+              "A"
+            ],
+            "notes": "Bé (E). Sau đó bé được ợ hơi và được thực hiện các hoạt động (A)."
+          },
+          {
+            "fakeId": null,
+            "from": 17,
+            "to": 17.5,
+            "types": [
+              "S",
+              "Y"
+            ],
+            "notes": "Bé NGỦ (S) giấc ngắn #3 và mẹ có thời gian dành cho mình (Y). Giấc ngủ này kéo dài 30-45'."
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 17.5,
+            "to": null,
+            "types": [
+              "E",
+              "A"
+            ],
+            "notes": "Mẹ có thể thực hiện một bữa ngắn NẾU BÉ HỢP TÁC VÀ NGỪNG ĂN ĐÊM."
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 19,
+            "to": null,
+            "types": [
+              "NONE"
+            ],
+            "notes": "BEDTIME - ROUNTIME\nMẹ tắm cho bé và thực hiện trình tự chuẩn bị cho bé ngủ đêm. Khi đó bé được ăn-ợ hơi (nằm trong trình tự ngủ đêm) và được đặt ngủ luôn (khoảng 19h30')."
+          }
+        ]
+      }
+    ],
+    "useCount": 93291,
+    "published": false
+  },
+  {
+    "id": "4",
+    "type": "common",
+    "name": "2-3-4",
+    "shortName": null,
+    "fromWeek": 19,
+    "toWeek": 46,
+    "conditions": "Độ tuổi được áp dụng: Khi bé được khoảng 19-46 tuần và bé có tín hiệu chuyển dịch nếp sinh hoạt.",
+    "notes": "Ăn: Mỗi cữ bú cách nhau khoảng 4-4.5h.\n\nHoạt động: Bé bắt đầu ăn dặm khi được 6 tháng tuổi.\n\nThời gian thức trước các giấc ngủ của bé lần lượt là: 2 giờ trước khi ngủ giấc 1; 3 giờ trước khi ngủ giấc 2; 4 giờ trước khi ngủ đêm (2-3-4).\n\nNgủ: bé ngủ 3 giấc ngày bao gồm 2 giấc dài 1,5-2 giờ và 1 giấc ngắn cuối ngày từ 30-40 phút. Bé ngủ đêm 11-12 giờ.",
+    "easyTimeGroups": [
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 7,
+            "to": 9,
+            "types": [
+              "E",
+              "A"
+            ],
+            "notes": "Bé ăn, sau đó được ợ hơi (bé dưới 6 tháng), được thực hiện các hoạt động (A). Thời gian thực hiện các hoạt động dài hơn vì thời gian thức dài hơn. Bé thức tổng cộng 2 TIẾNG (giờ ăn + giờ thực hiện thủ tục đi ngủ)"
+          },
+          {
+            "fakeId": null,
+            "from": 9,
+            "to": 11,
+            "types": [
+              "S",
+              "Y"
+            ],
+            "notes": "Bé NGỦ (S) giấc ngày #1 và mẹ có thời gian dành cho mình (Y)."
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 11,
+            "to": 14,
+            "types": [
+              "E",
+              "A"
+            ],
+            "notes": "Bé ăn sữa và ăn dặm ngay sau đó. Bé được chơi tự lập và thực hiện các hoạt động. Bé thức tổng cộng 3 TIẾNG (cả giờ ăn và giờ chuẩn bị thủ tục đi ngủ)."
+          },
+          {
+            "fakeId": null,
+            "from": 14,
+            "to": 15,
+            "types": [
+              "S",
+              "Y"
+            ],
+            "notes": "Bé NGỦ (S) giấc ngày #2 và mẹ có thời gian dành cho mình (Y). Bé có thể ngủ đến 15:30."
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 15,
+            "to": null,
+            "types": [
+              "E",
+              "A"
+            ],
+            "notes": "Bé được ăn sữa và được chơi tự lập, chơi cùng mẹ."
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 18,
+            "to": null,
+            "types": [
+              "E"
+            ],
+            "notes": "Các bé dưới 6 tháng, bé được tắm và uống sữa, thực hiện trình tự đi ngủ đêm (bedtime roundtine). Tổng thời gian từ thức giấc #2 đến khi ngủ đêm là 3.5-4 TIẾNG. Bé >6 tháng thì bé sẽ tắm, ăn dặm, thực hiện trình tự ngủ đêm + UỐNG SỮA. Nhiều mẹ có thể thực hiện tắm + uống sữa sau đó mới ăn dặm và trình tự đi ngủ là đọc sách, kể truyện, hát mà KHÔNG kèm theo bình sữa. Sau 6 tháng thì thời gian thức cho chu kỳ EASY cuối này là 4 tiếng."
+          },
+          {
+            "fakeId": null,
+            "from": 18.5,
+            "to": null,
+            "types": [
+              "S"
+            ],
+            "notes": "18:30 với các bé thực hiện E.A.S.Y. 2-3-3.5h, 19:00 với bé thục hiện E.A.S.Y. 2-3-4 là thời điểm bé được đặt vào giường ngủ đêm. (Tính 3,5-4h từ lúc bé dậy sau giấc ngủ thứ 2. Thời gian ngủ đêm này dao động rất nhiều tùy theo các bé và thời lượng giấc ngủ thứ 2 quá ngắn, mẹ có thể cân nhắc thực hiện cho bé thức 3,5h đồng thời quan sát chất lượng giấc ngủ đêm.)"
+          }
+        ]
+      }
+    ],
+    "useCount": 51047,
+    "published": false
+  },
+  {
+    "id": "5",
+    "type": "common",
+    "name": "5-6",
+    "shortName": null,
+    "fromWeek": 46,
+    "toWeek": null,
+    "conditions": "Độ tuổi được áp dụng: Khi bé được khoảng 46 tuần trở lên và bé có tín hiệu chuyển dịch nếp sinh hoạt.",
+    "notes": "Bé chuyển sang sinh hoạt gần như người lớn với 4 bữa ăn/ngày cả sữa và cơm.\n\nThời gian thức của bé như sau: ngủ dậy thức 5 giờ rồi đi ngủ trưa, ngủ trưa dậy thức 6 giờ và đi ngủ đêm. Bé ngủ 1 giấc trưa kéo dài từ 1.5-2h. Đêm bé ngủ từ 10-12 tiếng.",
+    "easyTimeGroups": [
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 7,
+            "to": null,
+            "types": [
+              "E"
+            ],
+            "notes": "Bé dậy, uống sữa, ăn sáng sau đó được vệ sinh cá nhân."
+          },
+          {
+            "fakeId": null,
+            "from": 7.5,
+            "to": 11.166666666666666,
+            "types": [
+              "A"
+            ],
+            "notes": "Bé được tham gia các hoạt động, lý tưởng là được chơi tự lập 30'-60' sau khi ăn."
+          },
+          {
+            "fakeId": null,
+            "from": 11,
+            "to": 11.5,
+            "types": [
+              "E"
+            ],
+            "notes": "Bé được ăn trưa. Vệ sinh cá nhân sau khi ăn."
+          },
+          {
+            "fakeId": null,
+            "from": 12,
+            "to": 14,
+            "types": [
+              "S"
+            ],
+            "notes": "Mẹ thực hiện trình tự đưa bé đi ngủ. Bé ngủ trưa trong 1.5-2h."
+          },
+          {
+            "fakeId": null,
+            "from": 14,
+            "to": null,
+            "types": [
+              "E"
+            ],
+            "notes": "Bé dậy và được uống sữa."
+          },
+          {
+            "fakeId": null,
+            "from": 14,
+            "to": 17.5,
+            "types": [
+              "A"
+            ],
+            "notes": "Bé được tham gia các hoạt động, kể cả các hoạt động chơi tự lập, thời gian theo khả năng của bé, ngay sau khi ăn bữa sữa 14:00."
+          },
+          {
+            "fakeId": null,
+            "from": 17,
+            "to": null,
+            "types": [
+              "NONE"
+            ],
+            "notes": "Bé tắm và chuẩn bị trình tự ngủ đêm."
+          }
+        ]
+      },
+      {
+        "fakeId": null,
+        "easyTimes": [
+          {
+            "fakeId": null,
+            "from": 18,
+            "to": null,
+            "types": [
+              "E"
+            ],
+            "notes": "Bé được ăn tối. Bé uống sữa trước và ăn dặm sau (trước 14 tháng), không nhất thiết phải uống sữa sau bữa ăn (sau 14 tháng). Bé vệ sinh cá nhân sau bữa ăn: rửa tay, đánh răng,..."
+          },
+          {
+            "fakeId": null,
+            "from": 18,
+            "to": null,
+            "types": [
+              "NONE"
+            ],
+            "notes": "Thời gian thư giãn trước khi ngủ: bé được trò chuyện cùng người thân, đọc sách, hát,..."
+          },
+          {
+            "fakeId": null,
+            "from": 19,
+            "to": 19.5,
+            "types": [
+              "NONE"
+            ],
+            "notes": "Mẹ tắt đèn và ra khỏi phòng bé, sau đây là giấc ngủ đêm của bé."
+          }
+        ]
+      }
+    ],
+    "useCount": 11027,
+    "published": false
+  }
+]

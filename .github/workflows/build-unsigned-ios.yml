@@ -1,0 +1,102 @@
+name: Build IPA for ESign
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gia-dinh-an-nam-ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-ios:
+    runs-on: macos-26
+    timeout-minutes: 75
+    env:
+      EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+      EXPO_PUBLIC_EAS_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_EAS_PROJECT_ID }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Validate build configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=()
+          [[ -n "${EXPO_PUBLIC_SUPABASE_URL:-}" ]] || missing+=(EXPO_PUBLIC_SUPABASE_URL)
+          [[ -n "${EXPO_PUBLIC_SUPABASE_ANON_KEY:-}" ]] || missing+=(EXPO_PUBLIC_SUPABASE_ANON_KEY)
+          [[ -n "${EXPO_PUBLIC_EAS_PROJECT_ID:-}" ]] || missing+=(EXPO_PUBLIC_EAS_PROJECT_ID)
+          if (( ${#missing[@]} > 0 )); then
+            echo "::error::Thiếu GitHub Actions secret: ${missing[*]}"
+            echo "Mở Settings → Secrets and variables → Actions để thêm đủ 3 secret."
+            exit 1
+          fi
+          if [[ ! "$EXPO_PUBLIC_SUPABASE_URL" =~ ^https://[^/]+\.supabase\.co/?$ ]]; then
+            echo "::error::EXPO_PUBLIC_SUPABASE_URL không đúng dạng https://PROJECT.supabase.co"
+            exit 1
+          fi
+          if [[ ! "$EXPO_PUBLIC_EAS_PROJECT_ID" =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]]; then
+            echo "::error::EXPO_PUBLIC_EAS_PROJECT_ID phải là UUID của Expo project."
+            exit 1
+          fi
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Show native tool versions
+        run: |
+          xcodebuild -version
+          swift --version
+          pod --version
+          node --version
+
+      - name: Build unsigned IPA
+        run: bash scripts/build_unsigned_ipa.sh
+
+      - name: Verify IPA package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ipa="build/ios/Gia-Dinh-An-Nam-unsigned.ipa"
+          test -s "$ipa"
+          unzip -t "$ipa" >/dev/null
+          app_info=$(unzip -Z1 "$ipa" | awk '/^Payload\/[^/]+\.app\/Info.plist$/ { print; exit }')
+          if [[ -z "$app_info" ]]; then
+            echo "::error::IPA không có Payload/*.app/Info.plist"
+            exit 1
+          fi
+          unzip -p "$ipa" "$app_info" > "$RUNNER_TEMP/GiaDinhAnNam-Info.plist"
+          bundle_id=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$RUNNER_TEMP/GiaDinhAnNam-Info.plist")
+          if [[ "$bundle_id" != "vn.giadinhanam.family" ]]; then
+            echo "::error::Bundle ID không đúng: $bundle_id"
+            exit 1
+          fi
+          version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/GiaDinhAnNam-Info.plist")
+          size=$(du -h "$ipa" | awk '{ print $1 }')
+          {
+            echo "## IPA đã build xong"
+            echo
+            echo "- Tệp: \`Gia-Dinh-An-Nam-unsigned.ipa\`"
+            echo "- Bundle ID: \`$bundle_id\`"
+            echo "- Phiên bản: \`$version\`"
+            echo "- Dung lượng: \`$size\`"
+            echo "- Trạng thái: chưa ký, sẵn sàng nhập vào ESign"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: gia-dinh-an-nam-unsigned-ipa
+          path: |
+            build/ios/Gia-Dinh-An-Nam-unsigned.ipa
+            build/ios/Gia-Dinh-An-Nam-unsigned.ipa.sha256
+          if-no-files-found: error
+          retention-days: 30
