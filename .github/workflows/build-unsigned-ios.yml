@@ -68,7 +68,9 @@ jobs:
           ipa="build/ios/Gia-Dinh-An-Nam-unsigned.ipa"
           test -s "$ipa"
           unzip -t "$ipa" >/dev/null
-          app_info=$(unzip -Z1 "$ipa" | awk '/^Payload\/[^/]+\.app\/Info.plist$/ { print; exit }')
+          # Dùng grep thay cho regex literal của BSD awk trên macOS; BSD awk
+          # coi dấu / trong character class là dấu kết thúc biểu thức.
+          app_info=$(unzip -Z1 "$ipa" | grep -E -m 1 '^Payload/[^/]+\.app/Info\.plist$' || true)
           if [[ -z "$app_info" ]]; then
             echo "::error::IPA không có Payload/*.app/Info.plist"
             exit 1
