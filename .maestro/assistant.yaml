@@ -1,0 +1,68 @@
+# Only run on the CI/demo simulator. clearState removes that app's local data.
+appId: vn.giadinhanam.family
+---
+- launchApp:
+    clearState: true
+- openLink: giadinhannam://em-be
+- tapOn:
+    text: 'Open'
+    optional: true
+- extendedWaitUntil:
+    visible: 'An Nam'
+    timeout: 30000
+- takeScreenshot: assistant-profile
+- scrollUntilVisible:
+    element:
+      id: tool-milk
+    centerElement: true
+- takeScreenshot: assistant-icons
+- tapOn:
+    id: tool-milk
+- tapOn:
+    id: add-care-record
+- tapOn:
+    id: record-amount
+- inputText: '120'
+- assertVisible:
+    id: record-amount
+    focused: true
+- takeScreenshot: milk-number-keyboard
+- tapOn:
+    id: keyboard-done
+- scrollUntilVisible:
+    element:
+      id: record-note
+- tapOn:
+    id: record-note
+- inputText: "Native keyboard check\nSecond line\nThird line"
+- assertVisible:
+    id: record-note
+    focused: true
+- takeScreenshot: milk-note-keyboard
+- tapOn:
+    id: keyboard-done
+- scrollUntilVisible:
+    element:
+      id: save-care-record
+- tapOn:
+    id: save-care-record
+- extendedWaitUntil:
+    visible:
+      id: add-care-record
+    timeout: 30000
+- assertVisible: '120 ml'
+- takeScreenshot: milk-saved
+- stopApp
+- launchApp
+- openLink: giadinhannam://assistant/milk
+- assertVisible: '120 ml'
+- openLink: giadinhannam://child/measure
+- tapOn:
+    id: measure-weight
+- inputText: '8.2'
+- takeScreenshot: growth-keyboard
+- tapOn:
+    id: keyboard-done
+- openLink: giadinhannam://assistant/teeth
+- assertVisible: '0 / 20 răng đã ghi'
+- takeScreenshot: teeth-original-shapes

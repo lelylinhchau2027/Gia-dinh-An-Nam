@@ -1,84 +1,242 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
-import { Card, Pill, Screen, SectionHeader } from '../../src/components/ui';
-import { easyTemplates, easyTypeLabels, formatEasyTime } from '../../src/data/reference';
-import { colors, radius, spacing } from '../../src/theme';
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Screen, PrimaryButton } from "../../src/components/ui";
+import { FormInput } from "../../src/components/FormInput";
+import { AssistantIcon } from "../../src/components/AssistantIcon";
+import { easyTemplates, easyTypeLabels } from "../../src/data/reference";
+import { findAssistantTool } from "../../src/data/assistant";
+import { useApp } from "../../src/providers/AppProvider";
+import { useCareHistory } from "../../src/lib/useCareHistory";
+import { parseWakeTime, shiftedEasyTime } from "../../src/lib/easySchedule";
 
 export default function EasyDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const template = easyTemplates.find((item) => item.id === id);
-  if (!template) return <Screen><Text>Không tìm thấy mẫu E.A.S.Y.</Text></Screen>;
-
+  const { entries } = useCareHistory();
+  const { addCare, child } = useApp();
+  const plan = entries.find(
+    (e) => e.details?.tool === "easy_plan" && e.details.templateId === id,
+  );
+  const base = Math.min(
+    ...(template?.easyTimeGroups.flatMap((g) =>
+      g.easyTimes.map((t) => t.from),
+    ) ?? [7]),
+  );
+  const [wake, setWake] = useState("07:00");
+  const [showNotes, setShowNotes] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const lock = useRef(false);
+  useEffect(() => {
+    setSaved(false);
+  }, [id]);
+  useEffect(() => {
+    setWake(plan?.details?.wakeTime || shiftedEasyTime(base, 0));
+  }, [plan?.id, id, base]);
+  let offset = 0;
+  let timeError = "";
+  try {
+    offset = parseWakeTime(wake) - Math.round(base * 60);
+  } catch (e) {
+    timeError = (e as Error).message;
+  }
+  if (!template)
+    return (
+      <Screen>
+        <Text>Không tìm thấy mẫu E.A.S.Y.</Text>
+      </Screen>
+    );
+  const save = async () => {
+    if (lock.current || timeError) return;
+    lock.current = true;
+    setSaving(true);
+    try {
+      await addCare({
+        kind: "activity",
+        note: `Chọn lịch E.A.S.Y ${template.name}, bắt đầu ${wake}`,
+        details: { tool: "easy_plan", templateId: template.id, wakeTime: wake },
+      });
+      setSaved(true);
+      Alert.alert(
+        "Đã lưu lịch của bé",
+        "Giờ bắt đầu và mẫu lịch sẽ đồng bộ cùng nhật ký gia đình. Đây chưa phải lịch nhắc tự động.",
+      );
+    } catch {
+      Alert.alert("Chưa lưu được", "Hãy thử lại.");
+    } finally {
+      lock.current = false;
+      setSaving(false);
+    }
+  };
   return (
-    <Screen>
-      <View style={styles.hero}>
-        <View style={styles.icon}>
-          <Ionicons name="time" size={28} color={colors.lavender} />
-        </View>
-        <Text style={styles.title}>E.A.S.Y {template.name}</Text>
-        <Pill label={`Tuần ${template.fromWeek}–${template.toWeek ?? 'trở đi'}`} tone="blue" />
+    <Screen contentStyle={s.content}>
+      <Stack.Screen options={{ title: `E.A.S.Y ${template.name}` }} />
+      <View style={s.child}>
+        <Text style={s.title}>
+          {child?.nickname || child?.name || "Bé yêu"}
+        </Text>
+        <Text style={s.muted}>
+          Mẫu từ dữ liệu gốc · Tuần {template.fromWeek}–
+          {template.toWeek ?? "trở đi"}
+        </Text>
       </View>
-
-      <Card style={styles.infoCard}>
-        <Text style={styles.infoTitle}>Khi nào áp dụng?</Text>
-        <Text style={styles.body}>{template.conditions}</Text>
-      </Card>
-
-      <SectionHeader title="Một ngày tham khảo" />
-      {template.easyTimeGroups.map((group, groupIndex) => (
-        <Card key={`${template.id}-${groupIndex}`} style={styles.groupCard}>
-          <Text style={styles.groupTitle}>Chu kỳ {groupIndex + 1}</Text>
-          {group.easyTimes.map((slot, slotIndex) => (
-            <View key={`${groupIndex}-${slotIndex}`} style={styles.slot}>
-              <View style={styles.timeColumn}>
-                <Text style={styles.time}>{formatEasyTime(slot.from)}</Text>
-                {slot.to !== null ? <Text style={styles.timeTo}>– {formatEasyTime(slot.to)}</Text> : null}
+      <View style={s.wake}>
+        <Ionicons name="sunny-outline" color="#E9BB64" size={28} />
+        <Text style={s.label}>Giờ bắt đầu ngày</Text>
+        <FormInput
+          accessibilityLabel="Giờ bắt đầu E.A.S.Y"
+          value={wake}
+          onChangeText={(value) => {
+            setWake(value);
+            setSaved(false);
+          }}
+          keyboardType="numbers-and-punctuation"
+          maxLength={5}
+          style={s.timeInput}
+        />
+      </View>
+      {timeError ? (
+        <Text accessibilityRole="alert" style={s.error}>
+          {timeError}
+        </Text>
+      ) : null}
+      <Text style={s.notice}>
+        Tham khảo, không phải chỉ định ăn/ngủ. Giờ hiển thị được dịch theo giờ
+        bắt đầu bạn chọn; không tự tạo thông báo.
+      </Text>
+      {template.easyTimeGroups.map((group, gi) => (
+        <View key={gi}>
+          <Text style={s.cycle}>Chu kỳ {gi + 1}</Text>
+          {group.easyTimes.map((slot, si) => (
+            <View key={si} style={s.slot}>
+              <View style={s.timeColumn}>
+                <Text style={s.time}>{shiftedEasyTime(slot.from, offset)}</Text>
+                {slot.to !== null ? (
+                  <Text style={s.timeTo}>
+                    {shiftedEasyTime(slot.to, offset)}
+                  </Text>
+                ) : null}
               </View>
-              <View style={styles.line} />
-              <View style={styles.grow}>
-                <View style={styles.types}>
-                  {slot.types.map((type) => (
-                    <View key={type} style={styles.typePill}>
-                      <Text style={styles.typeCode}>{type}</Text>
-                      <Text style={styles.typeLabel}>{easyTypeLabels[type]}</Text>
-                    </View>
-                  ))}
+              <View style={s.line} />
+              <View style={s.slotContent}>
+                <View style={s.types}>
+                  {slot.types.map((type) => {
+                    const tool = findAssistantTool(
+                      type === "E"
+                        ? "milk"
+                        : type === "S"
+                          ? "sleep"
+                          : "activity",
+                    )!;
+                    return (
+                      <View key={type} style={s.type}>
+                        <AssistantIcon tool={tool} size={32} />
+                        <Text style={s.label}>{easyTypeLabels[type]}</Text>
+                      </View>
+                    );
+                  })}
                 </View>
-                <Text style={styles.notes}>{slot.notes}</Text>
+                <Text style={s.notes}>{slot.notes}</Text>
               </View>
             </View>
           ))}
-        </Card>
+        </View>
       ))}
-
-      <SectionHeader title="Ghi chú từ dữ liệu gốc" />
-      <Card><Text style={styles.body}>{template.notes}</Text></Card>
-      <Text style={styles.disclaimer}>Đây là mẫu tham khảo để tùy chỉnh theo tín hiệu, sức khỏe và nhu cầu của bé.</Text>
+      <View style={s.footer}>
+        {saved ? (
+          <Text accessibilityRole="alert" style={s.link}>
+            Đã lưu lịch cho bé
+          </Text>
+        ) : null}
+        <PrimaryButton
+          disabled={saving || !!timeError}
+          title={saving ? "Đang lưu…" : "Dùng lịch này cho bé"}
+          onPress={save}
+        />
+        <Pressable
+          style={s.notesButton}
+          onPress={() => setShowNotes((v) => !v)}
+        >
+          <Text style={s.link}>
+            {showNotes ? "Ẩn" : "Xem"} điều kiện và ghi chú gốc
+          </Text>
+        </Pressable>
+        {showNotes ? (
+          <>
+            <Text style={s.notes}>{template.conditions}</Text>
+            <Text style={s.notes}>{template.notes}</Text>
+          </>
+        ) : null}
+      </View>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  hero: { alignItems: 'center', gap: spacing.md, paddingVertical: spacing.xl },
-  icon: { width: 58, height: 58, borderRadius: 29, backgroundColor: colors.lavenderSoft, alignItems: 'center', justifyContent: 'center' },
-  title: { color: colors.ink, fontWeight: '900', fontSize: 28 },
-  infoCard: { backgroundColor: colors.lavenderSoft },
-  infoTitle: { color: colors.lavender, fontWeight: '900', marginBottom: spacing.sm },
-  body: { color: colors.ink, lineHeight: 21, fontSize: 14 },
-  groupCard: { gap: spacing.sm },
-  groupTitle: { color: colors.lavender, fontWeight: '900', fontSize: 15, marginBottom: spacing.xs },
-  slot: { flexDirection: 'row', gap: spacing.md, paddingVertical: spacing.sm },
-  timeColumn: { width: 52 },
-  time: { color: colors.ink, fontWeight: '900', fontSize: 14 },
-  timeTo: { color: colors.inkMuted, fontSize: 11, marginTop: 2 },
-  line: { width: 3, borderRadius: 2, backgroundColor: colors.lavenderSoft },
-  grow: { flex: 1, gap: spacing.sm },
-  types: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  typePill: { flexDirection: 'row', gap: 4, backgroundColor: colors.surfaceMuted, borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 4 },
-  typeCode: { color: colors.lavender, fontWeight: '900', fontSize: 11 },
-  typeLabel: { color: colors.inkMuted, fontSize: 11 },
-  notes: { color: colors.ink, lineHeight: 19, fontSize: 13 },
-  disclaimer: { color: colors.inkMuted, fontSize: 12, lineHeight: 18, textAlign: 'center', paddingHorizontal: spacing.xl },
+const s = StyleSheet.create({
+  content: { paddingHorizontal: 0, gap: 0 },
+  child: { padding: 20, gap: 5, borderBottomWidth: 1, borderColor: "#EEE" },
+  title: { fontFamily: "QuicksandSemiBold", fontSize: 20, color: "#303B46" },
+  muted: { fontFamily: "Quicksand", fontSize: 13, color: "#858A91" },
+  wake: { padding: 18, flexDirection: "row", alignItems: "center", gap: 12 },
+  label: { fontFamily: "QuicksandSemiBold", color: "#303B46", fontSize: 15 },
+  timeInput: {
+    marginLeft: "auto",
+    width: 84,
+    textAlign: "center",
+    minHeight: 48,
+    borderBottomWidth: 1,
+    borderColor: "#8E70CA",
+    fontFamily: "QuicksandSemiBold",
+    fontSize: 20,
+    color: "#8E70CA",
+  },
+  error: { paddingHorizontal: 20, color: "#B94242", fontSize: 14 },
+  notice: {
+    padding: 18,
+    paddingTop: 0,
+    color: "#858A91",
+    fontFamily: "Quicksand",
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  cycle: {
+    padding: 12,
+    paddingLeft: 20,
+    backgroundColor: "#F1F2F5",
+    fontFamily: "QuicksandSemiBold",
+    fontSize: 16,
+    color: "#8E70CA",
+  },
+  slot: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    gap: 14,
+  },
+  timeColumn: { width: 64 },
+  time: { fontFamily: "QuicksandSemiBold", fontSize: 16, color: "#303B46" },
+  timeTo: {
+    fontFamily: "Quicksand",
+    fontSize: 13,
+    color: "#858A91",
+    marginTop: 5,
+  },
+  line: { width: 2, backgroundColor: "#E9E2F5" },
+  slotContent: { flex: 1, gap: 8 },
+  types: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  type: { flexDirection: "row", alignItems: "center", gap: 6 },
+  notes: {
+    fontFamily: "Quicksand",
+    fontSize: 14,
+    lineHeight: 23,
+    color: "#626C76",
+  },
+  footer: { padding: 20, gap: 16 },
+  notesButton: {
+    minHeight: 44,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  link: { fontFamily: "QuicksandSemiBold", fontSize: 15, color: "#8E70CA" },
 });
-

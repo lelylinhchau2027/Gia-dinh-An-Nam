@@ -1,8 +1,10 @@
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useIsFocused } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
+  Animated,
   Image,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -10,10 +12,15 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Screen } from "../../src/components/ui";
+import Svg, { Path } from "react-native-svg";
 import { FamilyPhoto } from "../../src/components/FamilyPhoto";
 import { AssistantIcon } from "../../src/components/AssistantIcon";
 import {
@@ -22,6 +29,7 @@ import {
   pregnancyTools,
   type AssistantTool,
 } from "../../src/data/assistant";
+import images from "../../src/data/legacyImageSources.json";
 import { useApp } from "../../src/providers/AppProvider";
 import { useCareHistory } from "../../src/lib/useCareHistory";
 import { GrowthChart } from "../../src/components/GrowthChart";
@@ -30,25 +38,32 @@ export default function BabyScreen() {
   const { child } = useApp();
   const { entries } = useCareHistory();
   const { width, fontScale } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const focused = useIsFocused();
+  const scrollY = useRef(new Animated.Value(0)).current;
   const [branch, setBranch] = useState<"pregnancy" | "born" | null>(null);
+  const [sheet, setSheet] = useState<"profile" | "tools" | null>(null);
   const [hidden, setHidden] = useState<string[]>([]);
-  const [editing, setEditing] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [hiddenDraft, setHiddenDraft] = useState<string[]>([]);
+  const [loadedPreferenceKey, setLoadedPreferenceKey] = useState<string | null>(
+    null,
+  );
   const [saving, setSaving] = useState(false);
   const stage =
     branch ?? (child?.due_date && !child.birthday ? "pregnancy" : "born");
   const preferenceKey = `assistant-tools:${child?.id ?? "local"}:${stage}`;
+  // The previous key can finish loading before the child's profile arrives.
+  // Only allow edits after preferences for the actual child/stage are loaded.
+  const ready = !!child && loadedPreferenceKey === preferenceKey;
   useEffect(() => {
     let active = true;
-    setReady(false);
-    setEditing(false);
     AsyncStorage.getItem(preferenceKey)
       .then((value) => {
-        const parsed: unknown = value ? JSON.parse(value) : [];
+        const saved: unknown = value ? JSON.parse(value) : [];
         if (active)
           setHidden(
-            Array.isArray(parsed)
-              ? parsed.filter((v): v is string => typeof v === "string")
+            Array.isArray(saved)
+              ? saved.filter((v): v is string => typeof v === "string")
               : [],
           );
       })
@@ -56,32 +71,26 @@ export default function BabyScreen() {
         if (active) setHidden([]);
       })
       .finally(() => {
-        if (active) setReady(true);
+        if (active) setLoadedPreferenceKey(preferenceKey);
       });
     return () => {
       active = false;
     };
   }, [preferenceKey]);
   const savePreferences = async () => {
+    if (!ready || saving) return;
     setSaving(true);
     try {
-      await AsyncStorage.setItem(preferenceKey, JSON.stringify(hidden));
-      setEditing(false);
+      await AsyncStorage.setItem(preferenceKey, JSON.stringify(hiddenDraft));
+      setHidden(hiddenDraft);
+      setSheet(null);
     } catch {
-      Alert.alert("Chưa lưu được", "Hãy thử lại để giữ cách hiển thị này.");
+      Alert.alert("Chưa lưu được", "Hãy thử lại để lưu các tiện ích đã chọn.");
     } finally {
       setSaving(false);
     }
   };
   const open = (tool: AssistantTool) => {
-    if (editing) {
-      setHidden((items) =>
-        items.includes(tool.id)
-          ? items.filter((id) => id !== tool.id)
-          : [...items, tool.id],
-      );
-      return;
-    }
     if (tool.route)
       router.push({
         pathname: tool.route as never,
@@ -91,13 +100,8 @@ export default function BabyScreen() {
             : { section: tool.section }
           : {},
       });
-    else if (["teeth", "kick", "milestones"].includes(tool.id))
-      router.push({ pathname: "/assistant/[tool]", params: { tool: tool.id } });
     else
-      router.push({
-        pathname: "/record/new",
-        params: { tool: tool.id, kind: tool.kind },
-      });
+      router.push({ pathname: "/assistant/[tool]", params: { tool: tool.id } });
   };
   const age = child?.birthday
     ? Math.max(
@@ -118,7 +122,6 @@ export default function BabyScreen() {
         ),
       )
     : null;
-  const columns = width < 350 || fontScale > 1.3 ? 3 : 4;
   const tools = stage === "born" ? bornTools : pregnancyTools;
   const weight = entries.find((e) => e.kind === "growth" && e.unit === "kg");
   const height = entries.find(
@@ -133,134 +136,116 @@ export default function BabyScreen() {
     weight.occurred_at.slice(0, 10) === height.occurred_at.slice(0, 10)
       ? (weight.amount / (height.amount / 100) ** 2).toFixed(1)
       : "--";
-  const tile = (tool: AssistantTool) => (
-    <Pressable
-      key={tool.id}
-      accessibilityRole="button"
-      accessibilityLabel={`${editing ? (hidden.includes(tool.id) ? "Hiện " : "Ẩn ") : ""}${tool.title}`}
-      onPress={() => open(tool)}
-      onLongPress={
-        tool.kind && !editing
-          ? () =>
-              router.push({
-                pathname: "/assistant/[tool]",
-                params: { tool: tool.id },
-              })
-          : undefined
-      }
-      style={({ pressed }) => [
-        styles.tile,
-        {
-          width: `${100 / columns}%`,
-          opacity: pressed || (editing && hidden.includes(tool.id)) ? 0.45 : 1,
-        },
-      ]}
-    >
-      <AssistantIcon
-        tool={tool}
-        size={Math.min(60, ((width - 32) / columns) * 0.64)}
+  const columns = fontScale > 1.4 ? 3 : 4;
+  const coverHeight = Math.max(290, Math.min(width * 0.88, 430));
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [coverHeight - 120, coverHeight - 65],
+    outputRange: [0, 1],
+    extrapolate: "clamp",
+  });
+  const expandedOpacity = scrollY.interpolate({
+    inputRange: [20, coverHeight - 100],
+    outputRange: [1, 0],
+    extrapolate: "clamp",
+  });
+  const iconSize = Math.min((width - 32) / columns / 1.6, 90);
+  const nickname = child?.nickname || child?.name || "Bé yêu";
+  const title = (tool: AssistantTool) =>
+    tool.id === "statistics"
+      ? `Thống kê vui bé ${child?.birthday?.slice(0, 4) || new Date().getFullYear()}`
+      : tool.title;
+  const avatar = (size: number) =>
+    child?.avatar_path ? (
+      <FamilyPhoto
+        path={child.avatar_path}
+        style={{ width: size, height: size, borderRadius: size / 2 }}
       />
-      <Text style={styles.tileLabel}>{tool.title}</Text>
-      {editing ? (
-        <Ionicons
-          style={styles.check}
-          name={
-            hidden.includes(tool.id) ? "ellipse-outline" : "checkmark-circle"
-          }
-          size={22}
-          color="#DC6D86"
-        />
-      ) : null}
-    </Pressable>
-  );
+    ) : (
+      <Image
+        source={images.avatar_male}
+        style={{ width: size, height: size, borderRadius: size / 2 }}
+      />
+    );
   return (
-    <Screen
-      scroll={false}
-      safeAreaStyle={{ backgroundColor: "#7B72BF" }}
-      contentStyle={{ padding: 0, paddingTop: 0, gap: 0 }}
-    >
-      <LinearGradient
-        colors={["#7771BC", "#9875CD"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.nav}
-      >
-        <Pressable
-          accessibilityLabel="Cài đặt"
-          onPress={() => router.push("/cai-dat")}
-          style={styles.navButton}
-        >
-          <Ionicons name="menu-outline" size={25} color="#fff" />
-        </Pressable>
-        <Pressable
-          onPress={() => router.push("/child/edit")}
-          style={styles.childPill}
-        >
-          <Text style={styles.navTitle}>
-            Bé {child?.nickname || child?.name || "yêu"}⌄
-          </Text>
-        </Pressable>
-        <Pressable
-          accessibilityLabel="Nhắn cho người nhà"
-          onPress={() => router.push("/gia-dinh")}
-          style={styles.navButton}
-        >
-          <Ionicons name="chatbubbles-outline" size={24} color="#fff" />
-        </Pressable>
-      </LinearGradient>
-      <ScrollView
-        contentContainerStyle={styles.page}
+    <SafeAreaView edges={["left", "right"]} style={s.root}>
+      {focused ? <StatusBar style="light" /> : null}
+      <Animated.ScrollView
+        testID="assistant-scroll"
+        style={s.scroll}
+        contentContainerStyle={s.page}
+        contentInsetAdjustmentBehavior="never"
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true },
+        )}
       >
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Đổi ảnh bìa và hồ sơ bé"
-          onPress={() => router.push("/child/edit")}
-        >
-          {child?.cover_path ? (
-            <FamilyPhoto path={child.cover_path} style={styles.cover} />
-          ) : (
-            <Image
-              source={require("../../assets/legacy/bg_child_08.png")}
-              style={styles.cover}
-              resizeMode="stretch"
-            />
-          )}
-          <View style={styles.heroProfile}>
-            {child?.avatar_path ? (
-              <FamilyPhoto path={child.avatar_path} style={styles.heroAvatar} />
+        <View style={{ height: coverHeight }}>
+          <Pressable
+            accessibilityLabel="Đổi ảnh bìa"
+            onPress={() => router.push("/child/edit")}
+            style={StyleSheet.absoluteFill}
+          >
+            {child?.cover_path ? (
+              <FamilyPhoto
+                path={child.cover_path}
+                style={{ width: "100%", height: coverHeight }}
+              />
             ) : (
               <Image
-                source={require("../../assets/legacy/avatar_male.png")}
-                style={styles.heroAvatar}
+                source={images.bg_child_08}
+                style={{ width: "100%", height: coverHeight }}
+                resizeMode="stretch"
               />
             )}
-            <Text style={styles.heroName}>{child?.name || "Bé yêu"}</Text>
+          </Pressable>
+          {child?.cover_path ? (
+            <Svg
+              pointerEvents="none"
+              width="100%"
+              height={70}
+              viewBox="0 0 390 70"
+              preserveAspectRatio="none"
+              style={s.coverCurve}
+            >
+              <Path
+                d="M0 0 Q95 -6 195 68 Q290 -6 390 0 L390 70 H0Z"
+                fill="#fff"
+              />
+            </Svg>
+          ) : null}
+          <View style={[s.heroProfile, { top: insets.top + 28 }]}>
+            <Pressable
+              onPress={() => setSheet("profile")}
+              accessibilityLabel="Hồ sơ và giai đoạn của bé"
+              style={s.avatarFrame}
+            >
+              {avatar(114)}
+              <View style={s.avatarArrow}>
+                <Ionicons name="chevron-down" color="#fff" size={24} />
+              </View>
+            </Pressable>
+            <Text style={s.heroName}>{child?.name || "Bé yêu"}</Text>
           </View>
-          <View style={styles.camera}>
-            <Ionicons name="camera" color="#fff" size={18} />
-          </View>
-        </Pressable>
+        </View>
         <Pressable
-          style={styles.profile}
-          onPress={() => router.push("/child/edit")}
-          accessibilityRole="button"
           accessibilityLabel="Sửa hồ sơ bé"
+          onPress={() => router.push("/child/edit")}
+          style={s.profile}
         >
-          <Text style={styles.name}>
-            {child?.nickname || child?.name || "Bé yêu"}
-          </Text>
-          <Text style={styles.age}>
+          <Text style={s.name}>{nickname}</Text>
+          <Text style={s.description}>
             {stage === "pregnancy"
-              ? weeks !== null
-                ? `Tuần thai ${weeks} · Đang mong con`
-                : "Thêm ngày dự sinh"
+              ? weeks === null
+                ? "Thêm ngày dự sinh"
+                : `Tuần thai ${weeks}`
               : child?.birthday
                 ? `Ngày sinh: ${child.birthday.split("-").reverse().join("/")}`
                 : "Thêm ngày sinh của bé"}
           </Text>
           {stage === "born" && age !== null ? (
-            <Text style={styles.age}>
+            <Text style={s.description}>
               Tuổi:{" "}
               {age < 30
                 ? `${age} ngày`
@@ -272,308 +257,493 @@ export default function BabyScreen() {
         </Pressable>
         {stage === "born" ? (
           <Pressable
+            accessibilityLabel="Xem chỉ số của bé"
             onPress={() => router.push("/child/growth")}
-            style={styles.measurements}
+            style={s.measurements}
           >
             {[
-              [`${height?.amount ?? "--"} cm`, "Chiều cao"],
-              [`${weight?.amount ?? "--"} kg`, "Cân nặng"],
-              [bmi, "BMI"],
-            ].map(([value, label]) => (
-              <View
-                key={label}
-                style={{ flex: 1, alignItems: "center", gap: 10 }}
-              >
-                <Text style={styles.metricLabel}>{label}</Text>
-                <Text style={styles.metricValue}>{value}</Text>
+              ["height", `${height?.amount ?? "--"} cm`],
+              ["weight", `${weight?.amount ?? "--"} kg`],
+              ["bmi", bmi],
+            ].map(([id, value]) => (
+              <View key={id} style={s.metric}>
+                {id === "bmi" ? (
+                  <Text style={s.metricHeading}>BMI</Text>
+                ) : (
+                  <MaterialCommunityIcons
+                    name={id === "height" ? "ruler" : "scale-bathroom"}
+                    color="#303B46"
+                    size={25}
+                  />
+                )}
+                <Text style={s.metricValue}>{value}</Text>
               </View>
             ))}
           </Pressable>
         ) : null}
-        <View style={styles.segment}>
-          {(["pregnancy", "born"] as const).map((v) => (
-            <Pressable
-              key={v}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: stage === v }}
-              onPress={() => setBranch(v)}
-              style={[
-                styles.segmentButton,
-                stage === v && styles.segmentActive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.segmentLabel,
-                  stage === v && styles.segmentSelected,
-                ]}
-              >
-                {v === "pregnancy" ? "Đang mang thai" : "Bé đã sinh"}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-        <View style={styles.divider} />
-        <Text style={styles.intro}>
+        <View style={s.divider} />
+        <Text style={s.intro}>
           Theo dõi sự phát triển của bé bằng những tính năng thú vị!
         </Text>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>
-            Trợ lí của {child?.nickname || "bé"}
-          </Text>
-          <Pressable
-            disabled={!ready || saving}
-            onPress={() =>
-              editing ? void savePreferences() : setEditing(true)
-            }
-            style={styles.smallButton}
-          >
-            <Text style={styles.action}>
-              {saving ? "Đang lưu…" : editing ? "Xong" : "Tùy chỉnh"}
-            </Text>
-          </Pressable>
-        </View>
-        {editing ? (
-          <Text style={styles.hint}>
-            Chạm để ẩn/hiện tiện ích trên máy này, rồi bấm Xong.
-          </Text>
-        ) : null}
-        <View style={styles.grid}>
+        <View style={s.grid}>
           {ready ? (
-            tools.filter((t) => editing || !hidden.includes(t.id)).map(tile)
+            tools
+              .filter((t) => !hidden.includes(t.id))
+              .map((tool) => (
+                <Pressable
+                  key={tool.id}
+                  testID={`tool-${tool.id}`}
+                  accessibilityRole="button"
+                  accessibilityLabel={title(tool)}
+                  onPress={() => open(tool)}
+                  onLongPress={
+                    tool.kind
+                      ? () =>
+                          router.push({
+                            pathname: "/record/new",
+                            params: { tool: tool.id, kind: tool.kind },
+                          })
+                      : undefined
+                  }
+                  style={({ pressed }) => [
+                    s.tile,
+                    { width: `${100 / columns}%`, opacity: pressed ? 0.5 : 1 },
+                  ]}
+                >
+                  <AssistantIcon tool={tool} size={iconSize} />
+                  <Text style={s.tileLabel}>{title(tool)}</Text>
+                </Pressable>
+              ))
           ) : (
-            <Text style={styles.hint}>Đang tải tiện ích…</Text>
+            <Text style={s.muted}>Đang tải tiện ích…</Text>
           )}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Khác, chọn tiện ích"
+            disabled={!ready}
+            onPress={() => {
+              setHiddenDraft(hidden);
+              setSheet("tools");
+            }}
+            style={[s.tile, { width: `${100 / columns}%` }]}
+          >
+            <View
+              style={{
+                width: iconSize,
+                height: iconSize,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Ionicons name="ellipsis-horizontal" color="#7E8790" size={32} />
+            </View>
+            <Text style={s.tileLabel}>Khác</Text>
+          </Pressable>
         </View>
         {stage === "born" ? (
           <>
-            <View style={styles.divider} />
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Chỉ số của bé</Text>
-              <Pressable
-                style={styles.smallButton}
-                onPress={() => router.push("/child/growth")}
-              >
-                <Text style={styles.action}>Xem chi tiết ›</Text>
-              </Pressable>
-            </View>
             {[
               ["Cân nặng", "kg"],
               ["Chiều dài / chiều cao", "cm"],
               ["Vòng đầu", "cm"],
             ].map(([metric, unit]) => (
-              <View
-                key={metric}
-                style={{
-                  padding: 18,
-                  borderBottomWidth: 8,
-                  borderColor: "#E2E6E8",
-                }}
-              >
-                <GrowthChart entries={entries} metric={metric!} unit={unit!} />
+              <View key={metric}>
+                <View style={s.divider} />
+                <Pressable
+                  accessibilityLabel={`Chi tiết ${metric}`}
+                  onPress={() => router.push("/child/growth")}
+                  style={s.chart}
+                >
+                  <GrowthChart
+                    entries={entries}
+                    metric={metric!}
+                    unit={unit!}
+                  />
+                </Pressable>
               </View>
             ))}
           </>
         ) : null}
-        <View style={styles.divider} />
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Chăm sóc sức khỏe</Text>
-        </View>
-        <View style={styles.grid}>
-          {assistantTools
-            .filter((t) => ["doctor", "temperature", "medicine"].includes(t.id))
-            .map((tool) => (
-              <Pressable
-                key={tool.id}
-                accessibilityRole="button"
-                style={[styles.tile, { width: `${100 / columns}%` }]}
-                onPress={() =>
-                  router.push({
-                    pathname: "/record/new",
-                    params: { tool: tool.id, kind: tool.kind },
-                  })
-                }
-              >
-                <AssistantIcon tool={tool} />
-                <Text style={styles.tileLabel}>{tool.title}</Text>
-              </Pressable>
-            ))}
-        </View>
-        <Pressable
-          onPress={() => router.push("/theo-doi")}
-          style={styles.history}
+      </Animated.ScrollView>
+      <View
+        style={[s.nav, { height: insets.top + 52, paddingTop: insets.top }]}
+        pointerEvents="box-none"
+      >
+        <Animated.View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFill, { opacity: headerOpacity }]}
         >
-          <Ionicons name="time-outline" size={22} color="#D56783" />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.historyTitle}>Nhật ký chung của con</Text>
-            <Text style={styles.age}>Xem, sửa và theo dõi cùng người nhà</Text>
-          </View>
-          <Ionicons name="chevron-forward" color="#B8A4AB" size={20} />
+          <LinearGradient colors={["#7771BC", "#9875CD"]} style={s.scroll} />
+        </Animated.View>
+        <Pressable
+          accessibilityLabel="Cài đặt"
+          onPress={() => router.push("/cai-dat")}
+          style={s.navButton}
+        >
+          <Ionicons name="menu-outline" color="#fff" size={28} />
         </Pressable>
-      </ScrollView>
-    </Screen>
+        <Animated.View style={{ opacity: headerOpacity }}>
+          <Pressable
+            style={s.childPill}
+            onPress={() => setSheet("profile")}
+            accessibilityLabel="Chọn hồ sơ bé"
+          >
+            {avatar(27)}
+            <Text style={s.navTitle}>{nickname}</Text>
+            <Ionicons name="chevron-down" color="#fff" size={15} />
+          </Pressable>
+        </Animated.View>
+        <Pressable
+          accessibilityLabel="Nhắn cho người nhà"
+          onPress={() => router.push("/gia-dinh")}
+          style={s.navButton}
+        >
+          <Ionicons name="chatbubbles-outline" color="#fff" size={26} />
+          <Animated.View
+            pointerEvents="none"
+            style={[s.chatCircle, { opacity: expandedOpacity }]}
+          >
+            <Ionicons name="chatbubbles-outline" color="#A0A0A0" size={27} />
+          </Animated.View>
+        </Pressable>
+      </View>
+      <Modal
+        transparent
+        visible={sheet !== null}
+        animationType="slide"
+        onRequestClose={() => setSheet(null)}
+      >
+        <View style={s.scrim}>
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            accessibilityLabel="Đóng"
+            onPress={() => setSheet(null)}
+          />
+          <View
+            style={[s.sheet, { paddingBottom: Math.max(insets.bottom, 16) }]}
+          >
+            <View style={s.sheetHeading}>
+              <Text style={s.sheetTitle}>
+                {sheet === "profile" ? nickname : "Các tiện ích của bé"}
+              </Text>
+              <Pressable
+                accessibilityLabel="Đóng"
+                onPress={() => setSheet(null)}
+                style={s.navButton}
+              >
+                <Ionicons name="close" size={25} color="#303B46" />
+              </Pressable>
+            </View>
+            <ScrollView keyboardShouldPersistTaps="handled">
+              {sheet === "profile" ? (
+                <>
+                  <Pressable
+                    style={s.sheetRow}
+                    onPress={() => {
+                      setSheet(null);
+                      router.push("/child/edit");
+                    }}
+                  >
+                    <Text style={s.rowText}>
+                      Hồ sơ, ảnh đại diện và ảnh bìa
+                    </Text>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={18}
+                      color="#8E70CA"
+                    />
+                  </Pressable>
+                  {(["pregnancy", "born"] as const).map((value) => (
+                    <Pressable
+                      key={value}
+                      style={s.sheetRow}
+                      onPress={() => {
+                        setBranch(value);
+                        setSheet(null);
+                      }}
+                    >
+                      <Text style={s.rowText}>
+                        {value === "pregnancy"
+                          ? "Đang mang thai"
+                          : "Bé đã sinh"}
+                      </Text>
+                      <Ionicons
+                        name={
+                          stage === value
+                            ? "checkmark-circle"
+                            : "ellipse-outline"
+                        }
+                        color="#8E70CA"
+                        size={24}
+                      />
+                    </Pressable>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <Text style={s.muted}>
+                    Chọn các mục hiện trên màn hình Trợ lí. Nhấn giữ một tiện
+                    ích để ghi nhanh.
+                  </Text>
+                  {tools.map((tool) => (
+                    <Pressable
+                      key={tool.id}
+                      accessibilityRole="checkbox"
+                      accessibilityLabel={`Hiện ${tool.title}`}
+                      aria-checked={!hiddenDraft.includes(tool.id)}
+                      accessibilityState={{
+                        checked: !hiddenDraft.includes(tool.id),
+                      }}
+                      testID={`toggle-tool-${tool.id}`}
+                      style={s.sheetRow}
+                      onPress={() =>
+                        setHiddenDraft((ids) =>
+                          ids.includes(tool.id)
+                            ? ids.filter((id) => id !== tool.id)
+                            : [...ids, tool.id],
+                        )
+                      }
+                    >
+                      <AssistantIcon tool={tool} size={40} />
+                      <Text style={[s.rowText, { flex: 1 }]}>{tool.title}</Text>
+                      <Ionicons
+                        name={
+                          hiddenDraft.includes(tool.id)
+                            ? "ellipse-outline"
+                            : "checkmark-circle"
+                        }
+                        size={24}
+                        color="#8E70CA"
+                      />
+                    </Pressable>
+                  ))}
+                  <Text style={[s.sheetTitle, { margin: 16 }]}>
+                    Tiện ích khác
+                  </Text>
+                  {assistantTools
+                    .filter((t) =>
+                      ["doctor", "temperature", "medicine", "mom"].includes(
+                        t.id,
+                      ),
+                    )
+                    .map((tool) => (
+                      <Pressable
+                        key={tool.id}
+                        style={s.sheetRow}
+                        onPress={() => {
+                          setSheet(null);
+                          open(tool);
+                        }}
+                      >
+                        <AssistantIcon tool={tool} size={40} />
+                        <Text style={[s.rowText, { flex: 1 }]}>
+                          {tool.title}
+                        </Text>
+                        <Ionicons
+                          name="chevron-forward"
+                          color="#8E70CA"
+                          size={20}
+                        />
+                      </Pressable>
+                    ))}
+                </>
+              )}
+            </ScrollView>
+            {sheet === "tools" ? (
+              <Pressable
+                disabled={saving || !ready}
+                testID="save-tool-preferences"
+                style={s.saveButton}
+                onPress={() => void savePreferences()}
+              >
+                <Text style={s.saveLabel}>{saving ? "Đang lưu…" : "Xong"}</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  page: {
-    padding: 0,
-    paddingTop: 0,
-    paddingBottom: 28,
-    gap: 0,
-    backgroundColor: "#fff",
-  },
-  nav: {
-    paddingHorizontal: 8,
-    minHeight: 54,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  navTitle: { fontSize: 17, fontFamily: "QuicksandSemiBold", color: "#fff" },
-  childPill: {
-    borderWidth: 1,
-    borderColor: "#ffffffaa",
-    borderRadius: 22,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-  },
-  navActions: { flexDirection: "row" },
-  navButton: {
-    width: 44,
-    height: 44,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cover: { width: "100%", height: 280, backgroundColor: "#579BA9" },
-  camera: {
-    position: "absolute",
-    right: 14,
-    top: 12,
-    backgroundColor: "#00000040",
-    borderRadius: 18,
-    padding: 8,
-  },
+const s = StyleSheet.create({
+  root: { flex: 1, backgroundColor: "#fff" },
+  scroll: { flex: 1 },
+  page: { paddingBottom: 24 },
+  coverCurve: { position: "absolute", bottom: -1 },
   heroProfile: {
     position: "absolute",
-    top: 28,
     alignSelf: "center",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
   },
-  heroAvatar: {
-    width: 112,
-    height: 112,
-    borderRadius: 56,
-    borderWidth: 3,
+  avatarFrame: { borderWidth: 3, borderColor: "#fff", borderRadius: 64 },
+  avatarArrow: {
+    position: "absolute",
+    bottom: -1,
+    right: -3,
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#8E70CA",
+    borderWidth: 2,
     borderColor: "#fff",
-    backgroundColor: "#F0F1F4",
+    borderRadius: 18,
   },
   heroName: { fontFamily: "QuicksandBold", fontSize: 24, color: "#fff" },
   profile: {
     alignItems: "center",
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    gap: 3,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 10,
   },
-  name: { fontSize: 23, fontFamily: "QuicksandSemiBold", color: "#52A7B0" },
-  age: {
-    fontSize: 15,
+  name: {
+    fontFamily: "QuicksandSemiBold",
+    color: "#52A7B0",
+    fontSize: 24,
+    marginBottom: 5,
+  },
+  description: {
     fontFamily: "Quicksand",
     color: "#303B46",
-    marginTop: 3,
+    fontSize: 15,
+    lineHeight: 21,
   },
   measurements: {
-    flexDirection: "row",
-    margin: 18,
-    paddingTop: 12,
+    marginHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 22,
     borderTopWidth: 1,
-    borderColor: "#EEE",
+    borderColor: "#F0F1F4",
+    flexDirection: "row",
   },
-  metricLabel: {
+  metric: { flex: 1, alignItems: "center", gap: 12 },
+  metricHeading: {
+    fontFamily: "QuicksandBold",
+    fontSize: 17,
+    height: 25,
+    color: "#303B46",
+  },
+  metricValue: { fontFamily: "QuicksandSemiBold", fontSize: 20, color: "#555" },
+  divider: { height: 12, backgroundColor: "#DDE3E5" },
+  intro: {
     fontFamily: "QuicksandSemiBold",
     color: "#303B46",
-    fontSize: 15,
-  },
-  metricValue: { fontFamily: "QuicksandSemiBold", color: "#555", fontSize: 19 },
-  intro: {
-    textAlign: "center",
-    fontFamily: "QuicksandSemiBold",
     fontSize: 17,
     lineHeight: 24,
-    color: "#303B46",
-    marginHorizontal: 18,
-    marginTop: 24,
-    marginBottom: 10,
+    textAlign: "center",
+    marginHorizontal: 12,
+    marginTop: 32,
+    marginBottom: 28,
   },
-  segment: {
-    flexDirection: "row",
-    marginHorizontal: 18,
-    marginBottom: 14,
-    padding: 4,
-    backgroundColor: "#F8F2F4",
-    borderRadius: 12,
-  },
-  segmentButton: {
-    flex: 1,
-    minHeight: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 9,
-  },
-  segmentActive: { backgroundColor: "#fff", elevation: 1 },
-  segmentLabel: { color: "#96848C", fontSize: 14, fontWeight: "600" },
-  segmentSelected: { color: "#8E70CA" },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 18,
-    minHeight: 44,
-  },
-  sectionTitle: {
-    fontSize: 17,
-    fontFamily: "QuicksandSemiBold",
-    color: "#303B46",
-  },
-  smallButton: { minHeight: 44, justifyContent: "center", paddingLeft: 14 },
-  action: { color: "#8E70CA", fontSize: 13, fontFamily: "QuicksandSemiBold" },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    paddingHorizontal: 12,
-    paddingTop: 8,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
   },
   tile: {
     alignItems: "center",
     paddingHorizontal: 3,
-    paddingTop: 4,
-    paddingBottom: 16,
-    gap: 8,
-    minHeight: 116,
+    paddingBottom: 24,
+    gap: 10,
+    minHeight: 118,
   },
   tileLabel: {
-    fontSize: 15,
-    lineHeight: 20,
     fontFamily: "Quicksand",
+    fontSize: 15,
+    lineHeight: 19,
     color: "#303B46",
     textAlign: "center",
   },
-  check: { position: "absolute", right: 8, top: 0 },
-  hint: {
-    paddingHorizontal: 18,
-    paddingVertical: 8,
-    color: "#8E7D84",
-    fontSize: 13,
+  chart: { padding: 20 },
+  nav: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 6,
   },
-  divider: { height: 10, backgroundColor: "#DFE4E6" },
-  history: {
-    margin: 16,
-    padding: 16,
-    borderRadius: 14,
-    backgroundColor: "#FFF4F6",
+  navButton: {
+    width: 44,
+    height: 44,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  childPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderWidth: 1,
+    borderColor: "#FFFFFF80",
+    borderRadius: 22,
+    padding: 4,
+    paddingRight: 10,
+  },
+  navTitle: { color: "#fff", fontFamily: "QuicksandSemiBold", fontSize: 16 },
+  chatCircle: {
+    position: "absolute",
+    width: 56,
+    height: 56,
+    backgroundColor: "#fff",
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scrim: { flex: 1, backgroundColor: "#00000055", justifyContent: "flex-end" },
+  sheet: {
+    maxHeight: "85%",
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    overflow: "hidden",
+  },
+  sheetHeading: {
+    paddingLeft: 20,
+    paddingRight: 8,
+    minHeight: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  sheetTitle: {
+    fontFamily: "QuicksandSemiBold",
+    fontSize: 19,
+    color: "#303B46",
+  },
+  sheetRow: {
+    minHeight: 58,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: "#E7E9ED",
   },
-  historyTitle: { fontSize: 15, color: "#654550", fontWeight: "600" },
+  rowText: {
+    fontFamily: "Quicksand",
+    color: "#303B46",
+    fontSize: 16,
+    flexShrink: 1,
+  },
+  muted: {
+    color: "#858A91",
+    fontFamily: "Quicksand",
+    fontSize: 14,
+    lineHeight: 21,
+    padding: 16,
+  },
+  saveButton: {
+    backgroundColor: "#8E70CA",
+    margin: 16,
+    borderRadius: 8,
+    minHeight: 48,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  saveLabel: { fontFamily: "QuicksandSemiBold", color: "#fff", fontSize: 17 },
 });

@@ -1,13 +1,7 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { FormInput as TextInput } from "../../src/components/FormInput";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Alert,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import { editCare } from "../../src/lib/childRecords";
 import { LinkButton } from "../../src/components/ui";
@@ -20,6 +14,7 @@ import type { CareEntry, CareKind } from "../../src/types";
 import { findAssistantTool, entryToolId } from "../../src/data/assistant";
 import { AssistantIcon } from "../../src/components/AssistantIcon";
 import { DayPicker } from "../../src/components/DayPicker";
+import { TeethDiagram } from "../../src/components/TeethDiagram";
 
 export default function NewRecordScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -84,6 +79,9 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
     vaccine?: string;
     dose?: string;
     category?: string;
+    day?: string;
+    medalId?: string;
+    milestone?: string;
   }>();
   const db = useSQLiteContext();
   const { addCare, child, refresh, syncNow } = useApp();
@@ -114,13 +112,19 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
       ...(params.vaccine ? { vaccine: params.vaccine } : {}),
       ...(params.dose ? { dose: params.dose } : {}),
       ...(params.category ? { category: params.category } : {}),
+      ...(params.medalId ? { medalId: params.medalId } : {}),
+      ...(params.milestone ? { milestone: params.milestone } : {}),
     },
   );
   const [editingTime, setEditingTime] = useState(false);
   const toLocal = (date: Date) =>
     `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
   const [time, setTime] = useState(
-    toLocal(new Date(existing?.occurred_at ?? Date.now())),
+    existing
+      ? toLocal(new Date(existing.occurred_at))
+      : params.day && /^\d{4}-\d{2}-\d{2}$/.test(params.day)
+        ? `${params.day} ${toLocal(new Date()).slice(11)}`
+        : toLocal(new Date()),
   );
   const [started, setStarted] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
@@ -273,19 +277,22 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
 
   return (
     <Screen contentStyle={styles.content} keyboardShouldPersistTaps="handled">
-      <View style={[styles.hero, { backgroundColor: meta.soft }]}>
-        {tool ? <AssistantIcon tool={tool} size={58} /> : null}
-        <Text style={[styles.heroLabel, { color: meta.color }]}>
-          {tool?.title ?? meta.label}
-        </Text>
-        <Text style={styles.heroTime}>
-          Bây giờ ·{" "}
-          {new Intl.DateTimeFormat("vi-VN", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }).format(new Date())}
+      <Stack.Screen
+        options={{
+          title: `${existing ? "Sửa" : "Thêm"} ${tool?.title.toLowerCase() ?? meta.label.toLowerCase()}`,
+        }}
+      />
+      <View style={styles.hero}>
+        {tool ? <AssistantIcon tool={tool} size={42} /> : null}
+        <Text style={styles.heroLabel}>
+          {child?.nickname || child?.name || "Bé yêu"}
         </Text>
       </View>
+      {details.medalId ? (
+        <Text style={[styles.label, { fontSize: 19, lineHeight: 27 }]}>
+          {details.milestone}
+        </Text>
+      ) : null}
 
       <Pressable
         accessibilityRole="button"
@@ -333,9 +340,18 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
       {tool?.numeric || (kind !== "diaper" && kind !== "activity") ? (
         <View style={styles.field}>
           <Text style={styles.label}>
-            Số lượng ({unit || "chọn đơn vị bên dưới"})
+            {kind === "milk"
+              ? "Lượng sữa"
+              : kind === "sleep"
+                ? "Thời gian ngủ"
+                : kind === "temperature"
+                  ? "Nhiệt độ"
+                  : "Số lượng"}{" "}
+            ({unit || "chọn đơn vị bên dưới"})
           </Text>
           <TextInput
+            accessibilityLabel="Số lượng"
+            testID="record-amount"
             value={amount}
             onChangeText={setAmount}
             keyboardType="decimal-pad"
@@ -387,27 +403,31 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
         </View>
       ) : null}
       {Object.entries(
-        tool?.choices
-          ? tool.choices
-          : kind === "milk"
-            ? {
-                feeding: [
-                  "Bú bình",
-                  "Bú mẹ bên trái",
-                  "Bú mẹ bên phải",
-                  "Hút sữa",
-                ],
-              }
-            : kind === "diaper"
+        details.medalId
+          ? {}
+          : tool?.choices
+            ? tool.choices
+            : kind === "milk"
               ? {
-                  diaper: ["Ướt", "Bẩn", "Cả hai"],
-                  consistency: ["Lỏng", "Mềm", "Cứng"],
+                  feeding: [
+                    "Bú bình",
+                    "Bú mẹ bên trái",
+                    "Bú mẹ bên phải",
+                    "Hút sữa",
+                  ],
                 }
-              : kind === "growth"
-                ? { metric: ["Cân nặng", "Chiều dài / chiều cao", "Vòng đầu"] }
-                : kind === "activity" && params.context
-                  ? { context: ["Khám thai", "Thai máy", "Ghi chú thai kỳ"] }
-                  : {},
+              : kind === "diaper"
+                ? {
+                    diaper: ["Ướt", "Bẩn", "Cả hai"],
+                    consistency: ["Lỏng", "Mềm", "Cứng"],
+                  }
+                : kind === "growth"
+                  ? {
+                      metric: ["Cân nặng", "Chiều dài / chiều cao", "Vòng đầu"],
+                    }
+                  : kind === "activity" && params.context
+                    ? { context: ["Khám thai", "Thai máy", "Ghi chú thai kỳ"] }
+                    : {},
       ).map(([field, choices]) => (
         <View key={field} style={form.wrap}>
           {choices.map((choice) => (
@@ -440,6 +460,7 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
         <View key={field} style={styles.field}>
           <Text style={styles.label}>{label}</Text>
           <TextInput
+            accessibilityLabel={label}
             style={styles.input}
             value={details[field] ?? ""}
             onChangeText={(value) =>
@@ -451,46 +472,25 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
       ))}
       {tool?.id === "teeth" ? (
         <View style={styles.field}>
-          <Text style={styles.label}>Chọn vị trí răng (theo phía của bé)</Text>
-          {["Trên", "Dưới"].map((jaw) => (
-            <View key={jaw} style={form.gap}>
-              <Text>{jaw}</Text>
-              <View style={form.wrap}>
-                {[
-                  "Phải 5",
-                  "Phải 4",
-                  "Phải 3",
-                  "Phải 2",
-                  "Phải 1",
-                  "Trái 1",
-                  "Trái 2",
-                  "Trái 3",
-                  "Trái 4",
-                  "Trái 5",
-                ].map((position) => {
-                  const tooth = `${jaw} · ${position}`;
-                  return (
-                    <Pressable
-                      key={tooth}
-                      onPress={() => setDetails((d) => ({ ...d, tooth }))}
-                      style={[
-                        form.chip,
-                        details.tooth === tooth && form.activeChip,
-                      ]}
-                    >
-                      <Text>{position}</Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
-          ))}
+          <Text style={styles.label}>Chọn răng đã mọc</Text>
+          <TeethDiagram
+            records={existing ? [existing] : []}
+            selected={details.tooth}
+            onSelect={(tooth) => setDetails((d) => ({ ...d, tooth }))}
+          />
+          <Text style={form.hint}>
+            {details.tooth
+              ? "Đã chọn: " + details.tooth
+              : "Chạm một răng trên sơ đồ"}
+          </Text>
         </View>
       ) : null}
 
       <View style={styles.field}>
         <Text style={styles.label}>Ghi chú</Text>
         <TextInput
+          accessibilityLabel="Ghi chú"
+          testID="record-note"
           value={note}
           onChangeText={setNote}
           multiline
@@ -505,6 +505,7 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
         </Text>
       ) : null}
       <PrimaryButton
+        testID="save-care-record"
         title={saving ? "Đang lưu..." : "Lưu vào nhật ký chung"}
         icon="checkmark"
         onPress={save}
@@ -562,16 +563,28 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
 
 const styles = StyleSheet.create({
   content: { paddingTop: spacing.lg },
-  hero: { borderRadius: radius.lg, padding: spacing.xl, gap: spacing.sm },
-  heroLabel: { fontWeight: "900", fontSize: 28 },
+  hero: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    gap: 12,
+    borderBottomWidth: 1,
+    borderColor: "#EEE",
+  },
+  heroLabel: {
+    fontFamily: "QuicksandSemiBold",
+    fontSize: 20,
+    color: colors.ink,
+  },
   heroTime: { color: colors.inkMuted },
   field: { gap: spacing.sm },
-  label: { color: colors.ink, fontWeight: "800" },
+  label: { color: colors.ink, fontFamily: "QuicksandSemiBold", fontSize: 16 },
   input: {
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.md,
+    borderRadius: 8,
+    fontFamily: "Quicksand",
     paddingHorizontal: spacing.lg,
     minHeight: 52,
     color: colors.ink,

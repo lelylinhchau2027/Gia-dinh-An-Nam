@@ -1,3 +1,4 @@
+import legacyImages from "./legacyImageSources.json";
 import type { ImageSourcePropType } from "react-native";
 import type { CareKind } from "../types";
 
@@ -18,7 +19,7 @@ export type AssistantTool = {
   hint?: string;
 };
 // Order and colors checked against ChildToolButtonModelFn / MeasurementTypeFn
-// in the user-provided 1.2.21 IPA. Community-only item intentionally excluded.
+// in the user-provided 1.2.21 IPA. Server-only features are labeled explicitly.
 export const assistantTools: AssistantTool[] = [
   {
     id: "vaccines",
@@ -31,7 +32,7 @@ export const assistantTools: AssistantTool[] = [
     id: "injections",
     title: "Các mũi tiêm",
     color: "#F0AF4C",
-    image: require("../../assets/legacy/ic_needle.png"),
+    image: legacyImages["ic_needle"],
     kind: "activity",
     route: "/child/vaccinations",
     section: "injections",
@@ -39,24 +40,24 @@ export const assistantTools: AssistantTool[] = [
     hint: "Ghi lại mũi đã tiêm theo sổ tiêm. Không dùng lịch tham khảo để tự quyết định tiêm.",
   },
   {
-    id: "family",
-    title: "Việc của bố mẹ",
+    id: "same-week",
+    title: "Bé cùng tuần sinh",
     color: "#6AB6D4",
-    image: require("../../assets/legacy/ic_baby.png"),
-    route: "/gia-dinh",
+    image: legacyImages["same_week"],
+    route: "/child/same-week",
   },
   {
     id: "statistics",
     title: "Thống kê năm",
     color: "#FC6157",
-    image: require("../../assets/legacy/emoji_1.png"),
+    image: legacyImages["emoji_1"],
     route: "/child/statistics",
   },
   {
     id: "growth",
     title: "Chiều cao, cân nặng",
     color: "#67ACC7",
-    image: require("../../assets/legacy/scale-2x.png"),
+    image: legacyImages["scale-2x"],
     route: "/child/measure",
   },
   {
@@ -70,15 +71,15 @@ export const assistantTools: AssistantTool[] = [
     id: "easy",
     title: "Lịch E.A.S.Y.",
     color: "#7759E0",
-    image: require("../../assets/legacy/ic_easy_routine.png"),
-    route: "/lich",
+    image: legacyImages["ic_easy_routine"],
+    route: "/easy",
     section: "easy",
   },
   {
     id: "milestones",
     title: "Huy chương của bé",
     color: "#EAC250",
-    image: require("../../assets/legacy/ic_medal.or8.png"),
+    image: legacyImages["ic_medal.or8"],
     kind: "activity",
     choices: {
       category: ["Vận động", "Tay", "Mắt – nhận thức", "Ngôn ngữ", "Tương tác"],
@@ -107,7 +108,7 @@ export const assistantTools: AssistantTool[] = [
     id: "feeling",
     title: "Cảm xúc",
     color: "#F7B64F",
-    image: require("../../assets/legacy/ic_activity_felling.png"),
+    image: legacyImages["ic_activity_felling"],
     kind: "activity",
     choices: { feeling: ["Rất vui", "Vui", "Bình thường", "Khó chịu", "Khóc"] },
   },
@@ -115,16 +116,17 @@ export const assistantTools: AssistantTool[] = [
     id: "milk",
     title: "Lượng sữa",
     color: "#349DEE",
-    image: require("../../assets/legacy/ic_activity_milk.png"),
+    image: legacyImages["ic_activity_milk"],
     kind: "milk",
     unit: "ml",
     presets: [30, 60, 90, 120, 150, 180],
+    choices: { feeding: ["Bú bình", "Bú mẹ bên trái", "Bú mẹ bên phải"] },
   },
   {
     id: "pump",
     title: "Hút sữa",
     color: "#FC77B4",
-    image: require("../../assets/legacy/ic_activity_breast_pump.png"),
+    image: legacyImages["ic_activity_breast_pump"],
     kind: "milk",
     unit: "ml",
     presets: [30, 60, 90, 120, 150, 180],
@@ -134,7 +136,7 @@ export const assistantTools: AssistantTool[] = [
     id: "sleep",
     title: "Thời gian ngủ",
     color: "#FFD365",
-    image: require("../../assets/legacy/ic_activity_sleep.png"),
+    image: legacyImages["ic_activity_sleep"],
     kind: "sleep",
     unit: "phút",
     presets: [15, 30, 45, 60, 90, 120],
@@ -143,14 +145,14 @@ export const assistantTools: AssistantTool[] = [
     id: "diaper",
     title: "Thay bỉm",
     color: "#39D9AE",
-    image: require("../../assets/legacy/ic_activity_diaper.png"),
+    image: legacyImages["ic_activity_diaper"],
     kind: "diaper",
   },
   {
     id: "weaning",
     title: "Ăn dặm",
     color: "#FF9D7E",
-    image: require("../../assets/legacy/ic_activity_weaning.png"),
+    image: legacyImages["ic_activity_weaning"],
     kind: "weaning",
     unit: "g",
     presets: [10, 30, 50, 80, 100],
@@ -161,7 +163,7 @@ export const assistantTools: AssistantTool[] = [
     id: "activity",
     title: "Hoạt động",
     color: "#DA7D53",
-    image: require("../../assets/legacy/ic_activity_activity.png"),
+    image: legacyImages["ic_activity_activity"],
     kind: "activity",
     choices: {
       activity: ["Chơi", "Tắm", "Đi dạo", "Đọc sách", "Vận động", "Khác"],
@@ -171,7 +173,7 @@ export const assistantTools: AssistantTool[] = [
     id: "teeth",
     title: "Mọc răng",
     color: "#FDC02F",
-    image: require("../../assets/legacy/cute_tooth.png"),
+    image: legacyImages["cute_tooth"],
     kind: "activity",
     hint: "Chọn răng và lưu ngày mọc thực tế của con; không suy ra chẩn đoán từ thời điểm mọc.",
   },
@@ -187,7 +189,7 @@ export const assistantTools: AssistantTool[] = [
     id: "kick",
     title: "Đếm cú đạp",
     color: "#2B82FF",
-    image: require("../../assets/legacy/ic_footprint.png"),
+    image: legacyImages["ic_footprint"],
     kind: "activity",
     unit: "lần",
     numeric: true,
@@ -197,7 +199,7 @@ export const assistantTools: AssistantTool[] = [
     id: "fetal",
     title: "Số đo thai nhi",
     color: "#67ACC7",
-    image: require("../../assets/legacy/scale-2x.png"),
+    image: legacyImages["scale-2x"],
     kind: "activity",
     numeric: true,
     unit: "g",
@@ -214,7 +216,7 @@ export const assistantTools: AssistantTool[] = [
     id: "mom",
     title: "Cân nặng của mẹ",
     color: "#FC77B4",
-    image: require("../../assets/legacy/ic_mom_weight_scale.png"),
+    image: legacyImages["ic_mom_weight_scale"],
     kind: "activity",
     numeric: true,
     unit: "kg",
@@ -223,7 +225,7 @@ export const assistantTools: AssistantTool[] = [
     id: "doctor",
     title: "Khám bệnh",
     color: "#67ACC7",
-    image: require("../../assets/legacy/ic_activity_doctor.png"),
+    image: legacyImages["ic_activity_doctor"],
     kind: "activity",
     fields: {
       clinic: "Cơ sở khám",
@@ -235,7 +237,7 @@ export const assistantTools: AssistantTool[] = [
     id: "temperature",
     title: "Nhiệt độ",
     color: "#FC636B",
-    image: require("../../assets/legacy/ic_activity_temperature.png"),
+    image: legacyImages["ic_activity_temperature"],
     kind: "temperature",
     unit: "°C",
     presets: [36.5, 37, 37.5, 38],
@@ -244,7 +246,7 @@ export const assistantTools: AssistantTool[] = [
     id: "medicine",
     title: "Uống thuốc",
     color: "#9AD886",
-    image: require("../../assets/legacy/ic_activity_medicine.png"),
+    image: legacyImages["ic_activity_medicine"],
     kind: "medicine",
     fields: { medicine: "Tên thuốc" },
     hint: "Chỉ ghi liều đã dùng theo chỉ định; app không đề xuất liều thuốc.",
@@ -253,12 +255,11 @@ export const assistantTools: AssistantTool[] = [
 export const bornTools = assistantTools.slice(0, 17);
 export const pregnancyTools = [
   "pregnancy",
+  "same-week",
   "statistics",
   "fetal",
   "weekly",
   "kick",
-  "mom",
-  "doctor",
 ].map((id) => assistantTools.find((t) => t.id === id)!);
 export function findAssistantTool(id?: string) {
   return assistantTools.find((t) => t.id === id);

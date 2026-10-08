@@ -19,7 +19,7 @@ ICONS = [
     "ic_medal_hand.or8", "ic_medal_eye.or8", "ic_medal_crawling.or8",
     "ic_medal_talk.or8", "ic_medal_interactive.or8",
 ]
-IMAGES = ["scale@2x", "scale@3x", "cute_tooth", "bg_cover_overlay@2x", "avatar_male"] + [f"bg_child_{i:02d}" for i in range(1, 9)]
+IMAGES = ["scale@2x", "scale@3x", "cute_tooth", "bg_cover_overlay@2x", "avatar_male", "same_week", "upper_gum", "lower_gum"] + [f"bg_child_{i:02d}" for i in range(1, 9)]
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)

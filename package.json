@@ -1,6 +1,6 @@
 {
   "name": "gia-dinh-an-nam",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "expo-router/entry",
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
@@ -38,6 +38,8 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
+    "test:ui": "node scripts/ui_smoke.cjs",
+    "assets:legacy": "node scripts/generate_legacy_sources.cjs",
     "test": "node --test tests/*.test.cjs",
     "start": "expo start",
     "android": "expo start --android",

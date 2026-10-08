@@ -1,0 +1,426 @@
+{
+  "source": "https://api.becuame.com",
+  "capturedAt": "2026-10-08T14:58:50.585Z",
+  "reviewState": "legacy-unverified",
+  "groups": [
+    {
+      "id": "20",
+      "name": "Vận động",
+      "totalMedalCount": 17,
+      "items": [
+        {
+          "id": "200",
+          "title": "Quay đầu sang 2 bên khi đặt nằm sấp",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "201",
+          "title": "Nâng được đầu và cổ khi đặt nằm sấp",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "202",
+          "title": "Nâng được 2 tay lên cao khi đặt nằm sấp",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "203",
+          "title": "Lẫy thành thạo 1 chiều",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "204",
+          "title": "Lẫy thành thạo 2 chiều",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "205",
+          "title": "Biết trườn",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "206",
+          "title": "Biết nâng người nhấc mông",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "207",
+          "title": "Biết bò",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "208",
+          "title": "Biết ngồi dựa",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "209",
+          "title": "Biết ngồi thẳng",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "210",
+          "title": "Biết đứng khi được giữ tay",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "211",
+          "title": "Biết tự vịn đứng lên",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "212",
+          "title": "Biết bám, đi men",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "213",
+          "title": "Tự bước những bước đầu tiên",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "214",
+          "title": "Biết chạy",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "215",
+          "title": "Biết nhún, đung đưa theo nhạc",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "216",
+          "title": "Biết nhảy",
+          "shortTitle": null,
+          "description": null
+        }
+      ]
+    },
+    {
+      "id": "21",
+      "name": "Tay",
+      "totalMedalCount": 13,
+      "items": [
+        {
+          "id": "230",
+          "title": "Nắm chặt tay",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "231",
+          "title": "Mở và nắm tay lại",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "232",
+          "title": "Bắt đầu chơi với các ngón tay",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "233",
+          "title": "Nắm chặt đồ vật bằng tay",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "234",
+          "title": "Với tay và có thể lấy đồ vật trong tầm tay",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "235",
+          "title": "Học cách chuyển đồ vật từ tay này sang tay kia",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "236",
+          "title": "Dùng tay lắc, kéo đồ chơi",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "237",
+          "title": "Bắt đầu học sử dụng ngón cái và các ngón tay",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "238",
+          "title": "Biết vỗ tay",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "239",
+          "title": "Biết nắm, bốc đồ chơi, thức ăn cho vào miệng",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "240",
+          "title": "Biết sắp xếp, xoay, lắp đồ chơi",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "241",
+          "title": "Biết lật giở trang sách",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "242",
+          "title": "Biết làm các động tác cá nhân: giơ tay lúc mặc áo, túm áo quần kéo lên, xuống",
+          "shortTitle": null,
+          "description": null
+        }
+      ]
+    },
+    {
+      "id": "22",
+      "name": "Mắt - Nhận thức",
+      "totalMedalCount": 8,
+      "items": [
+        {
+          "id": "260",
+          "title": "Phản xạ với ảnh sáng",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "261",
+          "title": "Biết đưa mắt dõi theo đồ vật",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "262",
+          "title": "Nhìn tay và các ngón tay của mình",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "263",
+          "title": "Thích nhìn mặt mẹ",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "264",
+          "title": "Nhìn chăm chăm vào vật",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "265",
+          "title": "Chú ý đến những vật nhỏ hơn",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "266",
+          "title": "Biết màu sắc",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "267",
+          "title": "Biết đi tìm đồ vật",
+          "shortTitle": null,
+          "description": null
+        }
+      ]
+    },
+    {
+      "id": "23",
+      "name": "Ngôn ngữ",
+      "totalMedalCount": 13,
+      "items": [
+        {
+          "id": "290",
+          "title": "Phát ra âm thanh bập bẹ",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "291",
+          "title": "Cười thành tiếng",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "292",
+          "title": "Thổi bong bóng bằng miệng",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "293",
+          "title": "Bập bẹ nói các âm a, ư, ô",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "294",
+          "title": "Bắt bước nói các âm theo người lớn",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "295",
+          "title": "Có phản xạ với tên của mình",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "296",
+          "title": "Biết quay lại khi có tiếng động",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "297",
+          "title": "Nhận ra các từ quen thuộc khi người lớn nói",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "298",
+          "title": "Biết nhận ra các đồ vật quen thuộc",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "299",
+          "title": "Biết gọi bà, mẹ, bố...",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "300",
+          "title": "Biết nói 1 tiếng",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "301",
+          "title": "Biết nói 2 tiếng",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "302",
+          "title": "Biết gọi tên đồ vật",
+          "shortTitle": null,
+          "description": null
+        }
+      ]
+    },
+    {
+      "id": "24",
+      "name": "Tương tác",
+      "totalMedalCount": 13,
+      "items": [
+        {
+          "id": "320",
+          "title": "Biết cười với mẹ hoặc người thân",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "321",
+          "title": "Biết bắt chước người lớn: cười, lè lưỡi",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "322",
+          "title": "Biết chơi cùng mọi người và có thể khóc nếu dừng chơi",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "323",
+          "title": "Biết chọn lựa, đòi đồ bé muốn",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "324",
+          "title": "Nhận biết người quen và người lạ",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "325",
+          "title": "Nhận biết và phản ứng lại khi bố mẹ tỏ thái độ vui - không vui",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "326",
+          "title": "Biết chơi trò chơi ú òa",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "327",
+          "title": "Biết vẫy tay chào tạm biệt",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "328",
+          "title": "Biết sợ - giữ khoảng cách với người lạ",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "329",
+          "title": "Nhận biết khóc là thể hiện không đồng ý",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "330",
+          "title": "Biết nghịch ngợm, lặp lại hành động nếu được cổ vũ",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "331",
+          "title": "Biết bắt chước anh, chị chơi trò chơi, nhảy múa",
+          "shortTitle": null,
+          "description": null
+        },
+        {
+          "id": "332",
+          "title": "Có đồ chơi mà bé yêu thích",
+          "shortTitle": null,
+          "description": null
+        }
+      ]
+    }
+  ]
+}

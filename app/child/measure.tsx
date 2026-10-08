@@ -1,6 +1,7 @@
+import { FormInput as TextInput } from "../../src/components/FormInput";
 import { router, Stack } from "expo-router";
 import { useRef, useState } from "react";
-import { Alert, Text, TextInput, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import { DayPicker, localDay } from "../../src/components/DayPicker";
 import { Screen, PrimaryButton, LinkButton } from "../../src/components/ui";
@@ -83,6 +84,7 @@ export default function MeasureScreen() {
           </Text>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <TextInput
+              testID={`measure-${m.id}`}
               accessibilityLabel={m.label}
               keyboardType="decimal-pad"
               style={[s.input, { flex: 1, borderRadius: 8 }]}

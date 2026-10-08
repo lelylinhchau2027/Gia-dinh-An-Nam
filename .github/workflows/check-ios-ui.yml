@@ -1,0 +1,84 @@
+name: Check iOS UI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: an-nam-ios-ui-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simulator-ui:
+    runs-on: macos-26
+    timeout-minutes: 75
+    env:
+      EXPO_NO_DOTENV: '1'
+      EXPO_NO_TELEMETRY: '1'
+      MAESTRO_CLI_NO_ANALYTICS: '1'
+      MAESTRO_DRIVER_STARTUP_TIMEOUT: '180000'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Boot an available iPhone Simulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          xcrun simctl list devices available --json > "$RUNNER_TEMP/an-nam-devices.json"
+          read -r simulator_id simulator_state < <(node -e '
+            const fs = require("fs");
+            const all = Object.values(JSON.parse(fs.readFileSync(process.argv[1])).devices).flat();
+            const phones = all.filter(d => d.isAvailable && d.name.startsWith("iPhone"));
+            const phone = phones.find(d => d.name === "iPhone 17") || phones[0];
+            if (!phone) process.exit(2);
+            console.log(phone.udid, phone.state);
+          ' "$RUNNER_TEMP/an-nam-devices.json")
+          echo "SIMULATOR_UDID=$simulator_id" >> "$GITHUB_ENV"
+          defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
+          if [[ "$simulator_state" != Booted ]]; then
+            xcrun simctl boot "$simulator_id"
+          fi
+          xcrun simctl bootstatus "$simulator_id" -b
+
+      - name: Build and install Release simulator app (demo data only)
+        run: bash scripts/build_ios_simulator.sh
+
+      - name: Install pinned Maestro CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          tool_zip="$RUNNER_TEMP/an-nam-maestro.zip"
+          curl -fL --retry 3 https://github.com/mobile-dev-inc/maestro/releases/download/cli-2.11.0/maestro.zip -o "$tool_zip"
+          echo "5384593cb4e7a106489e75a821d157dd43f4e438df6bc308b72e82c685e1283a  $tool_zip" | shasum -a 256 -c -
+          unzip -q "$tool_zip" -d "$RUNNER_TEMP/an-nam-maestro"
+          maestro_bin=$(find "$RUNNER_TEMP/an-nam-maestro" -type f -path '*/bin/maestro' -print -quit)
+          test -n "$maestro_bin"
+          echo "$(dirname "$maestro_bin")" >> "$GITHUB_PATH"
+
+      - name: Check keyboard, save a record, capture native UI
+        run: |
+          mkdir -p build/native-ui
+          maestro --device "$SIMULATOR_UDID" test \
+            --test-output-dir build/native-ui \
+            --debug-output build/native-ui/debug \
+            .maestro/assistant.yaml
+
+      - name: Upload native screenshots and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: an-nam-native-ui
+          path: build/native-ui
+          if-no-files-found: warn
+          retention-days: 14

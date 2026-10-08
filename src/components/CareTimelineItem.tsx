@@ -11,7 +11,10 @@ import { AssistantIcon } from "./AssistantIcon";
 export function CareTimelineItem({ entry }: { entry: CareEntry }) {
   const meta = careMeta[entry.kind];
   const tool = findAssistantTool(entryToolId(entry));
-  const label = tool?.title ?? meta.label;
+  const label =
+    entry.details?.tool === "easy_plan"
+      ? "Lịch E.A.S.Y."
+      : (tool?.title ?? meta.label);
   const value =
     entry.amount !== null
       ? `${entry.amount}${entry.unit ? ` ${entry.unit}` : ""}`
@@ -44,9 +47,15 @@ export function CareTimelineItem({ entry }: { entry: CareEntry }) {
             {Object.entries(entry.details)
               .filter(
                 ([key]) =>
-                  !["tool", "sessionId", "endedAt", "referenceId"].includes(
-                    key,
-                  ),
+                  ![
+                    "tool",
+                    "sessionId",
+                    "endedAt",
+                    "referenceId",
+                    "medalId",
+                    "templateId",
+                    "wakeTime",
+                  ].includes(key),
               )
               .map(([, value]) => value)
               .join(" · ")}

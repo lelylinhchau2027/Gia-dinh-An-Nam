@@ -1,5 +1,6 @@
+import { FormInput as TextInput } from "../src/components/FormInput";
 import { useEffect, useState } from "react";
-import { Alert, Text, TextInput, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { Card, LinkButton, PrimaryButton, Screen } from "../src/components/ui";

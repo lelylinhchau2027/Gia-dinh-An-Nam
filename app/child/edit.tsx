@@ -1,7 +1,8 @@
+import { FormInput as TextInput } from "../../src/components/FormInput";
 import { useState } from "react";
 import { router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { Alert, Pressable, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import { useApp } from "../../src/providers/AppProvider";
 import { Screen, PrimaryButton } from "../../src/components/ui";
 import { FamilyPhoto } from "../../src/components/FamilyPhoto";

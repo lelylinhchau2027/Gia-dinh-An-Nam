@@ -1,11 +1,13 @@
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSQLiteContext } from "expo-sqlite";
 import { findAssistantTool, entryToolId } from "../../src/data/assistant";
 import { AssistantIcon } from "../../src/components/AssistantIcon";
-import { TeethDiagram } from "../../src/components/TeethDiagram";
+import { DailyToolScreen } from "../../src/components/DailyToolScreen";
+import { MedalGroupsScreen } from "../../src/components/MedalGroupsScreen";
+import { TeethScreen } from "../../src/components/TeethScreen";
 import { CareTimelineItem } from "../../src/components/CareTimelineItem";
 import {
   Card,
@@ -29,6 +31,33 @@ export default function ToolScreen() {
       </Screen>
     );
   const history = entries.filter((entry) => entryToolId(entry) === tool.id);
+  if (tool.id === "teeth")
+    return (
+      <TeethScreen
+        history={history}
+        childName={child?.nickname || child?.name || "Bé yêu"}
+        loading={loading}
+        error={error}
+      />
+    );
+  if (tool.id === "milestones")
+    return (
+      <MedalGroupsScreen
+        history={history}
+        childName={child?.nickname || child?.name || "Bé yêu"}
+      />
+    );
+  if (!["teeth", "kick", "milestones"].includes(tool.id))
+    return (
+      <DailyToolScreen
+        key={tool.id}
+        tool={tool}
+        history={history}
+        childName={child?.nickname || child?.name || "Bé yêu"}
+        loading={loading}
+        error={error}
+      />
+    );
   const add = (tooth?: string) =>
     router.push({
       pathname: "/record/new",
@@ -48,108 +77,6 @@ export default function ToolScreen() {
       </View>
       {tool.id === "kick" && child ? (
         <KickCounter key={child.id} childId={child.id} />
-      ) : null}
-      {tool.id === "milestones" ? (
-        <View style={{ gap: 16 }}>
-          <Text style={styles.title}>
-            {history.length} kỷ niệm con đã làm được
-          </Text>
-          <Text style={styles.muted}>
-            Chọn nhóm để ghi một cột mốc. Không dùng số lượng kỷ niệm để đánh
-            giá mức phát triển của con.
-          </Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
-            {[
-              {
-                title: "Vận động",
-                image: require("../../assets/legacy/ic_medal_crawling.or8.png"),
-                color: "#C95868",
-              },
-              {
-                title: "Tay",
-                image: require("../../assets/legacy/ic_medal_hand.or8.png"),
-                color: "#91A74A",
-              },
-              {
-                title: "Mắt – nhận thức",
-                image: require("../../assets/legacy/ic_medal_eye.or8.png"),
-                color: "#8C75A8",
-              },
-              {
-                title: "Ngôn ngữ",
-                image: require("../../assets/legacy/ic_medal_talk.or8.png"),
-                color: "#559EC0",
-              },
-              {
-                title: "Tương tác",
-                image: require("../../assets/legacy/ic_medal_interactive.or8.png"),
-                color: "#B6A35F",
-              },
-            ].map((group) => (
-              <Pressable
-                key={group.title}
-                accessibilityRole="button"
-                accessibilityLabel={`Ghi cột mốc ${group.title}`}
-                onPress={() =>
-                  router.push({
-                    pathname: "/record/new",
-                    params: { tool: "milestones", category: group.title },
-                  })
-                }
-                style={{
-                  width: "47%",
-                  alignItems: "center",
-                  padding: 14,
-                  borderRadius: 16,
-                  backgroundColor: `${group.color}15`,
-                  gap: 8,
-                }}
-              >
-                <Image
-                  source={group.image}
-                  style={{ width: 90, height: 90 }}
-                  resizeMode="contain"
-                />
-                <Text
-                  style={{
-                    fontFamily: "QuicksandBold",
-                    color: group.color,
-                    textAlign: "center",
-                  }}
-                >
-                  {group.title}
-                </Text>
-                <Text style={styles.muted}>
-                  {
-                    history.filter((e) => e.details?.category === group.title)
-                      .length
-                  }{" "}
-                  kỷ niệm
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-      ) : null}
-      {tool.id === "teeth" ? (
-        <Card>
-          <Text style={styles.title}>Răng sữa của con</Text>
-          <Text style={styles.muted}>
-            Chọn răng để ghi ngày mọc. Số 1 ở gần giữa miệng, số 5 ở phía trong.
-            Trái/phải tính theo phía của bé.
-          </Text>
-          <TeethDiagram
-            records={history}
-            onSelect={(tooth, recorded) =>
-              recorded
-                ? router.push({
-                    pathname: "/record/new",
-                    params: { id: recorded.id },
-                  })
-                : add(tooth)
-            }
-          />
-        </Card>
       ) : null}
       {tool.id !== "kick" ? (
         <PrimaryButton

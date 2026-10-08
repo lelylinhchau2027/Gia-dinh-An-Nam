@@ -1,16 +1,10 @@
+import { FormInput as TextInput } from "../../src/components/FormInput";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { enqueue } from "../../src/lib/database";
 import { reconcileSyncedReminders } from "../../src/services/notifications";
 import { useMemo, useState } from "react";
-import {
-  Alert,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { PrimaryButton, Screen } from "../../src/components/ui";
 import { useApp } from "../../src/providers/AppProvider";
 import { colors, radius, spacing } from "../../src/theme";

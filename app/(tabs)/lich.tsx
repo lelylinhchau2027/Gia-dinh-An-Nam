@@ -1,11 +1,12 @@
+import { FormInput as TextInput } from "../../src/components/FormInput";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { handbookArticles } from "../../src/data/handbook";
 import { formStyles } from "../../src/components/forms";
-import { AppTitle } from "../../src/components/AppTitle";
+import { TabHeading } from "../../src/components/TabHeading";
 import { Card, Pill, Screen } from "../../src/components/ui";
 import {
   easyTemplates,
@@ -50,24 +51,31 @@ export default function ReferenceScreen() {
       .toLocaleLowerCase("vi")
       .includes(search.trim().toLocaleLowerCase("vi"));
   return (
-    <Screen>
-      <AppTitle
-        eyebrow="Đọc cùng nhau mỗi ngày"
-        title="Cẩm nang"
-        subtitle="Chăm bé, dinh dưỡng, giấc ngủ và những lịch cần nhớ."
-      />
+    <Screen
+      stickyHeaderIndices={[0]}
+      safeAreaStyle={{ backgroundColor: "#7771BC" }}
+      contentStyle={{
+        paddingHorizontal: 0,
+        gap: 0,
+        flexGrow: 1,
+        backgroundColor: "#fff",
+      }}
+    >
+      <TabHeading title="Cẩm nang" />
 
-      <View style={styles.notice}>
-        <Ionicons
-          name="shield-checkmark-outline"
-          size={22}
-          color={colors.amber}
-        />
-        <View style={styles.grow}>
-          <Text style={styles.noticeTitle}>{referenceRelease.label}</Text>
-          <Text style={styles.noticeBody}>{referenceRelease.warning}</Text>
+      {section !== "articles" ? (
+        <View style={styles.notice}>
+          <Ionicons
+            name="shield-checkmark-outline"
+            size={22}
+            color={colors.amber}
+          />
+          <View style={styles.grow}>
+            <Text style={styles.noticeTitle}>{referenceRelease.label}</Text>
+            <Text style={styles.noticeBody}>{referenceRelease.warning}</Text>
+          </View>
         </View>
-      </View>
+      ) : null}
 
       <View style={styles.segment}>
         <Segment
@@ -92,7 +100,7 @@ export default function ReferenceScreen() {
         />
       </View>
       <TextInput
-        style={formStyles.input}
+        style={[formStyles.input, { margin: 16 }]}
         value={search}
         onChangeText={setSearch}
         placeholder="Tìm trong cẩm nang…"
@@ -117,7 +125,18 @@ export default function ReferenceScreen() {
                 key={a.id}
                 onPress={() => router.push(`/handbook/${a.id}`)}
               >
-                <Card style={formStyles.gap}>
+                <Card
+                  style={[
+                    formStyles.gap,
+                    {
+                      borderRadius: 0,
+                      borderWidth: 0,
+                      borderBottomWidth: 1,
+                      elevation: 0,
+                      shadowOpacity: 0,
+                    },
+                  ]}
+                >
                   <Pill label={a.category} />
                   <Text style={styles.listTitle}>{a.title}</Text>
                   <Text style={styles.description}>{a.summary}</Text>
@@ -309,7 +328,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.primarySoft,
   },
-  listTitle: { color: colors.ink, fontWeight: "900", fontSize: 15 },
+  listTitle: {
+    color: colors.ink,
+    fontFamily: "QuicksandSemiBold",
+    fontSize: 17,
+  },
   listMeta: { color: colors.inkMuted, fontSize: 13, marginTop: 3 },
   description: {
     color: colors.inkMuted,

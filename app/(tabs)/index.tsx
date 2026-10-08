@@ -1,3 +1,4 @@
+import { FormInput as TextInput } from "../../src/components/FormInput";
 import { useCallback, useEffect, useState } from "react";
 import { useFocusEffect, router } from "expo-router";
 import {
@@ -6,10 +7,9 @@ import {
   Pressable,
   RefreshControl,
   Text,
-  TextInput,
   View,
 } from "react-native";
-import { AppTitle } from "../../src/components/AppTitle";
+import { TabHeading } from "../../src/components/TabHeading";
 import { FamilyPhoto } from "../../src/components/FamilyPhoto";
 import {
   Card,
@@ -139,23 +139,21 @@ export default function FeedScreen() {
   };
   return (
     <Screen
+      stickyHeaderIndices={[0]}
+      safeAreaStyle={{ backgroundColor: "#7771BC" }}
+      contentStyle={{
+        paddingHorizontal: 0,
+        paddingTop: 0,
+        gap: 10,
+        flexGrow: 1,
+        backgroundColor: "#F1F2F5",
+      }}
       keyboardShouldPersistTaps="handled"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={reload} />
       }
     >
-      <View style={s.row}>
-        <LinkButton
-          title="Việc chung & lời nhắn"
-          onPress={() => router.push("/gia-dinh")}
-        />
-        <LinkButton title="Tài khoản" onPress={() => router.push("/account")} />
-      </View>
-      <AppTitle
-        eyebrow="Những ngày bên nhau"
-        title="Bảng tin gia đình"
-        subtitle="Giữ lại những khoảnh khắc nhỏ, cùng nhìn con lớn lên."
-      />
+      <TabHeading title="Bảng tin gia đình" />
       {!paired ? (
         <Card>
           <EmptyState
@@ -170,7 +168,17 @@ export default function FeedScreen() {
         </Card>
       ) : (
         <>
-          <Card style={s.gap}>
+          <Card
+            style={[
+              s.gap,
+              {
+                borderRadius: 0,
+                borderWidth: 0,
+                elevation: 0,
+                shadowOpacity: 0,
+              },
+            ]}
+          >
             <TextInput
               style={s.input}
               placeholder="Hôm nay nhà mình có gì vui?"
@@ -309,7 +317,12 @@ function PostCard({
     };
   }, [isOpen, post.id, refreshComments]);
   return (
-    <Card style={s.gap}>
+    <Card
+      style={[
+        s.gap,
+        { borderRadius: 0, borderWidth: 0, elevation: 0, shadowOpacity: 0 },
+      ]}
+    >
       <View style={s.row}>
         <Text style={s.label}>{name(post.author_id)}</Text>
         <Text style={s.hint}>{formatDateTime(post.created_at)}</Text>

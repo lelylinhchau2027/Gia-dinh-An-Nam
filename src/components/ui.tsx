@@ -1,17 +1,30 @@
-import { Ionicons } from '@expo/vector-icons';
-import type { PropsWithChildren, ReactNode } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import {
+  useContext,
+  useId,
+  useRef,
+  type PropsWithChildren,
+  type ReactNode,
+} from "react";
+import { HeaderHeightContext } from "expo-router/react-navigation";
+import { BottomTabBarHeightContext } from "expo-router/js-tabs";
+import { KeyboardFormContext } from "./FormInput";
 import {
   Pressable,
+  Keyboard,
+  InputAccessoryView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
   type PressableProps,
   type ScrollViewProps,
   type ViewStyle,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, radius, shadow, spacing } from '../theme';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { colors, radius, shadow, spacing } from "../theme";
 
 export function Screen({
   children,
@@ -20,10 +33,37 @@ export function Screen({
   safeAreaStyle,
   ...scrollProps
 }: PropsWithChildren<
-  ScrollViewProps & { scroll?: boolean; contentStyle?: ViewStyle; safeAreaStyle?: ViewStyle }
+  ScrollViewProps & {
+    scroll?: boolean;
+    contentStyle?: ViewStyle;
+    safeAreaStyle?: ViewStyle;
+  }
 >) {
+  const headerHeight = useContext(HeaderHeightContext) ?? 0;
+  const tabHeight = useContext(BottomTabBarHeightContext) ?? 0;
+  const scrollRef = useRef<ScrollView>(null);
+  const accessoryID = useId();
   const content = scroll ? (
     <ScrollView
+      ref={scrollRef}
+      style={styles.flex}
+      automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
+      onFocus={() => {
+        // Native insets handle keyboard opening; also reveal a new field when
+        // focus moves while the keyboard is already visible.
+        if (Platform.OS !== "ios" || !Keyboard.isVisible()) return;
+        requestAnimationFrame(() => {
+          const input = TextInput.State.currentlyFocusedInput();
+          if (input)
+            scrollRef.current?.scrollResponderScrollNativeHandleToKeyboard(
+              input,
+              16,
+              true,
+            );
+        });
+      }}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={[styles.screenContent, contentStyle]}
       {...scrollProps}
@@ -31,9 +71,56 @@ export function Screen({
       {children}
     </ScrollView>
   ) : (
-    <View style={[styles.screenContent, styles.flex, contentStyle]}>{children}</View>
+    <View style={[styles.flex, contentStyle]}>{children}</View>
   );
-  return <SafeAreaView style={[styles.safe, safeAreaStyle]}>{content}</SafeAreaView>;
+  return (
+    <KeyboardFormContext.Provider value={accessoryID}>
+      <SafeAreaView
+        edges={[
+          "left",
+          "right",
+          ...(!headerHeight ? ["top" as const] : []),
+          ...(!tabHeight ? ["bottom" as const] : []),
+        ]}
+        style={[styles.safe, safeAreaStyle]}
+      >
+        {content}
+      </SafeAreaView>
+      {Platform.OS === "ios" && scroll ? (
+        <InputAccessoryView nativeID={accessoryID}>
+          <View
+            style={{
+              backgroundColor: "#F0F1F4",
+              borderTopWidth: StyleSheet.hairlineWidth,
+              borderColor: "#CCC",
+              alignItems: "flex-end",
+            }}
+          >
+            <Pressable
+              testID="keyboard-done"
+              accessibilityLabel="Xong, ẩn bàn phím"
+              onPress={Keyboard.dismiss}
+              style={{
+                minHeight: 44,
+                paddingHorizontal: 20,
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: colors.primary,
+                  fontFamily: "QuicksandSemiBold",
+                  fontSize: 17,
+                }}
+              >
+                Xong
+              </Text>
+            </Pressable>
+          </View>
+        </InputAccessoryView>
+      ) : null}
+    </KeyboardFormContext.Provider>
+  );
 }
 
 export function Card({
@@ -60,10 +147,10 @@ export function SectionHeader({
 
 export function Pill({
   label,
-  tone = 'sage',
+  tone = "sage",
 }: {
   label: string;
-  tone?: 'sage' | 'amber' | 'rose' | 'blue';
+  tone?: "sage" | "amber" | "rose" | "blue";
 }) {
   const palette = {
     sage: [colors.sageSoft, colors.sage],
@@ -100,7 +187,10 @@ export function PrimaryButton({
   );
 }
 
-export function LinkButton({ title, ...props }: PressableProps & { title: string }) {
+export function LinkButton({
+  title,
+  ...props
+}: PressableProps & { title: string }) {
   return (
     <Pressable {...props} hitSlop={8}>
       <Text style={styles.linkButton}>{title}</Text>
@@ -129,19 +219,19 @@ export function EmptyState({
 }
 
 export function formatClock(iso: string): string {
-  return new Intl.DateTimeFormat('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(new Date(iso));
 }
 
 export function formatDateTime(iso: string): string {
-  return new Intl.DateTimeFormat('vi-VN', {
-    weekday: 'short',
-    day: '2-digit',
-    month: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("vi-VN", {
+    weekday: "short",
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(new Date(iso));
 }
 
@@ -149,50 +239,63 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   flex: { flex: 1 },
   screenContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: 120,
+    padding: spacing.lg,
+    paddingTop: 0,
+    paddingBottom: 32,
     gap: spacing.lg,
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    borderRadius: 8,
     padding: spacing.lg,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
     ...shadow,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginTop: spacing.sm,
   },
-  sectionTitle: { fontSize: 19, fontWeight: '800', color: colors.ink },
-  pill: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: radius.pill },
-  pillText: { fontSize: 12, fontWeight: '700' },
+  sectionTitle: { fontSize: 19, fontWeight: "800", color: colors.ink },
+  pill: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: radius.pill,
+  },
+  pillText: { fontSize: 12, fontWeight: "700" },
   primaryButton: {
     minHeight: 48,
     borderRadius: radius.md,
     paddingHorizontal: spacing.lg,
     backgroundColor: colors.primary,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: spacing.sm,
   },
-  primaryButtonText: { color: colors.white, fontWeight: '800', fontSize: 16 },
-  linkButton: { color: colors.primary, fontWeight: '800', fontSize: 14 },
+  primaryButtonText: {
+    color: colors.white,
+    fontFamily: "QuicksandSemiBold",
+    fontSize: 16,
+  },
+  linkButton: {
+    color: colors.primary,
+    fontFamily: "QuicksandSemiBold",
+    fontSize: 14,
+  },
   pressed: { opacity: 0.78, transform: [{ scale: 0.99 }] },
   disabled: { opacity: 0.45 },
-  empty: { alignItems: 'center', paddingVertical: spacing.xl, gap: spacing.sm },
+  empty: { alignItems: "center", paddingVertical: spacing.xl, gap: spacing.sm },
   emptyIcon: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.sageSoft,
   },
-  emptyTitle: { fontWeight: '800', color: colors.ink, fontSize: 16 },
-  emptyBody: { textAlign: 'center', color: colors.inkMuted, lineHeight: 20 },
+  emptyTitle: { fontWeight: "800", color: colors.ink, fontSize: 16 },
+  emptyBody: { textAlign: "center", color: colors.inkMuted, lineHeight: 20 },
 });

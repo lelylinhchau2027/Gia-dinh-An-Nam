@@ -1,6 +1,8 @@
 # Gia Đình An Nam
 
-Bản 0.2 có ba tab Bảng tin / Em bé / Cẩm nang, ảnh gia đình, bình luận, like, hồ sơ ảnh bìa/đại diện, email OTP và cải tiến nhật ký/thông báo. **Cần nâng Supabase trước khi dùng:** [hướng dẫn 0.2](docs/UPGRADE_0_2.md).
+Bản đang phát triển **0.4.0 (build 4)** làm lại tab Em bé theo ảnh/video gốc, khôi phục 64 huy chương và sơ đồ răng, cải thiện trang theo ngày, lịch E.A.S.Y và nhập liệu với bàn phím iOS. Xem [thay đổi, giới hạn và kiểm thử](docs/ASSISTANT_REDESIGN.md). Chưa tuyên bố tương đương toàn bộ app gốc.
+
+Ba tab Bảng tin / Em bé / Cẩm nang tiếp tục giữ ảnh gia đình, bình luận, like, hồ sơ ảnh bìa/đại diện và email OTP. Nếu chưa nâng Supabase từ bản đầu, làm theo [hướng dẫn 0.2](docs/UPGRADE_0_2.md); bản 0.4 không cần migration mới.
 
 Ứng dụng riêng cho hai vợ chồng cùng theo dõi và chăm sóc bé. Bản đầu được xây bằng Expo/React Native, lưu dữ liệu cục bộ trước bằng SQLite và đã có schema Supabase dành cho đồng bộ hai thiết bị.
 
@@ -28,6 +30,7 @@ Kiểm tra mã nguồn:
 
 ```bash
 npm run typecheck
+npm test
 npm run doctor
 ```
 
@@ -36,6 +39,8 @@ Nếu chưa cấu hình Supabase, ứng dụng vẫn chạy ở chế độ loca
 Hướng dẫn tạo backend và ghép hai máy: [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md). Hướng dẫn APNs/IPA: [`docs/PUSH_NOTIFICATIONS.md`](docs/PUSH_NOTIFICATIONS.md).
 
 Build IPA chưa ký để ký lại bằng ESign: [`docs/BUILD_UNSIGNED_IPA.md`](docs/BUILD_UNSIGNED_IPA.md). Trên Mac chạy `npm run build:ios:unsigned`; nếu không có Mac, dùng workflow GitHub Actions đã chuẩn bị ở thư mục `.github/workflows` của repository.
+
+Workflow **Check iOS UI** kiểm tra riêng bản Release trên iPhone Simulator bằng dữ liệu demo, chụp giao diện và bàn phím. Không cần Apple certificate hoặc Supabase secrets, không tạo IPA cài lên máy thật. Workflow này đã được thêm nhưng chưa chạy xác nhận; vẫn cần xem ảnh native và thử trên iPhone.
 
 Quy trình chi tiết từ tạo Supabase, Expo project, repository và GitHub secrets đến ký/cài trên hai iPhone: [`docs/GITHUB_ACTIONS_ESIGN_TUNG_BUOC.md`](docs/GITHUB_ACTIONS_ESIGN_TUNG_BUOC.md).
 
