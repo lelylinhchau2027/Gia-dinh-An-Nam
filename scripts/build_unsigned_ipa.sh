@@ -81,12 +81,14 @@ trap cleanup EXIT
 
 mkdir -p "$source_root" "$output_dir" "$package_root/Payload"
 
-for item in app assets src app.json package.json package-lock.json tsconfig.json metro.config.js; do
+for item in app assets src tests supabase app.json package.json package-lock.json tsconfig.json metro.config.js; do
   cp -R "$project_root/$item" "$source_root/"
 done
 
 cd "$source_root"
 npm ci
+npm test
+npm run typecheck
 CI=1 npx expo prebuild --platform ios --clean --no-install
 
 cd "$source_root/ios"

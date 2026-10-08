@@ -1,12 +1,12 @@
 export type CareKind =
-  | 'milk'
-  | 'sleep'
-  | 'diaper'
-  | 'weaning'
-  | 'temperature'
-  | 'medicine'
-  | 'activity'
-  | 'growth';
+  | "milk"
+  | "sleep"
+  | "diaper"
+  | "weaning"
+  | "temperature"
+  | "medicine"
+  | "activity"
+  | "growth";
 
 export type Child = {
   id: string;
@@ -16,6 +16,8 @@ export type Child = {
   birthday: string | null;
   due_date: string | null;
   gender: string | null;
+  avatar_path?: string | null;
+  cover_path?: string | null;
 };
 
 export type CareEntry = {
@@ -29,7 +31,9 @@ export type CareEntry = {
   occurred_at: string;
   created_by: string;
   created_by_name: string;
-  sync_state: 'pending' | 'synced' | 'error';
+  sync_state: "pending" | "synced" | "error";
+  details?: Record<string, string>;
+  deleted_at?: string | null;
 };
 
 export type FamilyMessage = {
@@ -89,13 +93,13 @@ export type EasySlot = {
   fakeId: string | null;
   from: number;
   to: number | null;
-  types: Array<'E' | 'A' | 'S' | 'Y' | 'NONE'>;
+  types: Array<"E" | "A" | "S" | "Y" | "NONE">;
   notes: string;
 };
 
 export type EasyTemplate = {
   id: string;
-  type: 'common';
+  type: "common";
   name: string;
   shortName: string | null;
   fromWeek: number;
@@ -109,4 +113,3 @@ export type EasyTemplate = {
   useCount: number;
   published: boolean;
 };
-

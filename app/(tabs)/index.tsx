@@ -1,146 +1,436 @@
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { AppTitle } from '../../src/components/AppTitle';
-import { CareTimelineItem } from '../../src/components/CareTimelineItem';
-import { Card, EmptyState, LinkButton, Pill, Screen, SectionHeader } from '../../src/components/ui';
-import { careMeta, quickCareKinds } from '../../src/data/care';
-import { useApp } from '../../src/providers/AppProvider';
-import { colors, radius, spacing } from '../../src/theme';
-import type { CareKind } from '../../src/types';
+import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect, router } from "expo-router";
+import {
+  Alert,
+  Image,
+  Pressable,
+  RefreshControl,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { AppTitle } from "../../src/components/AppTitle";
+import { FamilyPhoto } from "../../src/components/FamilyPhoto";
+import {
+  Card,
+  EmptyState,
+  LinkButton,
+  PrimaryButton,
+  Screen,
+  formatDateTime,
+} from "../../src/components/ui";
+import {
+  client,
+  commentOnPost,
+  loadComments,
+  loadFeed,
+  pickPhoto,
+  publishPost,
+  setLike,
+  uploadPhoto,
+  type Comment,
+  type Post,
+} from "../../src/services/social";
+import { useApp } from "../../src/providers/AppProvider";
+import { formStyles as s } from "../../src/components/forms";
 
-export default function HomeScreen() {
-  const { child, entries, reminders, pendingSyncCount } = useApp();
-  const today = new Date().toDateString();
-  const todayEntries = entries.filter(
-    (entry) => new Date(entry.occurred_at).toDateString() === today,
+export default function FeedScreen() {
+  const { family } = useApp();
+  const [feed, setFeed] = useState<Awaited<ReturnType<typeof loadFeed>> | null>(
+    null,
   );
-  const dueReminders = reminders.filter((item) => !item.completed_at).slice(0, 2);
-
-  const openCare = (kind: CareKind) =>
-    router.push({ pathname: '/record/new', params: { kind } });
-
+  const [body, setBody] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [more, setMore] = useState(false);
+  const [error, setError] = useState("");
+  const paired = !!family && !family.id.startsWith("family_local");
+  const reload = useCallback(async () => {
+    if (!paired) return;
+    setRefreshing(true);
+    try {
+      const next = await loadFeed();
+      setFeed(next);
+      setMore(next.posts.length === 20);
+      setError("");
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Chưa tải được bảng tin. Kiểm tra kết nối và thử lại.",
+      );
+    } finally {
+      setRefreshing(false);
+    }
+  }, [paired]);
+  useFocusEffect(
+    useCallback(() => {
+      void reload();
+    }, [reload]),
+  );
+  useEffect(() => {
+    if (!paired || !family) return;
+    const channel = client().channel(`feed:${family.id}`);
+    for (const table of ["family_posts", "post_likes"])
+      channel.on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table,
+          filter: `family_id=eq.${family.id}`,
+        },
+        () => {
+          void reload();
+        },
+      );
+    channel.subscribe();
+    return () => {
+      void client().removeChannel(channel);
+    };
+  }, [family?.id, paired, reload]);
+  const publish = async () => {
+    setBusy(true);
+    try {
+      const uploaded: string[] = [];
+      for (const image of images) uploaded.push(await uploadPhoto(image));
+      await publishPost(body, uploaded);
+      setBody("");
+      setImages([]);
+      await reload();
+    } catch (e) {
+      Alert.alert(
+        "Chưa xác nhận đăng bài",
+        "Kiểm tra bảng tin trước khi thử lại. " +
+          (e instanceof Error ? e.message : "Hãy kiểm tra kết nối."),
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  const loadMore = async () => {
+    if (!feed?.posts.length) return;
+    setRefreshing(true);
+    try {
+      const next = await loadFeed(
+        feed.posts[feed.posts.length - 1]!.created_at,
+      );
+      setFeed((old) =>
+        old
+          ? {
+              ...next,
+              posts: [
+                ...old.posts,
+                ...next.posts.filter(
+                  (p) => !old.posts.some((o) => o.id === p.id),
+                ),
+              ],
+              likes: [...old.likes, ...next.likes],
+            }
+          : next,
+      );
+      setMore(next.posts.length === 20);
+    } catch {
+      setError("Chưa tải được bài cũ. Kéo xuống để thử lại.");
+    } finally {
+      setRefreshing(false);
+    }
+  };
   return (
-    <Screen>
-      <AppTitle
-        eyebrow="Gia Đình An Nam"
-        title={`Chào buổi ${new Date().getHours() < 12 ? 'sáng' : 'tối'} 🌿`}
-        subtitle="Hai người, một nhịp chăm con."
-      />
-
-      <Card style={styles.childCard}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{child?.nickname?.slice(0, 1) || 'A'}</Text>
-        </View>
-        <View style={styles.childInfo}>
-          <Text style={styles.childName}>{child?.nickname || child?.name || 'Bé yêu'}</Text>
-          <Text style={styles.childMeta}>{todayEntries.length} hoạt động hôm nay</Text>
-        </View>
-        <Pill
-          label={pendingSyncCount ? `${pendingSyncCount} chờ đồng bộ` : 'Đã đồng bộ'}
-          tone={pendingSyncCount ? 'amber' : 'sage'}
+    <Screen
+      keyboardShouldPersistTaps="handled"
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={reload} />
+      }
+    >
+      <View style={s.row}>
+        <LinkButton
+          title="Việc chung & lời nhắn"
+          onPress={() => router.push("/gia-dinh")}
         />
-      </Card>
-
-      <SectionHeader title="Ghi nhanh" />
-      <View style={styles.quickGrid}>
-        {quickCareKinds.map((kind) => {
-          const meta = careMeta[kind];
-          return (
-            <Pressable
-              key={kind}
-              onPress={() => openCare(kind)}
-              style={({ pressed }) => [styles.quickButton, pressed && styles.pressed]}
-            >
-              <View style={[styles.quickIcon, { backgroundColor: meta.soft }]}>
-                <Ionicons name={meta.icon} size={24} color={meta.color} />
-              </View>
-              <Text style={styles.quickLabel}>{meta.label}</Text>
-            </Pressable>
-          );
-        })}
+        <LinkButton title="Tài khoản" onPress={() => router.push("/account")} />
       </View>
-
-      <SectionHeader
-        title="Sắp tới"
-        action={<LinkButton title="Thêm nhắc việc" onPress={() => router.push('/reminder/new')} />}
+      <AppTitle
+        eyebrow="Những ngày bên nhau"
+        title="Bảng tin gia đình"
+        subtitle="Giữ lại những khoảnh khắc nhỏ, cùng nhìn con lớn lên."
       />
-      <Card>
-        {dueReminders.length ? (
-          dueReminders.map((item) => (
-            <View style={styles.reminderRow} key={item.id}>
-              <Ionicons name="notifications-outline" size={20} color={colors.amber} />
-              <View style={styles.grow}>
-                <Text style={styles.reminderTitle}>{item.title}</Text>
-                <Text style={styles.reminderTime}>
-                  {new Intl.DateTimeFormat('vi-VN', {
-                    day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
-                  }).format(new Date(item.due_at))}
-                </Text>
-              </View>
+      {!paired ? (
+        <Card>
+          <EmptyState
+            icon="heart-outline"
+            title="Kết nối hai người"
+            body="Tạo gia đình hoặc nhập mã ghép để cùng đăng ảnh và trò chuyện."
+          />
+          <PrimaryButton
+            title="Kết nối gia đình"
+            onPress={() => router.push("/family/connect")}
+          />
+        </Card>
+      ) : (
+        <>
+          <Card style={s.gap}>
+            <TextInput
+              style={s.input}
+              placeholder="Hôm nay nhà mình có gì vui?"
+              multiline
+              value={body}
+              onChangeText={setBody}
+              maxLength={5000}
+              editable={!busy}
+            />
+            <View style={s.wrap}>
+              {images.map((uri, i) => (
+                <Pressable
+                  key={`${uri}:${i}`}
+                  disabled={busy}
+                  accessibilityLabel="Bỏ ảnh"
+                  onPress={() =>
+                    setImages((list) => list.filter((_, n) => n !== i))
+                  }
+                >
+                  <Image
+                    source={{ uri }}
+                    style={{ width: 80, height: 80, borderRadius: 12 }}
+                  />
+                  <Text style={s.hint}>Bỏ ảnh ×</Text>
+                </Pressable>
+              ))}
             </View>
-          ))
-        ) : (
-          <EmptyState
-            icon="notifications-off-outline"
-            title="Chưa có việc sắp tới"
-            body="Tạo nhắc việc chung để cả hai không bỏ lỡ lịch của bé."
-          />
-        )}
-      </Card>
-
-      <SectionHeader
-        title="Hoạt động gần đây"
-        action={<LinkButton title="Xem tất cả" onPress={() => router.push('/theo-doi')} />}
+            <LinkButton
+              disabled={busy || images.length >= 6}
+              title={`Thêm ảnh (${images.length}/6)`}
+              onPress={async () => {
+                try {
+                  const uri = await pickPhoto();
+                  if (uri) setImages((v) => [...v, uri].slice(0, 6));
+                } catch {
+                  Alert.alert("Chưa chọn được ảnh");
+                }
+              }}
+            />
+            <PrimaryButton
+              title={busy ? "Đang đăng…" : "Đăng khoảnh khắc"}
+              disabled={busy || (!body.trim() && !images.length)}
+              onPress={publish}
+            />
+            <Text style={s.hint}>
+              Chỉ hai thành viên gia đình xem được. Cần mạng để đăng bài và ảnh.
+            </Text>
+          </Card>
+          {error ? (
+            <Text accessibilityRole="alert" style={s.error}>
+              {error}
+            </Text>
+          ) : null}
+          {feed?.posts.map((post) => (
+            <PostCard key={post.id} post={post} feed={feed} reload={reload} />
+          ))}
+          {feed && !feed.posts.length ? (
+            <EmptyState
+              icon="images-outline"
+              title="Khoảnh khắc đầu tiên"
+              body="Đăng một tấm ảnh hoặc đôi dòng để bắt đầu album của nhà mình."
+            />
+          ) : null}
+          {more ? (
+            <PrimaryButton
+              title="Xem bài cũ hơn"
+              disabled={refreshing}
+              onPress={loadMore}
+            />
+          ) : null}
+        </>
+      )}
+      <LinkButton
+        title="Cài đặt & thông báo"
+        onPress={() => router.push("/cai-dat")}
       />
-      <Card>
-        {entries.length ? (
-          entries.slice(0, 4).map((entry) => <CareTimelineItem entry={entry} key={entry.id} />)
-        ) : (
-          <EmptyState
-            icon="leaf-outline"
-            title="Bắt đầu nhật ký hôm nay"
-            body="Chạm một mục ghi nhanh phía trên để thêm hoạt động đầu tiên."
-          />
-        )}
-      </Card>
     </Screen>
   );
 }
 
-const styles = StyleSheet.create({
-  childCard: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  avatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: colors.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: { color: colors.primary, fontSize: 23, fontWeight: '900' },
-  childInfo: { flex: 1, gap: 3 },
-  childName: { color: colors.ink, fontSize: 19, fontWeight: '900' },
-  childMeta: { color: colors.inkMuted, fontSize: 13 },
-  quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
-  quickButton: {
-    width: '30%',
-    flexGrow: 1,
-    minWidth: 96,
-    alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.surface,
-    paddingVertical: spacing.lg,
-    borderRadius: radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
-  },
-  quickIcon: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' },
-  quickLabel: { color: colors.ink, fontWeight: '800', fontSize: 13 },
-  pressed: { opacity: 0.7, transform: [{ scale: 0.98 }] },
-  reminderRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm },
-  reminderTitle: { color: colors.ink, fontWeight: '800' },
-  reminderTime: { color: colors.inkMuted, fontSize: 12, marginTop: 3 },
-  grow: { flex: 1 },
-});
-
+function PostCard({
+  post,
+  feed,
+  reload,
+}: {
+  post: Post;
+  feed: Awaited<ReturnType<typeof loadFeed>>;
+  reload: () => Promise<void>;
+}) {
+  const [comments, setComments] = useState<Comment[] | null>(null);
+  const [body, setBody] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [more, setMore] = useState(false);
+  const name = (id: string) =>
+    feed.members.find((m) => m.user_id === id)?.display_name ?? "Người nhà";
+  const likes = feed.likes.filter((l) => l.post_id === post.id);
+  const liked = likes.some((l) => l.user_id === feed.userId);
+  const action = async (work: () => Promise<unknown>) => {
+    setBusy(true);
+    try {
+      await work();
+    } catch (e) {
+      Alert.alert(
+        "Chưa thực hiện được",
+        e instanceof Error ? e.message : "Hãy thử lại khi có mạng.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  const refreshComments = useCallback(async () => {
+    const rows = await loadComments(post.id);
+    setComments(rows);
+    setMore(rows.length === 40);
+  }, [post.id]);
+  const isOpen = comments !== null;
+  useEffect(() => {
+    if (!isOpen) return;
+    const channel = client()
+      .channel(`comments:${post.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "post_comments",
+          filter: `post_id=eq.${post.id}`,
+        },
+        () => {
+          void refreshComments().catch(() => undefined);
+        },
+      )
+      .subscribe();
+    return () => {
+      void client().removeChannel(channel);
+    };
+  }, [isOpen, post.id, refreshComments]);
+  return (
+    <Card style={s.gap}>
+      <View style={s.row}>
+        <Text style={s.label}>{name(post.author_id)}</Text>
+        <Text style={s.hint}>{formatDateTime(post.created_at)}</Text>
+      </View>
+      {post.body ? <Text style={s.body}>{post.body}</Text> : null}
+      {post.image_paths.map((path) => (
+        <FamilyPhoto
+          key={path}
+          path={path}
+          style={{ width: "100%", height: 260, borderRadius: 16 }}
+        />
+      ))}
+      <View style={s.row}>
+        <LinkButton
+          disabled={busy}
+          title={`${liked ? "♥" : "♡"} ${likes.length} lượt thích`}
+          onPress={() =>
+            action(async () => {
+              await setLike(post, !liked);
+              await reload();
+            })
+          }
+        />
+        <LinkButton
+          disabled={busy}
+          title={comments ? "Thu gọn" : "Bình luận"}
+          onPress={() =>
+            comments ? setComments(null) : action(refreshComments)
+          }
+        />
+      </View>
+      {comments ? (
+        <>
+          {more ? (
+            <LinkButton
+              title="Bình luận cũ hơn"
+              disabled={busy}
+              onPress={() =>
+                action(async () => {
+                  const next = await loadComments(
+                    post.id,
+                    comments[comments.length - 1]?.created_at,
+                  );
+                  setComments((v) => [...(v ?? []), ...next]);
+                  setMore(next.length === 40);
+                })
+              }
+            />
+          ) : null}
+          {[...comments].reverse().map((c) => (
+            <View key={c.id} style={s.comment}>
+              <Text style={s.label}>{name(c.author_id)}</Text>
+              <Text style={s.body}>{c.body}</Text>
+              {c.author_id === feed.userId ? (
+                <LinkButton
+                  title="Xóa bình luận"
+                  disabled={busy}
+                  onPress={() =>
+                    action(async () => {
+                      const { error } = await client()
+                        .from("post_comments")
+                        .delete()
+                        .eq("id", c.id);
+                      if (error) throw error;
+                      await refreshComments();
+                    })
+                  }
+                />
+              ) : null}
+            </View>
+          ))}
+          <TextInput
+            style={s.input}
+            value={body}
+            onChangeText={setBody}
+            placeholder="Viết bình luận…"
+            multiline
+            maxLength={2000}
+            editable={!busy}
+          />
+          <PrimaryButton
+            title="Gửi bình luận"
+            disabled={busy || !body.trim()}
+            onPress={() =>
+              action(async () => {
+                await commentOnPost(post, body);
+                setBody("");
+                await refreshComments();
+              })
+            }
+          />
+        </>
+      ) : null}
+      {post.author_id === feed.userId ? (
+        <LinkButton
+          title="Xóa bài"
+          disabled={busy}
+          onPress={() =>
+            Alert.alert(
+              "Xóa bài viết?",
+              "Bài và các bình luận sẽ được xóa khỏi bảng tin.",
+              [
+                { text: "Giữ lại", style: "cancel" },
+                {
+                  text: "Xóa",
+                  style: "destructive",
+                  onPress: () =>
+                    action(async () => {
+                      const { error } = await client()
+                        .from("family_posts")
+                        .delete()
+                        .eq("id", post.id);
+                      if (error) throw error;
+                      await reload();
+                    }),
+                },
+              ],
+            )
+          }
+        />
+      ) : null}
+    </Card>
+  );
+}

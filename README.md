@@ -1,5 +1,7 @@
 # Gia Đình An Nam
 
+Bản 0.2 có ba tab Bảng tin / Em bé / Cẩm nang, ảnh gia đình, bình luận, like, hồ sơ ảnh bìa/đại diện, email OTP và cải tiến nhật ký/thông báo. **Cần nâng Supabase trước khi dùng:** [hướng dẫn 0.2](docs/UPGRADE_0_2.md).
+
 Ứng dụng riêng cho hai vợ chồng cùng theo dõi và chăm sóc bé. Bản đầu được xây bằng Expo/React Native, lưu dữ liệu cục bộ trước bằng SQLite và đã có schema Supabase dành cho đồng bộ hai thiết bị.
 
 ## Đã có trong bản đầu

@@ -1,4 +1,4 @@
-import type { SQLiteDatabase } from 'expo-sqlite';
+import type { SQLiteDatabase } from "expo-sqlite";
 import type {
   AppSnapshot,
   CareEntry,
@@ -6,12 +6,12 @@ import type {
   Child,
   FamilyMessage,
   Reminder,
-} from '../types';
-import { makeId } from './ids';
+} from "../types";
+import { makeId } from "./ids";
 
-const DEMO_FAMILY_ID = 'family_local_an_nam';
-const DEMO_USER_ID = 'local_parent_1';
-const DEMO_CHILD_ID = 'child_local_beyeu';
+const DEMO_FAMILY_ID = "family_local_an_nam";
+const DEMO_USER_ID = "local_parent_1";
+const DEMO_CHILD_ID = "child_local_beyeu";
 
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   await db.execAsync(`
@@ -106,8 +106,24 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
       ON family_messages(family_id, created_at DESC);
   `);
 
+  // Add columns individually so upgrades from the installed 0.1 database preserve rows.
+  for (const [table, definitions] of Object.entries({
+    children: ["avatar_path TEXT", "cover_path TEXT"],
+    care_entries: ["details TEXT NOT NULL DEFAULT '{}'", "deleted_at TEXT"],
+  })) {
+    const columns = await db.getAllAsync<{ name: string }>(
+      `PRAGMA table_info(${table})`,
+    );
+    for (const definition of definitions) {
+      if (!columns.some((c) => c.name === definition.split(" ")[0]))
+        await db.execAsync(`ALTER TABLE ${table} ADD COLUMN ${definition}`);
+    }
+  }
+  await db.execAsync(`CREATE TABLE IF NOT EXISTS care_timers (child_id TEXT PRIMARY KEY, kind TEXT NOT NULL, started_at TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS push_outbox (id TEXT PRIMARY KEY, payload TEXT NOT NULL, attempts INTEGER NOT NULL DEFAULT 0, last_error TEXT);`);
+
   const family = await db.getFirstAsync<{ id: string }>(
-    'SELECT id FROM families LIMIT 1',
+    "SELECT id FROM families LIMIT 1",
   );
   if (!family) await seedLocalFamily(db);
 }
@@ -116,10 +132,10 @@ async function seedLocalFamily(db: SQLiteDatabase): Promise<void> {
   const now = new Date().toISOString();
   await db.withTransactionAsync(async () => {
     await db.runAsync(
-      'INSERT INTO families (id, name, pairing_code, created_at) VALUES (?, ?, ?, ?)',
+      "INSERT INTO families (id, name, pairing_code, created_at) VALUES (?, ?, ?, ?)",
       DEMO_FAMILY_ID,
-      'Gia Đình An Nam',
-      'AN-NAM-DEMO',
+      "Gia Đình An Nam",
+      "AN-NAM-DEMO",
       now,
     );
     await db.runAsync(
@@ -128,8 +144,8 @@ async function seedLocalFamily(db: SQLiteDatabase): Promise<void> {
        VALUES (?, ?, ?, ?, ?, ?)`,
       DEMO_USER_ID,
       DEMO_FAMILY_ID,
-      'Bạn',
-      'parent',
+      "Bạn",
+      "parent",
       1,
       now,
     );
@@ -139,33 +155,33 @@ async function seedLocalFamily(db: SQLiteDatabase): Promise<void> {
        VALUES (?, ?, ?, ?, ?, ?)`,
       DEMO_CHILD_ID,
       DEMO_FAMILY_ID,
-      'Bé yêu',
-      'An Nam',
+      "Bé yêu",
+      "An Nam",
       now,
-      'pending',
+      "pending",
     );
     await db.runAsync(
       `INSERT INTO family_messages
         (id, family_id, body, created_at, created_by, created_by_name, sync_state)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      makeId('msg'),
+      makeId("msg"),
       DEMO_FAMILY_ID,
-      'Chào mừng hai bạn đến với không gian chăm sóc bé của gia đình.',
+      "Chào mừng hai bạn đến với không gian chăm sóc bé của gia đình.",
       now,
-      'system',
-      'Gia Đình An Nam',
-      'pending',
+      "system",
+      "Gia Đình An Nam",
+      "pending",
     );
   });
 }
 
 export async function loadSnapshot(db: SQLiteDatabase): Promise<AppSnapshot> {
-  const family = await db.getFirstAsync<AppSnapshot['family']>(
-    'SELECT id, name, pairing_code FROM families LIMIT 1',
+  const family = await db.getFirstAsync<AppSnapshot["family"]>(
+    "SELECT id, name, pairing_code FROM families LIMIT 1",
   );
   const child = family
-    ? await db.getFirstAsync<AppSnapshot['child']>(
-        `SELECT id, family_id, name, nickname, birthday, due_date, gender
+    ? await db.getFirstAsync<AppSnapshot["child"]>(
+        `SELECT id, family_id, name, nickname, birthday, due_date, gender, avatar_path, cover_path
          FROM children WHERE family_id = ? ORDER BY updated_at DESC LIMIT 1`,
         family.id,
       )
@@ -173,8 +189,8 @@ export async function loadSnapshot(db: SQLiteDatabase): Promise<AppSnapshot> {
   const entries = child
     ? await db.getAllAsync<CareEntry>(
         `SELECT id, family_id, child_id, kind, amount, unit, note, occurred_at,
-                created_by, created_by_name, sync_state
-         FROM care_entries WHERE child_id = ?
+                created_by, created_by_name, sync_state, details, deleted_at
+         FROM care_entries WHERE child_id = ? AND deleted_at IS NULL
          ORDER BY occurred_at DESC LIMIT 80`,
         child.id,
       )
@@ -196,22 +212,32 @@ export async function loadSnapshot(db: SQLiteDatabase): Promise<AppSnapshot> {
         family.id,
       )
     : [];
-  return { family, child, entries, messages, reminders };
+  return {
+    family,
+    child,
+    entries: entries.map((e) => ({
+      ...e,
+      details:
+        typeof e.details === "string" ? JSON.parse(e.details) : e.details,
+    })),
+    messages,
+    reminders,
+  };
 }
 
-async function enqueue(
+export async function enqueue(
   db: SQLiteDatabase,
   familyId: string,
   entityType: string,
   entityId: string,
   payload: unknown,
-  operation: 'upsert' | 'update' = 'upsert',
+  operation: "upsert" | "update" = "upsert",
 ): Promise<void> {
   await db.runAsync(
     `INSERT INTO sync_outbox
       (id, family_id, entity_type, entity_id, operation, payload, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    makeId('outbox'),
+    makeId("outbox"),
     familyId,
     entityType,
     entityId,
@@ -231,7 +257,7 @@ async function currentAuthor(db: SQLiteDatabase): Promise<{
   );
   return {
     id: member?.id ?? DEMO_USER_ID,
-    displayName: member?.display_name ?? 'Bạn',
+    displayName: member?.display_name ?? "Bạn",
   };
 }
 
@@ -244,9 +270,11 @@ export async function insertCareEntry(
     amount?: number | null;
     unit?: string | null;
     note?: string | null;
+    occurredAt?: string;
+    details?: Record<string, string>;
   },
 ): Promise<void> {
-  const id = makeId('care');
+  const id = makeId("care");
   const now = new Date().toISOString();
   const author = await currentAuthor(db);
   const payload = {
@@ -257,7 +285,8 @@ export async function insertCareEntry(
     amount: input.amount ?? null,
     unit: input.unit ?? null,
     note: input.note ?? null,
-    occurred_at: now,
+    occurred_at: input.occurredAt ?? now,
+    details: input.details ?? {},
     created_by: author.id,
     created_by_name: author.displayName,
     updated_at: now,
@@ -280,7 +309,12 @@ export async function insertCareEntry(
       payload.created_by_name,
       payload.updated_at,
     );
-    await enqueue(db, input.familyId, 'care_entries', id, payload);
+    await db.runAsync(
+      "UPDATE care_entries SET details = ? WHERE id = ?",
+      JSON.stringify(payload.details),
+      id,
+    );
+    await enqueue(db, input.familyId, "care_entries", id, payload);
   });
 }
 
@@ -289,7 +323,7 @@ export async function insertMessage(
   familyId: string,
   body: string,
 ): Promise<void> {
-  const id = makeId('msg');
+  const id = makeId("msg");
   const now = new Date().toISOString();
   const author = await currentAuthor(db);
   const payload = {
@@ -312,7 +346,7 @@ export async function insertMessage(
       payload.created_by,
       payload.created_by_name,
     );
-    await enqueue(db, familyId, 'family_messages', id, payload);
+    await enqueue(db, familyId, "family_messages", id, payload);
   });
 }
 
@@ -327,7 +361,7 @@ export async function insertReminder(
     notificationId: string | null;
   },
 ): Promise<void> {
-  const id = makeId('reminder');
+  const id = makeId("reminder");
   const now = new Date().toISOString();
   const author = await currentAuthor(db);
   const payload = {
@@ -360,7 +394,7 @@ export async function insertReminder(
       payload.local_notification_id,
       payload.updated_at,
     );
-    await enqueue(db, input.familyId, 'reminders', id, payload);
+    await enqueue(db, input.familyId, "reminders", id, payload);
   });
 }
 
@@ -377,24 +411,31 @@ export async function completeReminder(
       completedAt,
       reminder.id,
     );
-    await enqueue(db, reminder.family_id, 'reminders', reminder.id, {
-      id: reminder.id,
-      family_id: reminder.family_id,
-      child_id: reminder.child_id,
-      title: reminder.title,
-      details: reminder.details,
-      due_at: reminder.due_at,
-      completed_at: completedAt,
-      created_by: reminder.created_by,
-      created_by_name: reminder.created_by_name,
-      updated_at: completedAt,
-    }, 'update');
+    await enqueue(
+      db,
+      reminder.family_id,
+      "reminders",
+      reminder.id,
+      {
+        id: reminder.id,
+        family_id: reminder.family_id,
+        child_id: reminder.child_id,
+        title: reminder.title,
+        details: reminder.details,
+        due_at: reminder.due_at,
+        completed_at: completedAt,
+        created_by: reminder.created_by,
+        created_by_name: reminder.created_by_name,
+        updated_at: completedAt,
+      },
+      "update",
+    );
   });
 }
 
 export async function getPendingSyncCount(db: SQLiteDatabase): Promise<number> {
   const row = await db.getFirstAsync<{ count: number }>(
-    'SELECT COUNT(*) AS count FROM sync_outbox',
+    "SELECT COUNT(*) AS count FROM sync_outbox",
   );
   return row?.count ?? 0;
 }
@@ -402,14 +443,16 @@ export async function getPendingSyncCount(db: SQLiteDatabase): Promise<number> {
 export type OutboxItem = {
   id: string;
   family_id: string;
-  entity_type: 'children' | 'care_entries' | 'family_messages' | 'reminders';
+  entity_type: "children" | "care_entries" | "family_messages" | "reminders";
   entity_id: string;
-  operation: 'upsert' | 'update';
+  operation: "upsert" | "update";
   payload: string;
   attempts: number;
 };
 
-export async function getPendingOutbox(db: SQLiteDatabase): Promise<OutboxItem[]> {
+export async function getPendingOutbox(
+  db: SQLiteDatabase,
+): Promise<OutboxItem[]> {
   return db.getAllAsync<OutboxItem>(
     `SELECT id, family_id, entity_type, entity_id, operation, payload, attempts
      FROM sync_outbox
@@ -421,16 +464,30 @@ export async function getPendingOutbox(db: SQLiteDatabase): Promise<OutboxItem[]
 export async function acknowledgeOutbox(
   db: SQLiteDatabase,
   item: OutboxItem,
+  pushPayload?: unknown,
 ): Promise<void> {
   const syncableTables = new Set([
-    'children',
-    'care_entries',
-    'family_messages',
-    'reminders',
+    "children",
+    "care_entries",
+    "family_messages",
+    "reminders",
   ]);
   await db.withTransactionAsync(async () => {
-    await db.runAsync('DELETE FROM sync_outbox WHERE id = ?', item.id);
-    if (syncableTables.has(item.entity_type)) {
+    if (pushPayload)
+      await db.runAsync(
+        "INSERT OR IGNORE INTO push_outbox (id, payload) VALUES (?, ?)",
+        item.id,
+        JSON.stringify(pushPayload),
+      );
+    await db.runAsync("DELETE FROM sync_outbox WHERE id = ?", item.id);
+    if (
+      syncableTables.has(item.entity_type) &&
+      !(await db.getFirstAsync(
+        "SELECT id FROM sync_outbox WHERE entity_type = ? AND entity_id = ?",
+        item.entity_type,
+        item.entity_id,
+      ))
+    ) {
       await db.runAsync(
         `UPDATE ${item.entity_type} SET sync_state = 'synced' WHERE id = ?`,
         item.entity_id,
@@ -463,14 +520,17 @@ export async function attachRemoteFamily(
   },
 ): Promise<void> {
   const current = await db.getFirstAsync<{ id: string }>(
-    'SELECT id FROM families LIMIT 1',
+    "SELECT id FROM families LIMIT 1",
   );
   const now = new Date().toISOString();
 
   await db.withTransactionAsync(async () => {
     if (!input.preserveLocalData && current) {
-      await db.runAsync('DELETE FROM sync_outbox WHERE family_id = ?', current.id);
-      await db.runAsync('DELETE FROM families WHERE id = ?', current.id);
+      await db.runAsync(
+        "DELETE FROM sync_outbox WHERE family_id = ?",
+        current.id,
+      );
+      await db.runAsync("DELETE FROM families WHERE id = ?", current.id);
     }
 
     await db.runAsync(
@@ -485,30 +545,50 @@ export async function attachRemoteFamily(
     );
 
     if (input.preserveLocalData && current && current.id !== input.id) {
-      await db.runAsync('UPDATE family_members SET family_id = ? WHERE family_id = ?', input.id, current.id);
-      await db.runAsync('UPDATE children SET family_id = ? WHERE family_id = ?', input.id, current.id);
-      await db.runAsync('UPDATE care_entries SET family_id = ? WHERE family_id = ?', input.id, current.id);
-      await db.runAsync('UPDATE family_messages SET family_id = ? WHERE family_id = ?', input.id, current.id);
-      await db.runAsync('UPDATE reminders SET family_id = ? WHERE family_id = ?', input.id, current.id);
+      await db.runAsync(
+        "UPDATE family_members SET family_id = ? WHERE family_id = ?",
+        input.id,
+        current.id,
+      );
+      await db.runAsync(
+        "UPDATE children SET family_id = ? WHERE family_id = ?",
+        input.id,
+        current.id,
+      );
+      await db.runAsync(
+        "UPDATE care_entries SET family_id = ? WHERE family_id = ?",
+        input.id,
+        current.id,
+      );
+      await db.runAsync(
+        "UPDATE family_messages SET family_id = ? WHERE family_id = ?",
+        input.id,
+        current.id,
+      );
+      await db.runAsync(
+        "UPDATE reminders SET family_id = ? WHERE family_id = ?",
+        input.id,
+        current.id,
+      );
 
       const queued = await db.getAllAsync<{ id: string; payload: string }>(
-        'SELECT id, payload FROM sync_outbox WHERE family_id = ?',
+        "SELECT id, payload FROM sync_outbox WHERE family_id = ?",
         current.id,
       );
       for (const row of queued) {
         const payload = JSON.parse(row.payload) as Record<string, unknown>;
         payload.family_id = input.id;
         await db.runAsync(
-          'UPDATE sync_outbox SET family_id = ?, payload = ? WHERE id = ?',
+          "UPDATE sync_outbox SET family_id = ?, payload = ? WHERE id = ?",
           input.id,
           JSON.stringify(payload),
           row.id,
         );
       }
-      await db.runAsync('DELETE FROM families WHERE id = ?', current.id);
+      await db.runAsync("DELETE FROM families WHERE id = ?", current.id);
     }
 
-    await db.runAsync('UPDATE family_members SET is_current = 0');
+    await db.runAsync("UPDATE family_members SET is_current = 0");
     await db.runAsync(
       `INSERT INTO family_members
         (id, family_id, display_name, role, is_current, created_at)
@@ -546,7 +626,7 @@ export async function attachRemoteFamily(
 
     if (input.preserveLocalData) {
       const localChildren = await db.getAllAsync<Child>(
-        'SELECT id, family_id, name, nickname, birthday, due_date, gender FROM children WHERE family_id = ?',
+        "SELECT id, family_id, name, nickname, birthday, due_date, gender, avatar_path, cover_path FROM children WHERE family_id = ?",
         input.id,
       );
       for (const child of localChildren) {
@@ -555,7 +635,7 @@ export async function attachRemoteFamily(
           child.id,
         );
         if (!alreadyQueued) {
-          await enqueue(db, input.id, 'children', child.id, {
+          await enqueue(db, input.id, "children", child.id, {
             ...child,
             updated_at: now,
           });
@@ -566,8 +646,10 @@ export async function attachRemoteFamily(
 }
 
 type RemoteSnapshot = {
-  children: Array<Omit<Child, 'family_id'> & { family_id: string; updated_at: string }>;
-  careEntries: Array<Omit<CareEntry, 'sync_state'>>;
+  children: Array<
+    Omit<Child, "family_id"> & { family_id: string; updated_at: string }
+  >;
+  careEntries: Array<Omit<CareEntry, "sync_state">>;
   messages: FamilyMessage[];
   reminders: Array<Reminder & { updated_at: string }>;
 };
@@ -588,8 +670,20 @@ export async function mergeRemoteSnapshot(
            gender = excluded.gender, updated_at = excluded.updated_at,
            sync_state = 'synced'
          WHERE children.sync_state <> 'pending'`,
-        child.id, child.family_id, child.name, child.nickname, child.birthday,
-        child.due_date, child.gender, child.updated_at,
+        child.id,
+        child.family_id,
+        child.name,
+        child.nickname,
+        child.birthday,
+        child.due_date,
+        child.gender,
+        child.updated_at,
+      );
+      await db.runAsync(
+        "UPDATE children SET avatar_path = ?, cover_path = ? WHERE id = ? AND sync_state <> 'pending'",
+        child.avatar_path ?? null,
+        child.cover_path ?? null,
+        child.id,
       );
     }
     for (const entry of snapshot.careEntries) {
@@ -603,9 +697,24 @@ export async function mergeRemoteSnapshot(
            occurred_at = excluded.occurred_at, updated_at = excluded.updated_at,
            sync_state = 'synced'
          WHERE care_entries.sync_state <> 'pending'`,
-        entry.id, entry.family_id, entry.child_id, entry.kind, entry.amount,
-        entry.unit, entry.note, entry.occurred_at, entry.created_by,
-        entry.created_by_name, (entry as CareEntry & { updated_at?: string }).updated_at ?? entry.occurred_at,
+        entry.id,
+        entry.family_id,
+        entry.child_id,
+        entry.kind,
+        entry.amount,
+        entry.unit,
+        entry.note,
+        entry.occurred_at,
+        entry.created_by,
+        entry.created_by_name,
+        (entry as CareEntry & { updated_at?: string }).updated_at ??
+          entry.occurred_at,
+      );
+      await db.runAsync(
+        "UPDATE care_entries SET details = ?, deleted_at = ? WHERE id = ? AND sync_state <> 'pending'",
+        JSON.stringify(entry.details ?? {}),
+        entry.deleted_at ?? null,
+        entry.id,
       );
     }
     for (const message of snapshot.messages) {
@@ -615,8 +724,12 @@ export async function mergeRemoteSnapshot(
          VALUES (?, ?, ?, ?, ?, ?, 'synced')
          ON CONFLICT(id) DO UPDATE SET body = excluded.body, sync_state = 'synced'
          WHERE family_messages.sync_state <> 'pending'`,
-        message.id, message.family_id, message.body, message.created_at,
-        message.created_by, message.created_by_name,
+        message.id,
+        message.family_id,
+        message.body,
+        message.created_at,
+        message.created_by,
+        message.created_by_name,
       );
     }
     for (const reminder of snapshot.reminders) {
@@ -630,9 +743,16 @@ export async function mergeRemoteSnapshot(
            due_at = excluded.due_at, completed_at = excluded.completed_at,
            updated_at = excluded.updated_at, sync_state = 'synced'
          WHERE reminders.sync_state <> 'pending'`,
-        reminder.id, reminder.family_id, reminder.child_id, reminder.title,
-        reminder.details, reminder.due_at, reminder.completed_at,
-        reminder.created_by, reminder.created_by_name, reminder.updated_at,
+        reminder.id,
+        reminder.family_id,
+        reminder.child_id,
+        reminder.title,
+        reminder.details,
+        reminder.due_at,
+        reminder.completed_at,
+        reminder.created_by,
+        reminder.created_by_name,
+        reminder.updated_at,
       );
     }
   });

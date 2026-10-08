@@ -1,12 +1,22 @@
-import type { PropsWithChildren } from 'react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useSQLiteContext } from 'expo-sqlite';
-import { AppState } from 'react-native';
+import type { PropsWithChildren } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useSQLiteContext } from "expo-sqlite";
+import { Alert, AppState } from "react-native";
 import {
   cancelLocalReminder,
   prepareNotifications,
   scheduleLocalReminder,
-} from '../services/notifications';
+  reconcileSyncedReminders,
+  requestNotificationPermission,
+} from "../services/notifications";
 import {
   completeReminder as completeReminderInDb,
   getPendingSyncCount,
@@ -14,10 +24,13 @@ import {
   insertMessage,
   insertReminder,
   loadSnapshot,
-} from '../lib/database';
-import type { AppSnapshot, CareKind, Reminder } from '../types';
-import { isSupabaseConfigured } from '../lib/supabase';
-import { subscribeFamilyChanges, synchronizeFamily } from '../services/familySync';
+} from "../lib/database";
+import type { AppSnapshot, CareKind, Reminder } from "../types";
+import { isSupabaseConfigured } from "../lib/supabase";
+import {
+  subscribeFamilyChanges,
+  synchronizeFamily,
+} from "../services/familySync";
 
 type AppContextValue = AppSnapshot & {
   loading: boolean;
@@ -32,6 +45,8 @@ type AppContextValue = AppSnapshot & {
     amount?: number | null;
     unit?: string | null;
     note?: string | null;
+    occurredAt?: string;
+    details?: Record<string, string>;
   }) => Promise<void>;
   sendMessage: (body: string) => Promise<void>;
   addReminder: (input: {
@@ -72,7 +87,11 @@ export function AppProvider({ children }: PropsWithChildren) {
       setSnapshot(next);
       setPendingSyncCount(pending);
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : 'Không thể đọc dữ liệu');
+      setError(
+        nextError instanceof Error
+          ? nextError.message
+          : "Không thể đọc dữ liệu",
+      );
     } finally {
       setLoading(false);
     }
@@ -87,7 +106,9 @@ export function AppProvider({ children }: PropsWithChildren) {
       setSyncMessage(result.message);
       await refresh();
     } catch (nextError) {
-      setSyncMessage(nextError instanceof Error ? nextError.message : 'Không thể đồng bộ');
+      setSyncMessage(
+        nextError instanceof Error ? nextError.message : "Không thể đồng bộ",
+      );
     } finally {
       syncingRef.current = false;
       setSyncing(false);
@@ -96,17 +117,28 @@ export function AppProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     prepareNotifications().catch(() => undefined);
+    reconcileSyncedReminders(db).catch(() => undefined);
     refresh().then(() => {
       if (isSupabaseConfigured) syncNow();
     });
   }, [refresh, syncNow]);
 
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', (state) => {
-      if (state === 'active' && isSupabaseConfigured) syncNow();
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") {
+        void reconcileSyncedReminders(db).catch(() => undefined);
+        if (isSupabaseConfigured) void syncNow();
+      }
     });
-    return () => subscription.remove();
-  }, [syncNow]);
+    const timer = setInterval(() => {
+      if (AppState.currentState === "active" && isSupabaseConfigured)
+        void syncNow();
+    }, 60000);
+    return () => {
+      subscription.remove();
+      clearInterval(timer);
+    };
+  }, [syncNow, db]);
 
   useEffect(() => {
     if (!isSupabaseConfigured) return;
@@ -130,8 +162,11 @@ export function AppProvider({ children }: PropsWithChildren) {
       amount?: number | null;
       unit?: string | null;
       note?: string | null;
+      occurredAt?: string;
+      details?: Record<string, string>;
     }) => {
-      if (!snapshot.family || !snapshot.child) throw new Error('Chưa có hồ sơ bé');
+      if (!snapshot.family || !snapshot.child)
+        throw new Error("Chưa có hồ sơ bé");
       await insertCareEntry(db, {
         familyId: snapshot.family.id,
         childId: snapshot.child.id,
@@ -145,7 +180,7 @@ export function AppProvider({ children }: PropsWithChildren) {
 
   const sendMessage = useCallback(
     async (body: string) => {
-      if (!snapshot.family) throw new Error('Chưa có gia đình');
+      if (!snapshot.family) throw new Error("Chưa có gia đình");
       await insertMessage(db, snapshot.family.id, body.trim());
       await refresh();
       if (isSupabaseConfigured) syncNow();
@@ -155,20 +190,29 @@ export function AppProvider({ children }: PropsWithChildren) {
 
   const addReminder = useCallback(
     async (input: { title: string; details?: string | null; dueAt: Date }) => {
-      if (!snapshot.family) throw new Error('Chưa có gia đình');
-      const notificationId = await scheduleLocalReminder({
-        title: input.title,
-        body: input.details,
-        dueAt: input.dueAt,
-      });
+      if (!snapshot.family) throw new Error("Chưa có gia đình");
       await insertReminder(db, {
         familyId: snapshot.family.id,
         childId: snapshot.child?.id ?? null,
         title: input.title,
         details: input.details ?? null,
         dueAt: input.dueAt.toISOString(),
-        notificationId,
+        notificationId: null,
       });
+      try {
+        const permitted = await requestNotificationPermission();
+        if (!permitted)
+          Alert.alert(
+            "Đã lưu nhắc việc",
+            "Hãy bật quyền thông báo trong Cài đặt iPhone để nhận nhắc giờ.",
+          );
+        await reconcileSyncedReminders(db);
+      } catch {
+        Alert.alert(
+          "Đã lưu nhắc việc",
+          "Chưa lập được thông báo trên máy. App sẽ thử lại khi mở hoặc đồng bộ; bạn không cần tạo lại nhắc việc.",
+        );
+      }
       await refresh();
       if (isSupabaseConfigured) syncNow();
     },
@@ -221,6 +265,6 @@ export function AppProvider({ children }: PropsWithChildren) {
 
 export function useApp(): AppContextValue {
   const value = useContext(AppContext);
-  if (!value) throw new Error('useApp must be used inside AppProvider');
+  if (!value) throw new Error("useApp must be used inside AppProvider");
   return value;
 }
