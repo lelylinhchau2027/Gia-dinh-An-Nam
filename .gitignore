@@ -37,6 +37,9 @@ yarn-error.*
 !.env.example
 .env*.local
 
+# Supabase CLI local state
+/supabase/.temp/
+
 # typescript
 *.tsbuildinfo
 
