@@ -17,9 +17,10 @@ export function Screen({
   children,
   scroll = true,
   contentStyle,
+  safeAreaStyle,
   ...scrollProps
 }: PropsWithChildren<
-  ScrollViewProps & { scroll?: boolean; contentStyle?: ViewStyle }
+  ScrollViewProps & { scroll?: boolean; contentStyle?: ViewStyle; safeAreaStyle?: ViewStyle }
 >) {
   const content = scroll ? (
     <ScrollView
@@ -32,7 +33,7 @@ export function Screen({
   ) : (
     <View style={[styles.screenContent, styles.flex, contentStyle]}>{children}</View>
   );
-  return <SafeAreaView style={styles.safe}>{content}</SafeAreaView>;
+  return <SafeAreaView style={[styles.safe, safeAreaStyle]}>{content}</SafeAreaView>;
 }
 
 export function Card({
@@ -195,4 +196,3 @@ const styles = StyleSheet.create({
   emptyTitle: { fontWeight: '800', color: colors.ink, fontSize: 16 },
   emptyBody: { textAlign: 'center', color: colors.inkMuted, lineHeight: 20 },
 });
-

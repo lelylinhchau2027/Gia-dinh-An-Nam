@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -17,6 +17,9 @@ import { careMeta, quickCareKinds } from "../../src/data/care";
 import { useApp } from "../../src/providers/AppProvider";
 import { colors, radius, spacing } from "../../src/theme";
 import type { CareEntry, CareKind } from "../../src/types";
+import { findAssistantTool, entryToolId } from "../../src/data/assistant";
+import { AssistantIcon } from "../../src/components/AssistantIcon";
+import { DayPicker } from "../../src/components/DayPicker";
 
 export default function NewRecordScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -75,24 +78,45 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
     kind?: string;
     id?: string;
     context?: string;
+    tool?: string;
+    tooth?: string;
+    referenceId?: string;
+    vaccine?: string;
+    dose?: string;
+    category?: string;
   }>();
   const db = useSQLiteContext();
   const { addCare, child, refresh, syncNow } = useApp();
+  const tool = findAssistantTool(
+    existing ? entryToolId(existing) : params.tool,
+  );
   const kind = useMemo<CareKind>(
     () =>
       existing?.kind ??
+      tool?.kind ??
       (params.kind && params.kind in careMeta
         ? (params.kind as CareKind)
         : "milk"),
-    [params.kind, existing?.kind],
+    [params.kind, existing?.kind, tool?.kind],
   );
   const meta = careMeta[kind];
   const [amount, setAmount] = useState(existing?.amount?.toString() ?? "");
   const [note, setNote] = useState(existing?.note ?? params.context ?? "");
-  const [unit, setUnit] = useState(existing?.unit ?? meta.defaultUnit ?? "");
-  const [details, setDetails] = useState<Record<string, string>>(
-    existing?.details ?? {},
+  const [unit, setUnit] = useState(
+    existing?.unit ?? tool?.unit ?? meta.defaultUnit ?? "",
   );
+  const [details, setDetails] = useState<Record<string, string>>(
+    existing?.details ?? {
+      ...(tool ? { tool: tool.id } : {}),
+      ...(tool?.id === "pump" ? { feeding: "Hút sữa" } : {}),
+      ...(params.tooth ? { tooth: params.tooth } : {}),
+      ...(params.referenceId ? { referenceId: params.referenceId } : {}),
+      ...(params.vaccine ? { vaccine: params.vaccine } : {}),
+      ...(params.dose ? { dose: params.dose } : {}),
+      ...(params.category ? { category: params.category } : {}),
+    },
+  );
+  const [editingTime, setEditingTime] = useState(false);
   const toLocal = (date: Date) =>
     `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
   const [time, setTime] = useState(
@@ -101,8 +125,10 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
   const [started, setStarted] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const saveLock = useRef(false);
   useEffect(() => {
-    if (child && !existing)
+    if (child && !existing && tool?.id !== "pump")
       db.getFirstAsync<{ kind: string; started_at: string }>(
         "SELECT kind, started_at FROM care_timers WHERE child_id=?",
         child.id,
@@ -167,13 +193,41 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
   };
 
   const save = async () => {
+    if (saveLock.current) return;
+    setSaveError("");
     const parsed = amount.trim() ? Number(amount.replace(",", ".")) : null;
     if (amount.trim() && (!Number.isFinite(parsed) || parsed! < 0)) {
       Alert.alert("Số lượng chưa đúng", "Hãy nhập một con số hợp lệ.");
       return;
     }
     try {
+      saveLock.current = true;
       setSaving(true);
+      if (
+        (tool?.numeric ||
+          [
+            "milk",
+            "sleep",
+            "weaning",
+            "temperature",
+            "growth",
+            "medicine",
+          ].includes(kind)) &&
+        (parsed === null || parsed <= 0)
+      )
+        throw new Error("Hãy nhập số lượng lớn hơn 0.");
+      if (tool?.id === "injections" && !details.vaccine?.trim())
+        throw new Error("Hãy nhập tên vắc-xin đã tiêm.");
+      if (tool?.id === "teeth" && !details.tooth)
+        throw new Error("Hãy chọn răng đã mọc.");
+      if (
+        tool?.id === "milestones" &&
+        !details.milestone &&
+        !details.achievement?.trim()
+      )
+        throw new Error("Hãy chọn hoặc nhập điều con đã làm được.");
+      if (tool?.id === "fetal" && !details.metric)
+        throw new Error("Hãy chọn loại số đo thai nhi.");
       if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(time))
         throw new Error("Thời gian cần đúng dạng YYYY-MM-DD HH:mm.");
       const date = new Date(time.replace(" ", "T") + ":00");
@@ -204,11 +258,15 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
       void syncNow();
       router.back();
     } catch (error) {
+      setSaveError(
+        error instanceof Error ? error.message : "Vui lòng thử lại.",
+      );
       Alert.alert(
         "Chưa thể lưu",
         error instanceof Error ? error.message : "Vui lòng thử lại.",
       );
     } finally {
+      saveLock.current = false;
       setSaving(false);
     }
   };
@@ -216,8 +274,9 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
   return (
     <Screen contentStyle={styles.content} keyboardShouldPersistTaps="handled">
       <View style={[styles.hero, { backgroundColor: meta.soft }]}>
+        {tool ? <AssistantIcon tool={tool} size={58} /> : null}
         <Text style={[styles.heroLabel, { color: meta.color }]}>
-          {meta.label}
+          {tool?.title ?? meta.label}
         </Text>
         <Text style={styles.heroTime}>
           Bây giờ ·{" "}
@@ -228,14 +287,39 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
         </Text>
       </View>
 
-      <Text style={styles.label}>Thời điểm (YYYY-MM-DD HH:mm)</Text>
-      <TextInput
-        style={styles.input}
-        value={time}
-        onChangeText={setTime}
-        keyboardType="numbers-and-punctuation"
-      />
-      {!existing && (kind === "sleep" || kind === "milk") ? (
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => setEditingTime((v) => !v)}
+        style={form.chip}
+      >
+        <Text style={styles.label}>
+          Thời điểm: {time.slice(11)} ·{" "}
+          {time.slice(0, 10).split("-").reverse().join("/")}　✎
+        </Text>
+      </Pressable>
+      {editingTime ? (
+        <View style={form.gap}>
+          <DayPicker
+            value={time.slice(0, 10)}
+            onChange={(day) => setTime(day + time.slice(10))}
+          />
+          <Text>Giờ (HH:mm)</Text>
+          <TextInput
+            style={styles.input}
+            value={time.slice(11)}
+            onChangeText={(value) => setTime(time.slice(0, 10) + " " + value)}
+            accessibilityLabel="Giờ ghi nhận"
+            keyboardType="numbers-and-punctuation"
+          />
+          <LinkButton
+            title="Lấy giờ hiện tại"
+            onPress={() => setTime(toLocal(new Date()))}
+          />
+        </View>
+      ) : null}
+      {!existing &&
+      tool?.id !== "pump" &&
+      (kind === "sleep" || kind === "milk") ? (
         <PrimaryButton
           title={
             started
@@ -246,7 +330,7 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
           disabled={saving}
         />
       ) : null}
-      {kind !== "diaper" && kind !== "activity" ? (
+      {tool?.numeric || (kind !== "diaper" && kind !== "activity") ? (
         <View style={styles.field}>
           <Text style={styles.label}>
             Số lượng ({unit || "chọn đơn vị bên dưới"})
@@ -259,6 +343,24 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
             placeholderTextColor={colors.inkMuted}
             style={styles.input}
           />
+          {tool?.presets && unit === tool.unit ? (
+            <View style={form.wrap}>
+              {tool.presets.map((value) => (
+                <Pressable
+                  key={value}
+                  onPress={() => setAmount(String(value))}
+                  style={[
+                    form.chip,
+                    amount === String(value) && form.activeChip,
+                  ]}
+                >
+                  <Text>
+                    {value} {unit}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          ) : null}
         </View>
       ) : null}
 
@@ -285,25 +387,27 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
         </View>
       ) : null}
       {Object.entries(
-        kind === "milk"
-          ? {
-              feeding: [
-                "Bú bình",
-                "Bú mẹ bên trái",
-                "Bú mẹ bên phải",
-                "Hút sữa",
-              ],
-            }
-          : kind === "diaper"
+        tool?.choices
+          ? tool.choices
+          : kind === "milk"
             ? {
-                diaper: ["Ướt", "Bẩn", "Cả hai"],
-                consistency: ["Lỏng", "Mềm", "Cứng"],
+                feeding: [
+                  "Bú bình",
+                  "Bú mẹ bên trái",
+                  "Bú mẹ bên phải",
+                  "Hút sữa",
+                ],
               }
-            : kind === "growth"
-              ? { metric: ["Cân nặng", "Chiều dài / chiều cao", "Vòng đầu"] }
-              : kind === "activity" && params.context
-                ? { context: ["Khám thai", "Thai máy", "Ghi chú thai kỳ"] }
-                : {},
+            : kind === "diaper"
+              ? {
+                  diaper: ["Ướt", "Bẩn", "Cả hai"],
+                  consistency: ["Lỏng", "Mềm", "Cứng"],
+                }
+              : kind === "growth"
+                ? { metric: ["Cân nặng", "Chiều dài / chiều cao", "Vòng đầu"] }
+                : kind === "activity" && params.context
+                  ? { context: ["Khám thai", "Thai máy", "Ghi chú thai kỳ"] }
+                  : {},
       ).map(([field, choices]) => (
         <View key={field} style={form.wrap}>
           {choices.map((choice) => (
@@ -313,7 +417,15 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
               onPress={() => {
                 setDetails((d) => ({ ...d, [field]: choice }));
                 if (field === "metric")
-                  setUnit(choice === "Cân nặng" ? "kg" : "cm");
+                  setUnit(
+                    tool?.id === "fetal"
+                      ? choice.includes("(g)")
+                        ? "g"
+                        : "cm"
+                      : choice === "Cân nặng"
+                        ? "kg"
+                        : "cm",
+                  );
                 if (field === "feeding")
                   setUnit(choice.startsWith("Bú mẹ") ? "phút" : "ml");
               }}
@@ -323,6 +435,58 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
           ))}
         </View>
       ))}
+
+      {Object.entries(tool?.fields ?? {}).map(([field, label]) => (
+        <View key={field} style={styles.field}>
+          <Text style={styles.label}>{label}</Text>
+          <TextInput
+            style={styles.input}
+            value={details[field] ?? ""}
+            onChangeText={(value) =>
+              setDetails((d) => ({ ...d, [field]: value }))
+            }
+            placeholder={label}
+          />
+        </View>
+      ))}
+      {tool?.id === "teeth" ? (
+        <View style={styles.field}>
+          <Text style={styles.label}>Chọn vị trí răng (theo phía của bé)</Text>
+          {["Trên", "Dưới"].map((jaw) => (
+            <View key={jaw} style={form.gap}>
+              <Text>{jaw}</Text>
+              <View style={form.wrap}>
+                {[
+                  "Phải 5",
+                  "Phải 4",
+                  "Phải 3",
+                  "Phải 2",
+                  "Phải 1",
+                  "Trái 1",
+                  "Trái 2",
+                  "Trái 3",
+                  "Trái 4",
+                  "Trái 5",
+                ].map((position) => {
+                  const tooth = `${jaw} · ${position}`;
+                  return (
+                    <Pressable
+                      key={tooth}
+                      onPress={() => setDetails((d) => ({ ...d, tooth }))}
+                      style={[
+                        form.chip,
+                        details.tooth === tooth && form.activeChip,
+                      ]}
+                    >
+                      <Text>{position}</Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          ))}
+        </View>
+      ) : null}
 
       <View style={styles.field}>
         <Text style={styles.label}>Ghi chú</Text>
@@ -335,12 +499,29 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
           style={[styles.input, styles.textarea]}
         />
       </View>
+      {saveError ? (
+        <Text accessibilityRole="alert" style={form.error}>
+          {saveError}
+        </Text>
+      ) : null}
       <PrimaryButton
         title={saving ? "Đang lưu..." : "Lưu vào nhật ký chung"}
         icon="checkmark"
         onPress={save}
         disabled={saving || !!started}
       />
+      {tool?.hint ? <Text style={form.hint}>{tool.hint}</Text> : null}
+      {tool?.kind && !existing ? (
+        <LinkButton
+          title={`Xem lịch sử ${tool.title.toLowerCase()}`}
+          onPress={() =>
+            router.push({
+              pathname: "/assistant/[tool]",
+              params: { tool: tool.id },
+            })
+          }
+        />
+      ) : null}
       {existing ? (
         <LinkButton
           title="Xóa bản ghi"

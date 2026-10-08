@@ -2,6 +2,9 @@ import { router, Stack } from "expo-router";
 import * as Notifications from "expo-notifications";
 import { SQLiteProvider } from "expo-sqlite";
 import { useEffect, useRef } from "react";
+import { Platform } from "react-native";
+import { useFonts } from "expo-font";
+import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
 import { AppProvider, useApp } from "../src/providers/AppProvider";
 import { migrateDatabase } from "../src/lib/database";
@@ -13,7 +16,7 @@ function NotificationNavigation() {
   state.current = { reminders, completeReminder };
   const handled = useRef<string | null>(null);
   useEffect(() => {
-    if (loading) return;
+    if (loading || Platform.OS === "web") return;
     const handle = (response: Notifications.NotificationResponse | null) => {
       if (!response) return;
       const key = `${response.notification.request.identifier}:${response.actionIdentifier}`;
@@ -42,6 +45,12 @@ function NotificationNavigation() {
 }
 
 export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts({
+    Quicksand: require("../assets/legacy/Quicksand-Medium.ttf"),
+    QuicksandSemiBold: require("../assets/legacy/Quicksand-SemiBold.ttf"),
+    QuicksandBold: require("../assets/legacy/Quicksand-Bold.ttf"),
+  });
+  if (!fontsLoaded && !fontError) return null;
   return (
     <SQLiteProvider databaseName="gia-dinh-an-nam.db" onInit={migrateDatabase}>
       <AppProvider>
@@ -49,10 +58,18 @@ export default function RootLayout() {
         <StatusBar style="dark" />
         <Stack
           screenOptions={{
-            headerStyle: { backgroundColor: colors.background },
+            headerStyle: { backgroundColor: colors.primary },
+            headerBackground: () => (
+              <LinearGradient
+                colors={["#7771BC", "#9875CD"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{ flex: 1 }}
+              />
+            ),
             headerShadowVisible: false,
-            headerTintColor: colors.ink,
-            headerTitleStyle: { fontWeight: "800" },
+            headerTintColor: "#fff",
+            headerTitleStyle: { fontFamily: "QuicksandSemiBold", fontSize: 19 },
             contentStyle: { backgroundColor: colors.background },
           }}
         >
@@ -80,6 +97,23 @@ export default function RootLayout() {
           <Stack.Screen name="easy/[id]" options={{ title: "Lịch E.A.S.Y" }} />
           <Stack.Screen name="account" options={{ title: "Tài khoản" }} />
           <Stack.Screen name="child/edit" options={{ title: "Hồ sơ bé" }} />
+          <Stack.Screen
+            name="child/measure"
+            options={{ title: "Thêm chỉ số cho bé" }}
+          />
+          <Stack.Screen
+            name="child/vaccinations"
+            options={{ title: "Lịch tiêm phòng" }}
+          />
+          <Stack.Screen name="assistant/[tool]" options={{ title: "Trợ lí" }} />
+          <Stack.Screen
+            name="child/statistics"
+            options={{ title: "Thống kê năm" }}
+          />
+          <Stack.Screen
+            name="child/weeks"
+            options={{ title: "Phát triển theo tuần" }}
+          />
           <Stack.Screen
             name="child/growth"
             options={{ title: "Tăng trưởng" }}

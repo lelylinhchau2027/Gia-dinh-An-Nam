@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { Screen, Card } from "../../src/components/ui";
+import { Screen, Card, LinkButton } from "../../src/components/ui";
 import { useApp } from "../../src/providers/AppProvider";
 import { formStyles as s } from "../../src/components/forms";
 import { colors } from "../../src/theme";
@@ -43,6 +43,10 @@ export default function GrowthScreen() {
   return (
     <Screen>
       <Text style={s.title}>Tăng trưởng của {child?.name}</Text>
+      <LinkButton
+        title="Thêm chỉ số cho bé"
+        onPress={() => router.push("/child/measure")}
+      />
       <View style={s.wrap}>
         {["Cân nặng", "Chiều dài / chiều cao", "Vòng đầu"].map((m) => (
           <Pressable
@@ -97,7 +101,7 @@ export default function GrowthScreen() {
           </View>
         </ScrollView>
         {!filtered.length ? (
-          <Text style={s.body}>Thêm số đo từ tab Em bé → Tăng trưởng.</Text>
+          <Text style={s.body}>Bấm “Thêm chỉ số cho bé” để bắt đầu.</Text>
         ) : null}
       </Card>
     </Screen>

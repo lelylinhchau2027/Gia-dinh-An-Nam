@@ -1,8 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
-import { useSQLiteContext } from "expo-sqlite";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import { useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { DayPicker, localDay } from "../../src/components/DayPicker";
+import { assistantTools, entryToolId } from "../../src/data/assistant";
+import { AssistantIcon } from "../../src/components/AssistantIcon";
 import { AppTitle } from "../../src/components/AppTitle";
 import { CareTimelineItem } from "../../src/components/CareTimelineItem";
 import {
@@ -13,73 +15,110 @@ import {
   SectionHeader,
 } from "../../src/components/ui";
 import { careMeta, quickCareKinds } from "../../src/data/care";
-import { useApp } from "../../src/providers/AppProvider";
+import { useCareHistory } from "../../src/lib/useCareHistory";
+import { summarizeCare } from "../../src/lib/careHistory";
 import { colors, radius, spacing } from "../../src/theme";
 import type { CareEntry, CareKind } from "../../src/types";
 
 export default function TrackingScreen() {
-  const { entries: latest, child } = useApp();
-  const db = useSQLiteContext();
-  const [entries, setEntries] = useState<CareEntry[]>(latest);
+  const { entries, error, loading } = useCareHistory();
   const [limit, setLimit] = useState(80);
   const [filter, setFilter] = useState<CareKind | null>(null);
-  const [error, setError] = useState("");
-  useFocusEffect(
-    useCallback(() => {
-      if (!child) return;
-      let active = true;
-      db.getAllAsync<CareEntry>(
-        "SELECT * FROM care_entries WHERE child_id=? AND deleted_at IS NULL ORDER BY occurred_at DESC LIMIT ?",
-        child.id,
-        limit,
-      )
-        .then((rows) => {
-          if (active)
-            setEntries(
-              rows.map((r) => ({
-                ...r,
-                details:
-                  typeof r.details === "string"
-                    ? JSON.parse(r.details)
-                    : r.details,
-              })),
-            );
-        })
-        .catch(() => setError("Chưa tải được nhật ký."));
-      return () => {
-        active = false;
-      };
-    }, [db, child?.id, limit, latest]),
-  );
-  const today = new Date().toDateString();
+  const [day, setDay] = useState(localDay(new Date()));
+  const [allDays, setAllDays] = useState(false);
+  const [toolFilter, setToolFilter] = useState<string | null>(null);
   const todayEntries = entries.filter(
-    (entry) => new Date(entry.occurred_at).toDateString() === today,
+    (entry) => localDay(new Date(entry.occurred_at)) === day,
   );
-  const total = (kind: CareKind) =>
-    todayEntries
-      .filter(
-        (entry) =>
-          entry.kind === kind && (kind !== "milk" || entry.unit === "ml"),
-      )
-      .reduce((sum, entry) => sum + (entry.amount ?? 0), 0);
+  const total = summarizeCare(todayEntries);
+  const filtered = (allDays ? entries : todayEntries).filter(
+    (e) =>
+      (!filter || e.kind === filter) &&
+      (!toolFilter || entryToolId(e) === toolFilter),
+  );
 
   return (
     <Screen>
       <AppTitle
         eyebrow="Nhật ký của bé"
-        title="Theo dõi hôm nay"
+        title="Hoạt động trong ngày"
         subtitle="Mọi cập nhật của hai người xuất hiện chung trên cùng một dòng thời gian."
       />
+      <DayPicker
+        value={day}
+        onChange={(value) => {
+          setDay(value);
+          setAllDays(false);
+        }}
+      />
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ gap: 12, paddingVertical: 10 }}
+      >
+        {assistantTools
+          .filter((t) =>
+            [
+              "feeling",
+              "milk",
+              "pump",
+              "sleep",
+              "diaper",
+              "weaning",
+              "activity",
+            ].includes(t.id),
+          )
+          .map((tool) => {
+            const rows = todayEntries.filter((e) => entryToolId(e) === tool.id);
+            const value =
+              tool.id === "milk"
+                ? `${total.milk} ml`
+                : tool.id === "pump"
+                  ? `${total.pumped} ml`
+                  : tool.id === "sleep"
+                    ? `${total.sleep} phút`
+                    : `${rows.length} lần`;
+            return (
+              <Pressable
+                key={tool.id}
+                onPress={() => {
+                  setToolFilter(tool.id);
+                  setFilter(null);
+                }}
+                style={{
+                  width: 116,
+                  padding: 14,
+                  alignItems: "center",
+                  gap: 8,
+                  borderRadius: 16,
+                  backgroundColor:
+                    toolFilter === tool.id ? "#E9E2F5" : "#F7F5FA",
+                }}
+              >
+                <AssistantIcon tool={tool} />
+                <Text
+                  style={{
+                    fontFamily: "QuicksandSemiBold",
+                    textAlign: "center",
+                  }}
+                >
+                  {tool.title}
+                </Text>
+                <Text style={{ color: colors.inkMuted }}>{value}</Text>
+              </Pressable>
+            );
+          })}
+      </ScrollView>
 
       <View style={styles.summaryRow}>
         <Summary
-          label="Sữa"
-          value={`${total("milk")} ml`}
+          label="Bé uống"
+          value={`${total.milk} ml`}
           color={colors.blueSoft}
         />
         <Summary
           label="Ngủ"
-          value={`${total("sleep")} phút`}
+          value={`${total.sleep} phút`}
           color={colors.lavenderSoft}
         />
         <Summary
@@ -88,6 +127,9 @@ export default function TrackingScreen() {
           color={colors.amberSoft}
         />
       </View>
+      <Text style={{ color: colors.inkMuted }}>
+        Mẹ hút: {total.pumped} ml · Không cộng vào lượng bé đã uống
+      </Text>
 
       <SectionHeader title="Thêm hoạt động" />
       <View style={styles.kindRow}>
@@ -110,20 +152,34 @@ export default function TrackingScreen() {
 
       <SectionHeader title="Dòng thời gian" />
       <View style={styles.kindRow}>
-        <LinkButton title="Tất cả" onPress={() => setFilter(null)} />
+        <LinkButton
+          title="Tất cả mục"
+          onPress={() => {
+            setFilter(null);
+            setToolFilter(null);
+          }}
+        />
+        <LinkButton
+          title={allDays ? "✓ Mọi ngày" : "Xem mọi ngày"}
+          onPress={() => setAllDays((v) => !v)}
+        />
         {(Object.keys(careMeta) as CareKind[]).map((kind) => (
           <LinkButton
             key={kind}
             title={`${filter === kind ? "✓ " : ""}${careMeta[kind].label}`}
-            onPress={() => setFilter(kind)}
+            onPress={() => {
+              setFilter(kind);
+              setToolFilter(null);
+            }}
           />
         ))}
       </View>
       {error ? <Text>{error}</Text> : null}
+      {loading ? <Text>Đang tải nhật ký…</Text> : null}
       <Card>
-        {entries.length ? (
-          entries
-            .filter((e) => !filter || e.kind === filter)
+        {filtered.length ? (
+          filtered
+            .slice(0, limit)
             .map((entry) => <CareTimelineItem key={entry.id} entry={entry} />)
         ) : (
           <EmptyState
@@ -133,7 +189,7 @@ export default function TrackingScreen() {
           />
         )}
       </Card>
-      {entries.length >= limit ? (
+      {filtered.length > limit ? (
         <LinkButton
           title="Tải nhật ký cũ hơn"
           onPress={() => setLimit((v) => v + 80)}

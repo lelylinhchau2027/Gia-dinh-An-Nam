@@ -18,12 +18,14 @@ const {
   migrateDatabase,
   loadSnapshot,
   insertCareEntry,
+  insertCareEntries,
   getPendingOutbox,
   acknowledgeOutbox,
   mergeRemoteSnapshot,
   attachRemoteFamily,
 } = require("../src/lib/database.ts");
 const { editCare, saveChild, parseDay } = require("../src/lib/childRecords.ts");
+const { readCareHistory, summarizeCare } = require("../src/lib/careHistory.ts");
 function database() {
   const raw = new DatabaseSync(":memory:");
   return {
@@ -160,4 +162,98 @@ test("date validation rejects rollover and accepts leap dates", () => {
   assert.throws(() => parseDay("2026-13-01"));
   assert.equal(parseDay("2024-02-29"), "2024-02-29");
   assert.equal(parseDay(""), null);
+});
+
+test("multi-metric measurement is atomic, including its sync queue", async () => {
+  const db = database();
+  await migrateDatabase(db);
+  const { family, child } = await loadSnapshot(db);
+  const base = {
+    familyId: family.id,
+    childId: child.id,
+    kind: "growth",
+    occurredAt: new Date().toISOString(),
+  };
+  await insertCareEntries(db, [
+    { ...base, amount: 8, unit: "kg", details: { metric: "Cân nặng" } },
+    {
+      ...base,
+      amount: 70,
+      unit: "cm",
+      details: { metric: "Chiều dài / chiều cao" },
+    },
+    { ...base, amount: 44, unit: "cm", details: { metric: "Vòng đầu" } },
+  ]);
+  assert.equal((await readCareHistory(db, child.id)).length, 3);
+  const before = (await getPendingOutbox(db)).length;
+  const run = db.runAsync;
+  let inserts = 0;
+  db.runAsync = async (sql, ...args) => {
+    if (sql.includes("INSERT INTO care_entries") && ++inserts === 2)
+      throw new Error("simulated storage failure");
+    return run(sql, ...args);
+  };
+  await assert.rejects(
+    insertCareEntries(db, [
+      { ...base, amount: 9 },
+      { ...base, amount: 71 },
+    ]),
+    /simulated/,
+  );
+  assert.equal((await readCareHistory(db, child.id)).length, 3);
+  assert.equal((await getPendingOutbox(db)).length, before);
+  db.raw.close();
+});
+
+test("assistant history retains tool details, excludes deleted records, and separates pumped from consumed milk", async () => {
+  const db = database();
+  await migrateDatabase(db);
+  const { child, family } = await loadSnapshot(db);
+  for (const input of [
+    { kind: "milk", amount: 120, unit: "ml", details: { tool: "milk" } },
+    {
+      kind: "milk",
+      amount: 90,
+      unit: "ml",
+      details: { tool: "pump", feeding: "Hút sữa" },
+    },
+    { kind: "milk", amount: 60, unit: "ml", details: { feeding: "Hút sữa" } },
+    {
+      kind: "milk",
+      amount: 15,
+      unit: "phút",
+      details: { feeding: "Bú mẹ bên trái" },
+    },
+    { kind: "activity", details: { tool: "teeth", tooth: "Trên · Trái 1" } },
+    {
+      kind: "activity",
+      amount: 4,
+      unit: "lần",
+      details: { tool: "kick", sessionId: "draft-1" },
+    },
+  ])
+    await insertCareEntry(db, {
+      familyId: family.id,
+      childId: child.id,
+      ...input,
+    });
+  const history = await readCareHistory(db, child.id);
+  assert.equal(history.length, 6);
+  assert.equal(summarizeCare(history).milk, 120);
+  assert.equal(summarizeCare(history).pumped, 150);
+  const tooth = history.find((e) => e.details?.tool === "teeth");
+  assert.equal(tooth.details.tooth, "Trên · Trái 1");
+  await editCare(db, tooth, { deleted_at: new Date().toISOString() });
+  assert.equal((await readCareHistory(db, child.id)).length, 5);
+  assert.equal(
+    db.raw
+      .prepare(
+        "SELECT count(*) AS n FROM care_entries WHERE json_extract(details, '$.sessionId') = ?",
+      )
+      .get("draft-1").n,
+    1,
+  );
+  const queued = await getPendingOutbox(db);
+  assert.ok(queued.some((q) => JSON.parse(q.payload).details?.tool === "kick"));
+  db.raw.close();
 });

@@ -5,9 +5,13 @@ import { careMeta } from "../data/care";
 import { colors, radius, spacing } from "../theme";
 import type { CareEntry } from "../types";
 import { formatClock } from "./ui";
+import { findAssistantTool, entryToolId } from "../data/assistant";
+import { AssistantIcon } from "./AssistantIcon";
 
 export function CareTimelineItem({ entry }: { entry: CareEntry }) {
   const meta = careMeta[entry.kind];
+  const tool = findAssistantTool(entryToolId(entry));
+  const label = tool?.title ?? meta.label;
   const value =
     entry.amount !== null
       ? `${entry.amount}${entry.unit ? ` ${entry.unit}` : ""}`
@@ -15,17 +19,21 @@ export function CareTimelineItem({ entry }: { entry: CareEntry }) {
   return (
     <Pressable
       style={styles.row}
-      accessibilityLabel={`Sửa ${meta.label}`}
+      accessibilityLabel={`Sửa ${label}`}
       onPress={() =>
         router.push({ pathname: "/record/new", params: { id: entry.id } })
       }
     >
-      <View style={[styles.icon, { backgroundColor: meta.soft }]}>
-        <Ionicons name={meta.icon} size={20} color={meta.color} />
-      </View>
+      {tool ? (
+        <AssistantIcon tool={tool} size={42} />
+      ) : (
+        <View style={[styles.icon, { backgroundColor: meta.soft }]}>
+          <Ionicons name={meta.icon} size={20} color={meta.color} />
+        </View>
+      )}
       <View style={styles.content}>
         <View style={styles.line}>
-          <Text style={styles.title}>{meta.label}</Text>
+          <Text style={styles.title}>{label}</Text>
           <Text style={styles.time}>{formatClock(entry.occurred_at)}</Text>
         </View>
         <Text numberOfLines={2} style={styles.value}>
@@ -33,7 +41,15 @@ export function CareTimelineItem({ entry }: { entry: CareEntry }) {
         </Text>
         {entry.details && Object.keys(entry.details).length ? (
           <Text style={styles.author}>
-            {Object.values(entry.details).join(" · ")}
+            {Object.entries(entry.details)
+              .filter(
+                ([key]) =>
+                  !["tool", "sessionId", "endedAt", "referenceId"].includes(
+                    key,
+                  ),
+              )
+              .map(([, value]) => value)
+              .join(" · ")}
           </Text>
         ) : null}
         <Text style={styles.author}>

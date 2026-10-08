@@ -1,11 +1,11 @@
 export const colors = {
-  background: '#FFF8F0',
+  background: '#FFFFFF',
   surface: '#FFFFFF',
-  surfaceMuted: '#F6EFE7',
-  ink: '#26352E',
-  inkMuted: '#6F7C75',
-  primary: '#D96C5F',
-  primarySoft: '#F9D9D3',
+  surfaceMuted: '#F0F1F4',
+  ink: '#303B46',
+  inkMuted: '#858A91',
+  primary: '#8E70CA',
+  primarySoft: '#E9E2F5',
   sage: '#6C8B74',
   sageSoft: '#DDE9DF',
   amber: '#D99A42',
@@ -15,7 +15,7 @@ export const colors = {
   lavender: '#7A6D9B',
   lavenderSoft: '#E8E1F2',
   danger: '#B94242',
-  border: '#E9DED3',
+  border: '#ECE3E7',
   white: '#FFFFFF',
 } as const;
 
@@ -42,4 +42,3 @@ export const shadow = {
   shadowRadius: 12,
   elevation: 2,
 } as const;
-

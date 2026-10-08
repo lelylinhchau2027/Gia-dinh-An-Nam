@@ -274,6 +274,22 @@ export async function insertCareEntry(
     details?: Record<string, string>;
   },
 ): Promise<void> {
+  await insertCareEntries(db, [input]);
+}
+
+export async function insertCareEntries(
+  db: SQLiteDatabase,
+  inputs: Array<Parameters<typeof insertCareEntry>[1]>,
+): Promise<void> {
+  await db.withTransactionAsync(async () => {
+    for (const input of inputs) await insertCareEntryRow(db, input);
+  });
+}
+
+async function insertCareEntryRow(
+  db: SQLiteDatabase,
+  input: Parameters<typeof insertCareEntry>[1],
+): Promise<void> {
   const id = makeId("care");
   const now = new Date().toISOString();
   const author = await currentAuthor(db);
@@ -291,31 +307,29 @@ export async function insertCareEntry(
     created_by_name: author.displayName,
     updated_at: now,
   };
-  await db.withTransactionAsync(async () => {
-    await db.runAsync(
-      `INSERT INTO care_entries
+  await db.runAsync(
+    `INSERT INTO care_entries
        (id, family_id, child_id, kind, amount, unit, note, occurred_at,
         created_by, created_by_name, updated_at, sync_state)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
-      payload.id,
-      payload.family_id,
-      payload.child_id,
-      payload.kind,
-      payload.amount,
-      payload.unit,
-      payload.note,
-      payload.occurred_at,
-      payload.created_by,
-      payload.created_by_name,
-      payload.updated_at,
-    );
-    await db.runAsync(
-      "UPDATE care_entries SET details = ? WHERE id = ?",
-      JSON.stringify(payload.details),
-      id,
-    );
-    await enqueue(db, input.familyId, "care_entries", id, payload);
-  });
+    payload.id,
+    payload.family_id,
+    payload.child_id,
+    payload.kind,
+    payload.amount,
+    payload.unit,
+    payload.note,
+    payload.occurred_at,
+    payload.created_by,
+    payload.created_by_name,
+    payload.updated_at,
+  );
+  await db.runAsync(
+    "UPDATE care_entries SET details = ? WHERE id = ?",
+    JSON.stringify(payload.details),
+    id,
+  );
+  await enqueue(db, input.familyId, "care_entries", id, payload);
 }
 
 export async function insertMessage(
