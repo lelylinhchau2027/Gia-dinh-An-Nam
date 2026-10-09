@@ -10,7 +10,6 @@ import { AppProvider, useApp } from "../src/providers/AppProvider";
 import { migrateDatabase } from "../src/lib/database";
 import { colors } from "../src/theme";
 import { setDiagnosticScreen } from "../src/lib/crashReporting";
-import { PushRegistration } from "../src/components/PushRegistration";
 export { RecoverableError as ErrorBoundary } from "../src/components/RecoverableError";
 
 function NotificationNavigation() {
@@ -73,7 +72,6 @@ export default function RootLayout() {
     <SQLiteProvider databaseName="gia-dinh-an-nam.db" onInit={migrateDatabase}>
       <AppProvider>
         <NotificationNavigation />
-        <PushRegistration />
         <StatusBar style="dark" />
         <Stack
           screenOptions={{
@@ -99,7 +97,7 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="family/message"
-            options={{ title: "Tin nhắn gia đình" }}
+            options={{ title: "Lời nhắc gia đình" }}
           />
           <Stack.Screen
             name="family/connect"
@@ -115,6 +113,18 @@ export default function RootLayout() {
           />
           <Stack.Screen name="easy/[id]" options={{ title: "Lịch E.A.S.Y" }} />
           <Stack.Screen name="account" options={{ title: "Tài khoản" }} />
+          <Stack.Screen
+            name="family/telegram"
+            options={{ title: "Telegram" }}
+          />
+          <Stack.Screen
+            name="family/attention"
+            options={{ title: "Báo cần hỗ trợ" }}
+          />
+          <Stack.Screen
+            name="widgets"
+            options={{ title: "Tiện ích màn hình" }}
+          />
           <Stack.Screen name="child/edit" options={{ title: "Hồ sơ bé" }} />
           <Stack.Screen
             name="child/measure"

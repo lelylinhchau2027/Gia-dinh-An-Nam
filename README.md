@@ -1,5 +1,9 @@
 # Gia Đình An Nam
 
+**0.6.0 (build 7, đang kiểm thử)** chuyển sang **Telegram + nhắc cục bộ**, thay chat bằng lời nhắc có xác nhận, chọn ngày/giờ bằng nút, thêm ba kiểu widget iPhone. Xem [hướng dẫn triển khai Telegram và widget](docs/TELEGRAM_SETUP.md). Cần migration **0005**, bot, ba Functions và Cron/webhook; chưa triển khai backend thật hoặc xác minh widget trên thiết bị. Widget dữ liệu cần quyền App Group hợp lệ khi ký, không phải chỉ cài IPA là đủ.
+
+Các mục 0.5 trở về trước dưới đây lưu lịch sử; hướng dẫn APNs/chat không còn áp dụng cho bản 0.6.
+
 **0.5.1 (build 6)** cải thiện hàng đợi thông báo chat và chẩn đoán lỗi JS. Xem [hướng dẫn nâng cấp](docs/UPGRADE_0_5_1.md) và [triển khai push](docs/PUSH_NOTIFICATIONS.md). Cần migration 0004, Function/webhook/Cron và profile/APNs hợp lệ; chỉ cài IPA không tự hoàn thành cấu hình push nền.
 
 Phiên bản **0.5.0 (build 5)** bổ sung nhiều hồ sơ bé, xem ảnh toàn màn hình, chat ảnh/video và tách kiểm tra thông báo cục bộ/push. **Chat media cần migration `0003_family_chat.sql`.** Xem [hướng dẫn nâng cấp và tình trạng lỗi iPhone 11](docs/UPGRADE_0_5.md). Chưa xác định nguyên nhân crash native khi thiếu file `.ips`. Tải IPA từ artifact của lượt [Build IPA for ESign](https://github.com/lelylinhchau2027/Gia-dinh-An-Nam/actions/workflows/build-unsigned-ios.yml) thành công tương ứng với phiên bản cần cài.

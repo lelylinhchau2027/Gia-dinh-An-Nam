@@ -126,7 +126,10 @@ async function main() {
     await go("/easy/1");
     // A direct reload renders the template before the local baby is loaded.
     await page.getByText("An Nam", { exact: true }).waitFor();
-    await page.getByLabel("Giờ bắt đầu E.A.S.Y").fill("07:30");
+    await page.getByLabel("Giờ bắt đầu E.A.S.Y", { exact: true }).click();
+    await page.getByLabel("Giờ 07", { exact: true }).click();
+    await page.getByLabel("Phút 30", { exact: true }).click();
+    await page.getByText("Chọn 07:30", { exact: true }).click();
     await page.getByText("07:30", { exact: true }).first().waitFor();
     await page.getByText("Dùng lịch này cho bé", { exact: true }).click();
     await page.getByText("Đã lưu lịch cho bé", { exact: true }).waitFor();
@@ -164,24 +167,41 @@ async function main() {
       "PASS: add/switch babies, isolated diaries, selected baby survives reload",
     );
     await go("/family/message");
-    await page.getByTestId("chat-input").fill("Tin nhắn kiểm thử 0.5");
-    await page.getByTestId("send-chat").click();
-    // The textarea also contains the message while SQLite is saving. Wait for
-    // the cleared composer and a committed message bubble before reloading.
-    await page.waitForFunction(
-      () => document.querySelector('[data-testid="chat-input"]')?.value === "",
+    await page.getByText("Lời nhắc của hai người", { exact: true }).waitFor();
+    assert.equal(await page.getByTestId("chat-input").count(), 0);
+    await page.getByText("Tạo lời nhắc", { exact: true }).click();
+    await page
+      .getByPlaceholder("Lịch tiêm, khám, mua đồ…")
+      .fill("Lịch thử Telegram và cục bộ");
+    await page.getByLabel("Chọn giờ", { exact: true }).click();
+    await page.getByLabel("Giờ 23", { exact: true }).click();
+    await page.getByLabel("Phút 45", { exact: true }).click();
+    await page.getByText("Chọn 23:45", { exact: true }).click();
+    await page
+      .getByLabel("Phút 45", { exact: true })
+      .waitFor({ state: "hidden" });
+    await page
+      .getByPlaceholder("Cần chuẩn bị gì, ai hỗ trợ…")
+      .fill("Ghi chú riêng chỉ trong app");
+    await snapshot("reminder-06-picker");
+    await page.getByText("Tạo lời nhắc", { exact: true }).last().click();
+    await page.waitForURL((url) => url.pathname === "/gia-dinh");
+    await page
+      .getByText("Lịch thử Telegram và cục bộ", { exact: true })
+      .waitFor();
+    await go("/gia-dinh");
+    await page
+      .getByText("Lịch thử Telegram và cục bộ", { exact: true })
+      .waitFor();
+    await snapshot("reminder-06-list");
+    await go("/family/attention");
+    await page.getByText("Xác nhận gửi báo nhanh", { exact: true }).waitFor();
+    await go("/widgets");
+    await page.getByText("Ba kiểu tiện ích", { exact: true }).waitFor();
+    await snapshot("widgets-06-settings");
+    console.log(
+      "PASS: tap-only time, offline reminder persists, retired chat redirects, widget/attention settings",
     );
-    await page
-      .getByTestId(/^chat-message-/)
-      .filter({ hasText: "Tin nhắn kiểm thử 0.5" })
-      .waitFor();
-    await go("/family/message");
-    await page
-      .getByTestId(/^chat-message-/)
-      .filter({ hasText: "Tin nhắn kiểm thử 0.5" })
-      .waitFor();
-    await snapshot("chat-05-offline");
-    console.log("PASS: chat text persists offline after reopening");
     await page.setViewportSize({ width: 320, height: 740 });
     await go("/em-be");
     await page.getByTestId("tool-milk").scrollIntoViewIfNeeded();
@@ -201,7 +221,10 @@ async function main() {
     // This is an isolated demo profile; never inspect a signed-in family.
     console.error("Browser errors:", errors);
     if (page) {
-      console.error("Screen:", (await page.locator("body").innerText()).slice(-4000));
+      console.error(
+        "Screen:",
+        (await page.locator("body").innerText()).slice(-4000),
+      );
       await page.screenshot({ path: "build/preview/ui-smoke-failure.png" });
     }
     throw error;

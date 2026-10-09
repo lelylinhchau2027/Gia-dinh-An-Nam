@@ -45,14 +45,7 @@ if [[ -n "${EXPO_PUBLIC_SUPABASE_URL:-}" && ! "$EXPO_PUBLIC_SUPABASE_URL" =~ ^ht
   exit 2
 fi
 
-if [[ -z "${EXPO_PUBLIC_EAS_PROJECT_ID:-}" ]]; then
-  if [[ "${ALLOW_REMOTE_PUSH_DISABLED:-0}" != "1" ]]; then
-    echo "Lỗi: thiếu EXPO_PUBLIC_EAS_PROJECT_ID; Expo remote push sẽ không đăng ký được."
-    echo "Đặt ALLOW_REMOTE_PUSH_DISABLED=1 chỉ khi chủ ý build bản không có remote push."
-    exit 2
-  fi
-  echo "Cảnh báo: đang build bản không có remote push."
-fi
+# Local + Telegram does not require an EAS project or APNs credentials.
 
 
 if [[ -n "${EXPO_PUBLIC_EAS_PROJECT_ID:-}" && ! "$EXPO_PUBLIC_EAS_PROJECT_ID" =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]]; then
@@ -81,7 +74,7 @@ trap cleanup EXIT
 
 mkdir -p "$source_root" "$output_dir" "$package_root/Payload"
 
-for item in app assets src tests supabase index.js app.json package.json package-lock.json tsconfig.json metro.config.js; do
+for item in app assets src tests supabase targets index.js app.json app.config.js package.json package-lock.json tsconfig.json metro.config.js; do
   cp -R "$project_root/$item" "$source_root/"
 done
 

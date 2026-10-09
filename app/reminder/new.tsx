@@ -1,20 +1,16 @@
-import { FormInput as TextInput } from "../../src/components/FormInput";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
+import { useState } from "react";
+import { Alert } from "react-native";
+import { FamilyText as Text } from "../../src/components/FamilyText";
+import { FormInput } from "../../src/components/FormInput";
+import { DayPicker, localDay } from "../../src/components/DayPicker";
+import { TimePicker } from "../../src/components/TimePicker";
+import { Card, PrimaryButton, Screen } from "../../src/components/ui";
+import { useApp } from "../../src/providers/AppProvider";
 import { enqueue } from "../../src/lib/database";
 import { reconcileSyncedReminders } from "../../src/services/notifications";
-import { useMemo, useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
-import { PrimaryButton, Screen } from "../../src/components/ui";
-import { useApp } from "../../src/providers/AppProvider";
-import { colors, radius, spacing } from "../../src/theme";
-
-const offsets = [
-  { label: "15 phút", minutes: 15 },
-  { label: "1 giờ", minutes: 60 },
-  { label: "Tối nay", minutes: 0 },
-  { label: "Ngày mai", minutes: 24 * 60 },
-];
+import { calendarPreview } from "../../src/lib/reminderSchedule";
 
 export default function NewReminderScreen() {
   const params = useLocalSearchParams<{
@@ -24,58 +20,40 @@ export default function NewReminderScreen() {
   }>();
   const { addReminder, reminders, refresh, syncNow } = useApp();
   const existing = reminders.find((r) => r.id === params.id);
+  const initial = existing
+    ? new Date(existing.due_at)
+    : new Date(Date.now() + 3600000);
   const db = useSQLiteContext();
   const [title, setTitle] = useState(existing?.title ?? params.title ?? "");
   const [details, setDetails] = useState(
     existing?.details ?? params.details ?? "",
   );
-  const localTime = (date: Date) =>
-    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-  const [custom, setCustom] = useState(
-    existing ? localTime(new Date(existing.due_at)) : "",
+  const [day, setDay] = useState(localDay(initial));
+  const [time, setTime] = useState(
+    String(initial.getHours()).padStart(2, "0") +
+      ":" +
+      String(initial.getMinutes()).padStart(2, "0"),
   );
-  const [selected, setSelected] = useState(1);
   const [saving, setSaving] = useState(false);
-  const dueAt = useMemo(() => {
-    const option = offsets[selected]!;
-    if (option.label === "Tối nay") {
-      const date = new Date();
-      date.setHours(20, 0, 0, 0);
-      if (date.getTime() <= Date.now()) date.setDate(date.getDate() + 1);
-      return date;
-    }
-    return new Date(Date.now() + option.minutes * 60_000);
-  }, [selected]);
-
+  const dueAt = new Date(day + "T" + time + ":00");
   const save = async () => {
-    if (!title.trim()) return;
+    if (saving || !title.trim()) return;
+    if (!Number.isFinite(dueAt.getTime()) || dueAt.getTime() <= Date.now())
+      return Alert.alert("Chọn ngày giờ trong tương lai");
+    setSaving(true);
     try {
-      setSaving(true);
-      const selectedDate = custom
-        ? new Date(custom.replace(" ", "T") + ":00")
-        : dueAt;
-      if (
-        !Number.isFinite(selectedDate.getTime()) ||
-        selectedDate.getTime() <= Date.now() ||
-        (custom &&
-          (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(custom) ||
-            localTime(selectedDate) !== custom))
-      )
-        throw new Error(
-          "Chọn thời điểm hợp lệ ở tương lai, dạng YYYY-MM-DD HH:mm.",
-        );
       if (existing) {
         const payload = {
           id: existing.id,
           family_id: existing.family_id,
           title: title.trim(),
           details: details.trim() || null,
-          due_at: selectedDate.toISOString(),
+          due_at: dueAt.toISOString(),
           updated_at: new Date().toISOString(),
         };
         await db.withTransactionAsync(async () => {
           await db.runAsync(
-            "UPDATE reminders SET title=?, details=?, due_at=?, updated_at=?, sync_state='pending' WHERE id=?",
+            "UPDATE reminders SET title=?,details=?,due_at=?,updated_at=?,acknowledged_at=NULL,acknowledged_by=NULL,sync_state='pending' WHERE id=?",
             payload.title,
             payload.details,
             payload.due_at,
@@ -98,130 +76,76 @@ export default function NewReminderScreen() {
         await addReminder({
           title: title.trim(),
           details: details.trim() || null,
-          dueAt: selectedDate,
+          dueAt,
         });
       router.back();
-    } catch (error) {
+    } catch (e) {
       Alert.alert(
-        "Chưa tạo được",
-        error instanceof Error ? error.message : "Vui lòng thử lại.",
+        "Chưa lưu được",
+        e instanceof Error ? e.message : "Hãy thử lại.",
       );
     } finally {
       setSaving(false);
     }
   };
-
   return (
-    <Screen contentStyle={styles.content} keyboardShouldPersistTaps="handled">
-      <View style={styles.field}>
-        <Text style={styles.label}>Việc cần nhắc</Text>
-        <TextInput
-          value={title}
-          onChangeText={setTitle}
-          maxLength={160}
-          placeholder="Lịch tiêm, mua bỉm, uống thuốc..."
-          placeholderTextColor={colors.inkMuted}
-          style={styles.input}
-        />
-      </View>
-      <View style={styles.field}>
-        <Text style={styles.label}>Thời điểm</Text>
-        <View style={styles.options}>
-          {offsets.map((option, index) => (
-            <Pressable
-              key={option.label}
-              onPress={() => {
-                setSelected(index);
-                setCustom("");
-              }}
-              style={[
-                styles.option,
-                !custom && selected === index && styles.optionActive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.optionText,
-                  selected === index && styles.optionTextActive,
-                ]}
-              >
-                {option.label}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-        <Text style={styles.preview}>
-          {new Intl.DateTimeFormat("vi-VN", {
-            weekday: "long",
-            day: "2-digit",
-            month: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-          }).format(dueAt)}
+    <Screen>
+      <Text>Việc cần nhắc</Text>
+      <FormInput
+        value={title}
+        onChangeText={setTitle}
+        maxLength={160}
+        placeholder="Lịch tiêm, khám, mua đồ…"
+        style={{
+          minHeight: 52,
+          backgroundColor: "white",
+          padding: 14,
+          borderRadius: 12,
+        }}
+      />
+      <Text>Ngày hẹn</Text>
+      <DayPicker value={day} onChange={setDay} allowFuture />
+      <Text>
+        Giờ hẹn trên điện thoại (
+        {Intl.DateTimeFormat().resolvedOptions().timeZone})
+      </Text>
+      <TimePicker value={time} onChange={setTime} />
+      <Text>Ghi chú riêng trong An Nam</Text>
+      <FormInput
+        value={details}
+        onChangeText={setDetails}
+        maxLength={2000}
+        multiline
+        placeholder="Cần chuẩn bị gì, ai hỗ trợ…"
+        style={{
+          minHeight: 100,
+          padding: 14,
+          backgroundColor: "white",
+          borderRadius: 12,
+        }}
+      />
+      <Card>
+        <Text style={{ fontWeight: "700" }}>Các lượt thông báo dự kiến</Text>
+        <Text>
+          Khi đồng bộ: Telegram báo người còn lại có lời nhắc mới, kèm nút xác
+          nhận. Không gửi nội dung ghi chú sang Telegram.
         </Text>
-        <TextInput
-          style={styles.input}
-          value={custom}
-          onChangeText={setCustom}
-          placeholder="Hoặc nhập YYYY-MM-DD HH:mm"
-          keyboardType="numbers-and-punctuation"
-        />
-      </View>
-      <View style={styles.field}>
-        <Text style={styles.label}>Ghi chú</Text>
-        <TextInput
-          value={details}
-          onChangeText={setDetails}
-          multiline
-          placeholder="Ai làm, cần chuẩn bị gì..."
-          placeholderTextColor={colors.inkMuted}
-          style={[styles.input, styles.textarea]}
-        />
-      </View>
+        {calendarPreview(dueAt).map((line) => (
+          <Text key={line}>{line}</Text>
+        ))}
+        <Text>
+          Lịch gửi cho cả hai tài khoản đã liên kết Telegram. Nhắc cục bộ chỉ có
+          trên máy đã đồng bộ và cấp quyền. Sửa lời nhắc cần xác nhận lại; máy
+          offline có thể còn nhắc giờ cũ.
+        </Text>
+      </Card>
       <PrimaryButton
         title={
-          saving
-            ? "Đang lưu..."
-            : existing
-              ? "Lưu thay đổi giờ hẹn"
-              : "Tạo nhắc việc chung"
+          saving ? "Đang lưu…" : existing ? "Lưu thay đổi" : "Tạo lời nhắc"
         }
-        icon="notifications"
+        disabled={saving || !title.trim()}
         onPress={save}
-        disabled={!title.trim() || saving}
       />
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  content: { paddingTop: spacing.lg },
-  field: { gap: spacing.sm },
-  label: { color: colors.ink, fontWeight: "800" },
-  input: {
-    minHeight: 52,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.lg,
-    color: colors.ink,
-    fontSize: 16,
-  },
-  textarea: {
-    minHeight: 100,
-    paddingTop: spacing.md,
-    textAlignVertical: "top",
-  },
-  options: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
-  option: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: 10,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surfaceMuted,
-  },
-  optionActive: { backgroundColor: colors.primarySoft },
-  optionText: { color: colors.inkMuted, fontWeight: "700" },
-  optionTextActive: { color: colors.primary, fontWeight: "900" },
-  preview: { color: colors.primary, fontWeight: "800" },
-});

@@ -38,8 +38,8 @@ export function TabHeading({ title }: { title: string }) {
         {title}
       </Text>
       <Pressable
-        accessibilityLabel="Nhắn tin giữa bố mẹ"
-        onPress={() => router.push("/family/message")}
+        accessibilityLabel="Lời nhắc giữa bố mẹ"
+        onPress={() => router.push("/gia-dinh")}
         style={{
           width: 44,
           height: 44,
@@ -47,7 +47,7 @@ export function TabHeading({ title }: { title: string }) {
           alignItems: "center",
         }}
       >
-        <Ionicons name="chatbubbles-outline" size={24} color="#fff" />
+        <Ionicons name="notifications-outline" size={24} color="#fff" />
       </Pressable>
     </LinearGradient>
   );

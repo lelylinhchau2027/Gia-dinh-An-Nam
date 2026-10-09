@@ -179,7 +179,7 @@ async function reconcileReminders(db: SQLiteDatabase): Promise<void> {
     details: string | null;
     due_at: string;
   }>(
-    "SELECT id, title, details, due_at FROM reminders WHERE completed_at IS NULL AND due_at > ? ORDER BY due_at LIMIT 48",
+    "SELECT id, title, details, due_at FROM reminders WHERE completed_at IS NULL AND reminder_kind = 'calendar' AND due_at > ? ORDER BY due_at LIMIT 48",
     new Date().toISOString(),
   );
   const scheduled = await Notifications.getAllScheduledNotificationsAsync();

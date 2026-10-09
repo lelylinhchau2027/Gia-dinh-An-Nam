@@ -1,4 +1,5 @@
 import { FormInput as TextInput } from "../../src/components/FormInput";
+import { DayPicker } from "../../src/components/DayPicker";
 import { useState } from "react";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
@@ -167,22 +168,10 @@ function ChildEditor({
           </Pressable>
         ))}
       </View>
-      <Text style={s.label}>Ngày sinh (YYYY-MM-DD)</Text>
-      <TextInput
-        style={s.input}
-        value={birthday}
-        onChangeText={setBirthday}
-        placeholder="Để trống nếu đang mang thai"
-        keyboardType="numbers-and-punctuation"
-      />
-      <Text style={s.label}>Ngày dự sinh (YYYY-MM-DD)</Text>
-      <TextInput
-        style={s.input}
-        value={due}
-        onChangeText={setDue}
-        placeholder="Ví dụ 2027-02-15"
-        keyboardType="numbers-and-punctuation"
-      />
+      <Text style={s.label}>Ngày sinh · bỏ trống nếu đang mang thai</Text>
+      <DayPicker value={birthday} onChange={setBirthday} optional />
+      <Text style={s.label}>Ngày dự sinh</Text>
+      <DayPicker value={due} onChange={setDue} allowFuture optional />
       <PrimaryButton
         testID="save-child"
         title={busy ? "Đang lưu…" : "Lưu hồ sơ"}

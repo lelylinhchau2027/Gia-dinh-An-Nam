@@ -67,6 +67,11 @@ export type Reminder = {
   created_by: string;
   created_by_name: string;
   local_notification_id: string | null;
+  reminder_kind?: "calendar" | "attention";
+  acknowledged_by?: string | null;
+  acknowledged_at?: string | null;
+  schedule_version?: number;
+  sync_state?: "pending" | "synced" | "error";
 };
 
 export type Family = {

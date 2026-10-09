@@ -3,7 +3,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Screen, PrimaryButton } from "../../src/components/ui";
-import { FormInput } from "../../src/components/FormInput";
+import { TimePicker } from "../../src/components/TimePicker";
 import { AssistantIcon } from "../../src/components/AssistantIcon";
 import { easyTemplates, easyTypeLabels } from "../../src/data/reference";
 import { findAssistantTool } from "../../src/data/assistant";
@@ -85,16 +85,13 @@ export default function EasyDetailsScreen() {
       <View style={s.wake}>
         <Ionicons name="sunny-outline" color="#E9BB64" size={28} />
         <Text style={s.label}>Giờ bắt đầu ngày</Text>
-        <FormInput
-          accessibilityLabel="Giờ bắt đầu E.A.S.Y"
+        <TimePicker
+          label="Giờ bắt đầu E.A.S.Y"
           value={wake}
-          onChangeText={(value) => {
+          onChange={(value) => {
             setWake(value);
             setSaved(false);
           }}
-          keyboardType="numbers-and-punctuation"
-          maxLength={5}
-          style={s.timeInput}
         />
       </View>
       {timeError ? (

@@ -3,7 +3,7 @@
     "name": "Gia Đình An Nam",
     "slug": "gia-dinh-an-nam",
     "scheme": "giadinhannam",
-    "version": "0.5.1",
+    "version": "0.6.0",
     "orientation": "portrait",
     "icon": "./assets/an-nam-icon-v1.png",
     "userInterfaceStyle": "automatic",
@@ -11,11 +11,9 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "vn.giadinhanam.family",
-      "buildNumber": "6",
+      "buildNumber": "7",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "remote-notification"
-        ]
+        "UIBackgroundModes": []
       }
     },
     "android": {

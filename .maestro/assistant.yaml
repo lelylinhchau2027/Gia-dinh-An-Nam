@@ -97,27 +97,20 @@ appId: vn.giadinhanam.family
     timeout: 30000
 - assertNotVisible: '120 ml'
 - openLink: giadinhannam://family/message
-- tapOn:
-    id: chat-input
-- inputText: 'Native chat check'
-- assertVisible:
-    id: chat-input
-    text: 'Native chat check'
-- takeScreenshot: chat-keyboard
-- tapOn:
-    id: send-chat
 - extendedWaitUntil:
-    visible:
-      id: 'chat-message-.*'
+    visible: 'Lời nhắc của hai người'
     timeout: 30000
-- tapOn:
-    id: chat-keyboard-done
-- takeScreenshot: chat-saved
-- stopApp
-- launchApp
-- openLink: giadinhannam://family/message
-- extendedWaitUntil:
-    visible:
-      id: 'chat-message-.*'
-    timeout: 30000
-- takeScreenshot: chat-restored
+- assertNotVisible:
+    id: chat-input
+- tapOn: 'Tạo lời nhắc'
+- tapOn: 'Chọn giờ'
+- tapOn: 'Giờ 07'
+- tapOn: 'Phút 30'
+- tapOn: 'Chọn 07:30'
+- takeScreenshot: reminder-time-picker
+- openLink: giadinhannam://widgets
+- assertVisible: 'Ba kiểu tiện ích'
+- takeScreenshot: widget-settings
+- openLink: giadinhannam://family/attention
+- assertVisible: 'Xác nhận gửi báo nhanh'
+- takeScreenshot: attention-confirmation

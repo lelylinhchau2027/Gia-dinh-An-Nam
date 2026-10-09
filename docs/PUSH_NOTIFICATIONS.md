@@ -1,5 +1,7 @@
 # Thông báo của Gia Đình An Nam
 
+> Từ nhánh 0.6, app chuyển sang **Telegram + nhắc cục bộ**, bỏ chat và ngừng đăng ký APNs. Hãy dùng [TELEGRAM_SETUP.md](TELEGRAM_SETUP.md). Phần APNs dưới đây lưu để tham khảo lịch sử, không phải hướng dẫn triển khai bản hiện tại.
+
 Ứng dụng dùng hai lớp thông báo vì mỗi lớp giải quyết một nhu cầu khác nhau.
 
 ## 1. Nhắc đúng giờ trên chính điện thoại
@@ -118,5 +120,15 @@ Cài đặt trong app có 3 phép thử riêng: nhắc cục bộ, đăng ký to
 Không có token được giữ chờ, không báo thành công. Thử lại tối đa 12 lượt với backoff; expiry 24 giờ. Lỗi cấu hình dừng để tránh lặp vô hạn. Sau khi sửa cấu hình, ưu tiên tạo một tin mới để thử. Job thất bại/hết hạn không bị tự gửi hàng loạt lại. Bảng job/ticket không chứa bản sao nội dung chat; nội dung chỉ được đọc khi gửi. RLS chặn truy cập bảng worker từ client, chỉ cung cấp số liệu trạng thái gia đình qua RPC.
 
 Phần chat mới dùng hàng đợi server; nhắc nhật ký/công việc cũ vẫn dùng đường `notify-family` legacy. Chưa triển khai cơ chế nhắc y tế khẩn cấp, không dùng push làm kênh bảo đảm an toàn.
+
+### F. Nếu chỉ có chứng chỉ do bên khác cấp
+
+Chỉ có `.p12` và `.mobileprovision` không đồng nghĩa có quyền cấu hình App ID/APNs. Với profile thiếu quyền iOS đã kiểm tra, không thể sửa việc này bằng đổi Bundle ID hoặc thêm một chuỗi vào app.
+
+- Hướng giữ push trực tiếp trong IPA: nhờ bên cấp hỗ trợ explicit App ID, profile iOS có Push Notifications và cấu hình APNs đúng Team cho Expo. Không yêu cầu họ đăng khóa riêng trong chat hay repository.
+- Hướng không phụ thuộc chứng chỉ IPA: triển khai thêm bản web An Nam cài lên màn hình chính (PWA). iOS 16.4+ hỗ trợ Web Push cho loại app này, không yêu cầu tham gia Apple Developer Program. Đây là kênh thông báo của **bản web**, không cấp quyền APNs cho IPA; cần hosting HTTPS, service worker, đăng ký nhận thông báo và backend Web Push riêng. Bản 0.5.1 **chưa triển khai** hướng này.
+- Một ứng dụng thông báo trung gian cũng có thể là kênh bổ sung, nhưng cần thống nhất dịch vụ và dữ liệu được phép gửi ra ngoài trước khi tích hợp.
+
+Nguồn: [WebKit: Web Push trên iOS/iPadOS](https://webkit.org/blog/13878/web-push-for-web-apps-on-ios-and-ipados/).
 
 Nguồn chính thức: [Supabase scheduling](https://supabase.com/docs/guides/functions/schedule-functions), [Database webhooks](https://supabase.com/docs/guides/database/webhooks), [Expo reliability](https://docs.expo.dev/push-notifications/sending-notifications/).

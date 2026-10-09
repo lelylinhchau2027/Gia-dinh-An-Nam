@@ -20,7 +20,6 @@ import {
 } from "../../src/data/reference";
 import { isSupabaseConfigured } from "../../src/lib/supabase";
 import {
-  getRemotePushToken,
   requestNotificationPermission,
   reconcileSyncedReminders,
   testLocalNotification,
@@ -28,76 +27,21 @@ import {
 } from "../../src/services/notifications";
 import { useSQLiteContext } from "expo-sqlite";
 import Constants from "expo-constants";
-import { registerFamilyPush } from "../../src/services/familySync";
 import { useApp } from "../../src/providers/AppProvider";
 import { colors, spacing } from "../../src/theme";
 import { readCrashReport } from "../../src/lib/crashReporting";
-import { pushHealth, testServerPush } from "../../src/services/pushDiagnostics";
 
 export default function SettingsScreen() {
   const db = useSQLiteContext();
   const { pendingSyncCount, syncing, syncMessage, syncNow } = useApp();
   const [permission, setPermission] = useState("đang kiểm tra");
-  const [pushState, setPushState] = useState<string | null>(null);
   const [localState, setLocalState] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
-  const [serverState, setServerState] = useState<string | null>(null);
-  const checkServer = async (test: boolean) => {
-    if (checking) return;
-    setChecking(true);
-    try {
-      setServerState(
-        test
-          ? `${await testServerPush()}\n${await pushHealth()}`
-          : await pushHealth(),
-      );
-    } catch (e) {
-      setServerState(
-        e instanceof Error ? e.message : "Chưa kiểm tra được máy chủ.",
-      );
-    } finally {
-      setChecking(false);
-    }
-  };
-
   useEffect(() => {
     Notifications.getPermissionsAsync()
       .then((result) => setPermission(notificationPermissionLabel(result)))
       .catch(() => setPermission("chưa đọc được"));
   }, []);
-
-  const testPushSetup = async () => {
-    if (checking) return;
-    setChecking(true);
-    try {
-      await requestNotificationPermission();
-      await reconcileSyncedReminders(db);
-      if (isSupabaseConfigured) {
-        try {
-          setPushState(await registerFamilyPush());
-        } catch (error) {
-          setPushState(
-            error instanceof Error
-              ? error.message
-              : "Chưa đăng ký được thiết bị.",
-          );
-        }
-      } else {
-        const result = await getRemotePushToken();
-        setPushState(
-          result.token
-            ? "Thiết bị có token; cần cấu hình backend để lưu token."
-            : result.reason,
-        );
-      }
-      const next = await Notifications.getPermissionsAsync();
-      setPermission(notificationPermissionLabel(next));
-    } catch (e) {
-      setPushState(e instanceof Error ? e.message : "Chưa kiểm tra được push.");
-    } finally {
-      setChecking(false);
-    }
-  };
 
   return (
     <Screen>
@@ -149,7 +93,7 @@ export default function SettingsScreen() {
         <SettingRow
           icon="notifications-outline"
           title="Quyền thông báo"
-          body="Nhắc cục bộ vẫn hoạt động khi không có mạng. Remote push cần APNs provisioning."
+          body="Nhắc đã đặt trên iPhone vẫn hoạt động khi mất mạng. Hoạt động từ người nhà nhận qua Telegram."
           status={permission}
         />
         <PrimaryButton
@@ -172,30 +116,47 @@ export default function SettingsScreen() {
         />
         {localState ? <Text style={styles.helper}>{localState}</Text> : null}
         <PrimaryButton
-          title="Đăng ký push từ máy người còn lại"
+          title="Liên kết / kiểm tra Telegram"
+          onPress={() => router.push("/family/telegram")}
+        />
+        <PrimaryButton
+          title="Tiện ích ngoài màn hình"
+          onPress={() => router.push("/widgets")}
+        />
+        <PrimaryButton
+          title="Cho phép và đặt lại nhắc cục bộ"
           disabled={checking}
-          icon="shield-checkmark-outline"
-          onPress={testPushSetup}
+          onPress={async () => {
+            setChecking(true);
+            try {
+              await requestNotificationPermission();
+              await reconcileSyncedReminders(db);
+              const requests =
+                await Notifications.getAllScheduledNotificationsAsync();
+              setLocalState(
+                "Đang có " +
+                  requests.filter((r) => r.content.data?.route === "/gia-dinh")
+                    .length +
+                  "/48 lịch trên máy. Chỉ những lịch đã đặt mới có thể báo khi app đóng.",
+              );
+              setPermission(
+                notificationPermissionLabel(
+                  await Notifications.getPermissionsAsync(),
+                ),
+              );
+            } catch {
+              setLocalState(
+                "Chưa lập được lịch cục bộ. Hãy kiểm tra quyền thông báo.",
+              );
+            } finally {
+              setChecking(false);
+            }
+          }}
         />
-        {pushState ? <Text style={styles.helper}>{pushState}</Text> : null}
-        <PrimaryButton
-          title="Thử push từ máy chủ về máy này"
-          disabled={checking || !isSupabaseConfigured}
-          onPress={() => void checkServer(true)}
-        />
-        <PrimaryButton
-          title="Xem trạng thái push hai người"
-          disabled={checking || !isSupabaseConfigured}
-          onPress={() => void checkServer(false)}
-        />
-        {serverState ? (
-          <Text selectable style={styles.helper}>
-            {serverState}
-          </Text>
-        ) : null}
         <Text style={styles.helper}>
-          Nhắc đã đồng bộ được đặt lịch trên từng máy. Tin nhắn mới khi app đang
-          đóng vẫn cần push APNs; thông báo cục bộ không thay thế phần này.
+          Telegram nhắc lịch lúc 21:00 giờ Việt Nam trong 7 ngày trước sự kiện.
+          iPhone nhắc đúng giờ hẹn, tối đa 48 lịch đang chờ; mở app để nạp thêm.
+          Lời nhắc và báo cần hỗ trợ có xác nhận của người còn lại.
         </Text>
       </Card>
 

@@ -1,0 +1,46 @@
+{
+  "version": "5",
+  "remote": {
+    "https://esm.sh/@supabase/supabase-js@2.117.3": "614f9e550b12b4be7054f947cc4949ebcc0eceeb8e83f7e226cc875356e9b126"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@bacons/apple-targets@5",
+        "npm:@electric-sql/pglite@~0.5.8",
+        "npm:@expo/vector-icons@^15.0.2",
+        "npm:@react-native-async-storage/async-storage@2.2.0",
+        "npm:@supabase/supabase-js@^2.117.3",
+        "npm:@types/react@~19.2.2",
+        "npm:base64-arraybuffer@^1.0.2",
+        "npm:expo-constants@~57.0.21",
+        "npm:expo-dev-client@~57.0.19",
+        "npm:expo-device@~57.0.2",
+        "npm:expo-file-system@~57.0.7",
+        "npm:expo-font@~57.0.4",
+        "npm:expo-image-manipulator@~57.0.21",
+        "npm:expo-image-picker@~57.0.20",
+        "npm:expo-linear-gradient@~57.0.2",
+        "npm:expo-linking@~57.0.12",
+        "npm:expo-notifications@~57.0.22",
+        "npm:expo-router@~57.0.25",
+        "npm:expo-secure-store@~57.0.4",
+        "npm:expo-splash-screen@~57.0.9",
+        "npm:expo-sqlite@~57.0.4",
+        "npm:expo-status-bar@~57.0.1",
+        "npm:expo-system-ui@~57.0.4",
+        "npm:expo-video@~57.0.5",
+        "npm:expo@~57.0.27",
+        "npm:react-dom@19.2.3",
+        "npm:react-native-safe-area-context@5.7",
+        "npm:react-native-screens@4.26",
+        "npm:react-native-svg@15.15.4",
+        "npm:react-native-url-polyfill@4",
+        "npm:react-native-web@~0.21.2",
+        "npm:react-native@0.86.3",
+        "npm:react@19.2.3",
+        "npm:typescript@~6.0.3"
+      ]
+    }
+  }
+}

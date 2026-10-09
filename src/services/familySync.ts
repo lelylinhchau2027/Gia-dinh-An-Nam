@@ -1,6 +1,4 @@
-import * as SecureStore from "expo-secure-store";
 import type { SQLiteDatabase } from "expo-sqlite";
-import { Platform } from "react-native";
 import {
   acknowledgeOutbox,
   attachRemoteFamily,
@@ -9,14 +7,9 @@ import {
   rejectOutbox,
   type OutboxItem,
 } from "../lib/database";
-import { makeId } from "../lib/ids";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
-import { assertPushAccepted } from "../lib/pushResult";
-import {
-  getRemotePushToken,
-  reconcileSyncedReminders,
-  requestNotificationPermission,
-} from "./notifications";
+import { telegramAction } from "./telegram";
+import { reconcileSyncedReminders } from "./notifications";
 
 type RemoteFamily = {
   id: string;
@@ -157,96 +150,6 @@ function normalizedPayload(item: OutboxItem, familyId: string, userId: string) {
   return payload;
 }
 
-async function notifyPartner(
-  item: OutboxItem,
-  payload: Record<string, unknown>,
-) {
-  const client = configuredClient();
-  let title = "Gia Đình An Nam";
-  let body = "Có cập nhật mới trong gia đình.";
-  let route = "/";
-  if (item.entity_type === "care_entries") {
-    title = "Bé vừa có cập nhật mới";
-    body = payload.note
-      ? String(payload.note)
-      : "Mở ứng dụng để xem nhật ký chăm bé.";
-    route = "/theo-doi";
-  } else if (item.entity_type === "family_messages") {
-    title = String(payload.created_by_name ?? "Người nhà");
-    body = String(payload.body ?? body);
-    route = "/family/message";
-  } else if (item.entity_type === "reminders") {
-    title = payload.completed_at
-      ? "Một việc chung đã hoàn thành"
-      : "Có việc chung mới";
-    body = String(payload.title ?? body);
-    route = "/gia-dinh";
-  } else {
-    return;
-  }
-  const { data, error } = await client.functions.invoke("notify-family", {
-    body: {
-      family_id: payload.family_id,
-      title,
-      body,
-      data: { route, entity_id: item.entity_id },
-    },
-  });
-  if (error) throw error;
-  assertPushAccepted(data);
-}
-
-async function registerThisDevice(
-  familyId: string,
-  userId: string,
-  askPermission = true,
-): Promise<void> {
-  if (Platform.OS !== "ios" && Platform.OS !== "android")
-    throw new Error("Đăng ký thông báo trên điện thoại.");
-  const result = await getRemotePushToken(askPermission);
-  if (!result.token)
-    throw new Error(result.reason ?? "Chưa lấy được mã nhận thông báo.");
-  let deviceId = await SecureStore.getItemAsync("an_nam_device_id");
-  if (!deviceId) {
-    deviceId = makeId("device");
-    await SecureStore.setItemAsync("an_nam_device_id", deviceId);
-  }
-  const client = configuredClient();
-  if (!askPermission) {
-    const { data: existing, error: readError } = await client
-      .from("push_tokens")
-      .select("enabled")
-      .eq("user_id", userId)
-      .eq("device_id", deviceId)
-      .maybeSingle();
-    if (readError) throw readError;
-    if (existing?.enabled === false) return;
-  }
-  const { error } = await client.from("push_tokens").upsert(
-    {
-      family_id: familyId,
-      user_id: userId,
-      device_id: deviceId,
-      expo_push_token: result.token,
-      platform: Platform.OS,
-      enabled: true,
-      last_seen_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id,device_id" },
-  );
-  if (error) throw error;
-}
-
-export async function registerFamilyPush(
-  askPermission = true,
-): Promise<string> {
-  const user = await currentUser();
-  const membership = await getMembership(user.id);
-  if (!membership) throw new Error("Hãy ghép thiết bị vào gia đình trước");
-  await registerThisDevice(membership.familyId, user.id, askPermission);
-  return "Đã lưu token thiết bị. Cần thử push máy chủ để xác nhận đường Expo/APNs; đăng ký token chưa chứng minh thông báo đến máy.";
-}
-
 export async function synchronizeFamily(
   db: SQLiteDatabase,
   onDataReady?: () => Promise<void>,
@@ -300,6 +203,8 @@ export async function synchronizeFamily(
   let failed = 0;
   const blockedEntities = new Set<string>();
   for (const item of await getPendingOutbox(db)) {
+    // Retired chat: preserve pending content locally, never send it as a reminder.
+    if (item.entity_type === "family_messages") continue;
     const entityKey = `${item.entity_type}:${item.entity_id}`;
     if (blockedEntities.has(entityKey)) {
       failed += 1;
@@ -335,11 +240,7 @@ export async function synchronizeFamily(
       blockedEntities.add(entityKey);
       continue;
     }
-    await acknowledgeOutbox(
-      db,
-      item,
-      item.entity_type === "children" ? undefined : { item, payload },
-    );
+    await acknowledgeOutbox(db, item);
     uploaded += 1;
   }
 
@@ -369,27 +270,9 @@ export async function synchronizeFamily(
   });
   // Show synced chat immediately; don't wait behind slow push HTTP calls.
   await onDataReady?.();
-  let pushFailed = 0;
-  for (const row of await db.getAllAsync<{ id: string; payload: string }>(
-    "SELECT id, payload FROM push_outbox WHERE attempts < 8 LIMIT 20",
-  )) {
-    try {
-      const task = JSON.parse(row.payload);
-      await notifyPartner(task.item, task.payload);
-      await db.runAsync("DELETE FROM push_outbox WHERE id = ?", row.id);
-    } catch (e) {
-      pushFailed += 1;
-      await db.runAsync(
-        "UPDATE push_outbox SET attempts = attempts + 1, last_error = ? WHERE id = ?",
-        e instanceof Error ? e.message : "Không gửi được push",
-        row.id,
-      );
-    }
-  }
+  // Atomic server queue + webhook/Cron own delivery. Nudge without blocking sync.
+  if (uploaded) void telegramAction("process").catch(() => undefined);
   await reconcileSyncedReminders(db);
-  const stalledPush = await db.getFirstAsync<{ count: number }>(
-    "SELECT count(*) AS count FROM push_outbox WHERE attempts >= 8",
-  );
   return {
     state: "synced",
     uploaded,
@@ -400,11 +283,7 @@ export async function synchronizeFamily(
       reminders!.length,
     message: failed
       ? `Còn ${failed} thay đổi chưa gửi được. Dữ liệu vẫn lưu trên máy; hãy thử đồng bộ lại.`
-      : (stalledPush?.count ?? 0) > 0
-        ? "Dữ liệu đã đồng bộ; có thông báo đã dừng thử lại vì lỗi cấu hình. Hãy kiểm tra push ở cả hai máy."
-        : pushFailed
-          ? "Dữ liệu đã đồng bộ; thông báo đang chờ gửi lại."
-          : "Đã đồng bộ dữ liệu gia đình.",
+      : "Đã đồng bộ dữ liệu gia đình. Trạng thái Telegram xem trong Cài đặt → Telegram.",
   };
 }
 

@@ -23,34 +23,18 @@ export default function AccountScreen() {
   const [members, setMembers] = useState<
     Array<{ user_id: string; display_name: string }>
   >([]);
-  const [devices, setDevices] = useState<
-    Array<{
-      id: string;
-      platform: string;
-      last_seen_at: string;
-      enabled: boolean;
-    }>
-  >([]);
   const paired = !!family && !family.id.startsWith("family_local");
   const load = async () => {
     if (!supabase) return;
     const u = await currentUser();
     setUser(u);
     if (family && paired) {
-      const [m, d] = await Promise.all([
-        supabase
-          .from("family_members")
-          .select("user_id, display_name")
-          .eq("family_id", family.id),
-        supabase
-          .from("push_tokens")
-          .select("id, platform, last_seen_at, enabled")
-          .eq("user_id", u.id)
-          .order("last_seen_at", { ascending: false }),
-      ]);
-      if (m.error || d.error) throw m.error ?? d.error;
-      setMembers(m.data ?? []);
-      setDevices(d.data ?? []);
+      const { data, error } = await supabase
+        .from("family_members")
+        .select("user_id, display_name")
+        .eq("family_id", family.id);
+      if (error) throw error;
+      setMembers(data ?? []);
     }
   };
   useEffect(() => {
@@ -211,32 +195,15 @@ export default function AccountScreen() {
         />
       </Card>
       <Card style={s.gap}>
-        <Text style={s.label}>Điện thoại nhận thông báo của bạn</Text>
+        <Text style={s.label}>Thông báo của bạn</Text>
         <Text style={s.hint}>
-          Tắt thông báo máy cũ không đăng xuất tài khoản trên máy đó.
+          Telegram nhận hoạt động mới; lịch đã đồng bộ được nhắc cục bộ trên
+          iPhone. Đã ngừng dùng token APNs cũ.
         </Text>
-        {devices.map((d) => (
-          <View key={d.id} style={s.gap}>
-            <Text style={s.body}>
-              {d.platform} · {new Date(d.last_seen_at).toLocaleString("vi-VN")}{" "}
-              · {d.enabled ? "Đang bật" : "Đã tắt"}
-            </Text>
-            <LinkButton
-              disabled={busy}
-              title={d.enabled ? "Tắt nhận thông báo" : "Bật nhận thông báo"}
-              onPress={() =>
-                perform(async () => {
-                  const result = await supabase!
-                    .from("push_tokens")
-                    .update({ enabled: !d.enabled })
-                    .eq("id", d.id);
-                  if (result.error) throw result.error;
-                  await load();
-                })
-              }
-            />
-          </View>
-        ))}
+        <LinkButton
+          title="Quản lý Telegram"
+          onPress={() => router.push("/family/telegram")}
+        />
       </Card>
       <Text style={s.hint}>
         Để khôi phục trên máy mới: mở Tài khoản → Khôi phục tài khoản cũ, dùng

@@ -21,19 +21,14 @@ import {
   completeReminder as completeReminderInDb,
   getPendingSyncCount,
   insertCareEntry,
-  insertMessage,
   insertReminder,
   loadSnapshot,
 } from "../lib/database";
-import type {
-  AppSnapshot,
-  CareKind,
-  Reminder,
-  MessageAttachment,
-} from "../types";
+import type { AppSnapshot, CareKind, Reminder } from "../types";
 import { selectActiveChild } from "../lib/childRecords";
 import { isSupabaseConfigured } from "../lib/supabase";
 import { coalescedTask } from "../lib/syncRunner";
+import { syncWidgets } from "../services/widgets";
 import {
   subscribeFamilyChanges,
   synchronizeFamily,
@@ -56,10 +51,6 @@ type AppContextValue = AppSnapshot & {
     occurredAt?: string;
     details?: Record<string, string>;
   }) => Promise<void>;
-  sendMessage: (
-    body: string,
-    attachments?: MessageAttachment[],
-  ) => Promise<void>;
   addReminder: (input: {
     title: string;
     details?: string | null;
@@ -101,6 +92,7 @@ export function AppProvider({ children }: PropsWithChildren) {
       if (request === refreshSequence.current) {
         setSnapshot(next);
         setPendingSyncCount(pending);
+        void syncWidgets(db, next).catch(() => undefined);
       }
     } catch (nextError) {
       if (request === refreshSequence.current)
@@ -207,16 +199,6 @@ export function AppProvider({ children }: PropsWithChildren) {
     [db, refresh, snapshot.child, snapshot.family, syncNow],
   );
 
-  const sendMessage = useCallback(
-    async (body: string, attachments: MessageAttachment[] = []) => {
-      if (!snapshot.family) throw new Error("Chưa có gia đình");
-      await insertMessage(db, snapshot.family.id, body.trim(), attachments);
-      await refresh();
-      if (isSupabaseConfigured) syncNow();
-    },
-    [db, refresh, snapshot.family, syncNow],
-  );
-
   const addReminder = useCallback(
     async (input: { title: string; details?: string | null; dueAt: Date }) => {
       if (!snapshot.family) throw new Error("Chưa có gia đình");
@@ -270,7 +252,6 @@ export function AppProvider({ children }: PropsWithChildren) {
       selectChild,
       syncNow,
       addCare,
-      sendMessage,
       addReminder,
       completeReminder,
     }),
@@ -285,7 +266,6 @@ export function AppProvider({ children }: PropsWithChildren) {
       selectChild,
       syncNow,
       addCare,
-      sendMessage,
       addReminder,
       completeReminder,
     ],

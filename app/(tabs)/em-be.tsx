@@ -416,16 +416,16 @@ export default function BabyScreen() {
           </Pressable>
         </Animated.View>
         <Pressable
-          accessibilityLabel="Nhắn cho người nhà"
-          onPress={() => router.push("/family/message")}
+          accessibilityLabel="Lời nhắc cho người nhà"
+          onPress={() => router.push("/gia-dinh")}
           style={s.navButton}
         >
-          <Ionicons name="chatbubbles-outline" color="#fff" size={26} />
+          <Ionicons name="notifications-outline" color="#fff" size={26} />
           <Animated.View
             pointerEvents="none"
             style={[s.chatCircle, { opacity: expandedOpacity }]}
           >
-            <Ionicons name="chatbubbles-outline" color="#A0A0A0" size={27} />
+            <Ionicons name="notifications-outline" color="#A0A0A0" size={27} />
           </Animated.View>
         </Pressable>
       </View>

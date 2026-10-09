@@ -29,17 +29,16 @@ jobs:
           missing=()
           [[ -n "${EXPO_PUBLIC_SUPABASE_URL:-}" ]] || missing+=(EXPO_PUBLIC_SUPABASE_URL)
           [[ -n "${EXPO_PUBLIC_SUPABASE_ANON_KEY:-}" ]] || missing+=(EXPO_PUBLIC_SUPABASE_ANON_KEY)
-          [[ -n "${EXPO_PUBLIC_EAS_PROJECT_ID:-}" ]] || missing+=(EXPO_PUBLIC_EAS_PROJECT_ID)
           if (( ${#missing[@]} > 0 )); then
             echo "::error::Thiếu GitHub Actions secret: ${missing[*]}"
-            echo "Mở Settings → Secrets and variables → Actions để thêm đủ 3 secret."
+            echo "Mở Settings → Secrets and variables → Actions để thêm các secret Supabase."
             exit 1
           fi
           if [[ ! "$EXPO_PUBLIC_SUPABASE_URL" =~ ^https://[^/]+\.supabase\.co/?$ ]]; then
             echo "::error::EXPO_PUBLIC_SUPABASE_URL không đúng dạng https://PROJECT.supabase.co"
             exit 1
           fi
-          if [[ ! "$EXPO_PUBLIC_EAS_PROJECT_ID" =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]]; then
+          if [[ -n "${EXPO_PUBLIC_EAS_PROJECT_ID:-}" && ! "$EXPO_PUBLIC_EAS_PROJECT_ID" =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]]; then
             echo "::error::EXPO_PUBLIC_EAS_PROJECT_ID phải là UUID của Expo project."
             exit 1
           fi
@@ -81,6 +80,17 @@ jobs:
             echo "::error::Bundle ID không đúng: $bundle_id"
             exit 1
           fi
+          widget_info=$(unzip -Z1 "$ipa" | grep -E -m 1 '^Payload/[^/]+\.app/PlugIns/AnNamWidgets\.appex/Info\.plist$' || true)
+          if [[ -z "$widget_info" ]]; then
+            echo "::error::IPA thiếu phần mở rộng AnNamWidgets.appex"
+            exit 1
+          fi
+          unzip -p "$ipa" "$widget_info" > "$RUNNER_TEMP/AnNamWidget-Info.plist"
+          widget_id=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$RUNNER_TEMP/AnNamWidget-Info.plist")
+          if [[ "$widget_id" != "vn.giadinhanam.family.widget" ]]; then
+            echo "::error::Widget bundle ID không đúng"
+            exit 1
+          fi
           version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/GiaDinhAnNam-Info.plist")
           size=$(du -h "$ipa" | awk '{ print $1 }')
           {
@@ -91,6 +101,7 @@ jobs:
             echo "- Phiên bản: \`$version\`"
             echo "- Dung lượng: \`$size\`"
             echo "- Trạng thái: chưa ký, sẵn sàng nhập vào ESign"
+            echo "- Widget: đã đóng gói AnNamWidgets.appex; cần ký cả extension và giữ App Group để đọc dữ liệu bé"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload unsigned IPA

@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Keyboard,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export function localDay(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -8,10 +15,12 @@ export function DayPicker({
   value,
   onChange,
   allowFuture = false,
+  optional = false,
 }: {
   value: string;
   onChange: (day: string) => void;
   allowFuture?: boolean;
+  optional?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState(new Date());
@@ -25,12 +34,17 @@ export function DayPicker({
         accessibilityRole="button"
         accessibilityLabel="Chọn ngày"
         onPress={() => {
-          setMonth(new Date(`${value}T12:00:00`));
+          Keyboard.dismiss();
+          const parsed = new Date(`${value}T12:00:00`);
+          setMonth(Number.isFinite(parsed.getTime()) ? parsed : new Date());
           setOpen(true);
         }}
         style={s.input}
       >
-        <Text style={s.text}>▦　{value.split("-").reverse().join("/")}　⌄</Text>
+        <Text style={s.text}>
+          ▦　{value ? value.split("-").reverse().join("/") : "Chưa chọn ngày"}
+          　⌄
+        </Text>
       </Pressable>
       <Modal
         transparent
@@ -41,6 +55,39 @@ export function DayPicker({
         <View style={s.overlay}>
           <View style={s.panel}>
             <View style={s.row}>
+              <Pressable
+                style={s.button}
+                onPress={() =>
+                  setMonth(
+                    new Date(month.getFullYear() - 1, month.getMonth(), 1),
+                  )
+                }
+              >
+                <Text style={s.text}>« Năm trước</Text>
+              </Pressable>
+              <Pressable
+                style={s.button}
+                onPress={() =>
+                  setMonth(
+                    new Date(month.getFullYear() + 1, month.getMonth(), 1),
+                  )
+                }
+              >
+                <Text style={s.text}>Năm sau »</Text>
+              </Pressable>
+            </View>
+            <View style={s.row}>
+              {optional && (
+                <Pressable
+                  style={s.button}
+                  onPress={() => {
+                    onChange("");
+                    setOpen(false);
+                  }}
+                >
+                  <Text style={s.text}>Bỏ ngày</Text>
+                </Pressable>
+              )}
               <Pressable
                 style={s.button}
                 accessibilityLabel="Tháng trước"

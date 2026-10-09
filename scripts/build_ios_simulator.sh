@@ -17,7 +17,7 @@ source_root="$native_work_root/source"
 output_dir="$project_root/build/simulator"
 mkdir -p "$source_root" "$output_dir"
 # Clean prebuild only operates on a newly-created copy, never the user's ios/.
-for item in app assets src tests supabase index.js app.json package.json package-lock.json tsconfig.json metro.config.js; do
+for item in app assets src tests supabase targets index.js app.json app.config.js package.json package-lock.json tsconfig.json metro.config.js; do
   cp -R "$project_root/$item" "$source_root/"
 done
 cd "$source_root"

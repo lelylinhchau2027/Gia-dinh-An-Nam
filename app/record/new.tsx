@@ -1,4 +1,5 @@
 import { FormInput as TextInput } from "../../src/components/FormInput";
+import { TimePicker } from "../../src/components/TimePicker";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
@@ -310,13 +311,11 @@ function RecordForm({ existing }: { existing?: CareEntry }) {
             value={time.slice(0, 10)}
             onChange={(day) => setTime(day + time.slice(10))}
           />
-          <Text>Giờ (HH:mm)</Text>
-          <TextInput
-            style={styles.input}
+          <Text>Giờ ghi nhận</Text>
+          <TimePicker
             value={time.slice(11)}
-            onChangeText={(value) => setTime(time.slice(0, 10) + " " + value)}
-            accessibilityLabel="Giờ ghi nhận"
-            keyboardType="numbers-and-punctuation"
+            onChange={(value) => setTime(time.slice(0, 10) + " " + value)}
+            label="Giờ ghi nhận"
           />
           <LinkButton
             title="Lấy giờ hiện tại"

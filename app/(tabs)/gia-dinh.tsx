@@ -1,209 +1,139 @@
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Alert, View } from "react-native";
+import { FamilyText as Text } from "../../src/components/FamilyText";
 import { AppTitle } from "../../src/components/AppTitle";
 import {
   Card,
-  EmptyState,
-  LinkButton,
   PrimaryButton,
   Screen,
   SectionHeader,
   formatDateTime,
 } from "../../src/components/ui";
 import { useApp } from "../../src/providers/AppProvider";
-import { colors, radius, spacing } from "../../src/theme";
+import { telegramAction } from "../../src/services/telegram";
 
 export default function FamilyScreen() {
-  const { family, messages, reminders, completeReminder } = useApp();
+  const { family, reminders, currentUserId, completeReminder, syncNow } =
+    useApp();
+  const [busy, setBusy] = useState<string | null>(null);
+  const action = async (id: string, work: () => Promise<unknown>) => {
+    if (busy) return;
+    setBusy(id);
+    try {
+      await work();
+      await syncNow();
+    } catch (e) {
+      Alert.alert(
+        "Chưa cập nhật được",
+        e instanceof Error ? e.message : "Hãy kiểm tra mạng.",
+      );
+    } finally {
+      setBusy(null);
+    }
+  };
   return (
     <Screen>
       <AppTitle
-        eyebrow="Không gian của hai người"
-        title="Cùng chăm con"
-        subtitle="Nhắn nhanh, phân công và nhắc nhau ngay trong một nơi."
+        eyebrow={family?.name ?? "Gia đình"}
+        title="Lời nhắc của hai người"
+        subtitle="Giao việc rõ ràng · xác nhận đã nhận · cùng theo dõi đến khi hoàn thành"
       />
-
-      <Card style={styles.familyCard}>
-        <View style={styles.familyIcon}>
-          <Ionicons name="people" size={28} color={colors.sage} />
-        </View>
-        <View style={styles.grow}>
-          <Text style={styles.familyName}>{family?.name}</Text>
-          <Text style={styles.codeLabel}>Mã ghép đôi</Text>
-          <Text selectable style={styles.code}>
-            {family?.pairing_code}
-          </Text>
-        </View>
-        <View style={styles.memberStack}>
-          <View
-            style={[styles.member, { backgroundColor: colors.primarySoft }]}
-          >
-            <Text>Ba</Text>
-          </View>
-          <View
-            style={[
-              styles.member,
-              styles.memberSecond,
-              { backgroundColor: colors.sageSoft },
-            ]}
-          >
-            <Text>Mẹ</Text>
-          </View>
-        </View>
-      </Card>
       <PrimaryButton
-        title="Tạo hoặc nhập mã ghép đôi"
+        title="Tạo lời nhắc"
+        icon="add-circle-outline"
+        onPress={() => router.push("/reminder/new")}
+      />
+      <PrimaryButton
+        title="Báo người nhà: cần hỗ trợ ngay"
+        icon="alert-circle-outline"
+        onPress={() => router.push("/family/attention")}
+      />
+      <PrimaryButton
+        title="Liên kết / kiểm tra Telegram"
+        onPress={() => router.push("/family/telegram")}
+      />
+      <SectionHeader title="Lời nhắc & lịch gia đình" />
+      {!reminders.length && (
+        <Card>
+          <Text>
+            Chưa có lời nhắc. Tạo lịch hoặc việc cần người còn lại hỗ trợ.
+          </Text>
+        </Card>
+      )}
+      {reminders.map((r) => (
+        <Card key={r.id}>
+          <Text style={{ fontSize: 18, fontWeight: "700" }}>{r.title}</Text>
+          <Text>
+            {formatDateTime(r.due_at)} · {r.created_by_name}
+          </Text>
+          {!!r.details && <Text>{r.details}</Text>}
+          <Text>
+            {r.sync_state === "pending"
+              ? "Đang chờ đồng bộ — chưa báo người nhà"
+              : r.acknowledged_at
+                ? "Đã nhận lúc " + formatDateTime(r.acknowledged_at)
+                : "Chưa được người còn lại xác nhận"}
+          </Text>
+          <Text>
+            {r.completed_at
+              ? "Đã hoàn thành · " + formatDateTime(r.completed_at)
+              : "Chưa hoàn thành"}
+          </Text>
+          {!r.completed_at && (
+            <View style={{ gap: 8 }}>
+              {r.created_by !== currentUserId && !r.acknowledged_at && (
+                <PrimaryButton
+                  title="Tôi đã nhận lời nhắc"
+                  disabled={!!busy || r.sync_state === "pending"}
+                  onPress={() =>
+                    void action(r.id, () =>
+                      telegramAction("acknowledge", {
+                        id: r.id,
+                        revision: r.schedule_version ?? 1,
+                      }),
+                    )
+                  }
+                />
+              )}
+              <PrimaryButton
+                title="Đánh dấu đã hoàn thành"
+                disabled={!!busy}
+                onPress={() =>
+                  Alert.alert(
+                    "Đã hoàn thành?",
+                    "Chỉ chọn khi việc thực sự đã làm xong. Các lượt nhắc tương lai sẽ dừng.",
+                    [
+                      { text: "Chưa", style: "cancel" },
+                      {
+                        text: "Đã xong",
+                        onPress: () =>
+                          void action(r.id, () => completeReminder(r)),
+                      },
+                    ],
+                  )
+                }
+              />
+              {r.reminder_kind !== "attention" && (
+                <PrimaryButton
+                  title="Sửa lời nhắc / giờ hẹn"
+                  onPress={() =>
+                    router.push({
+                      pathname: "/reminder/new",
+                      params: { id: r.id },
+                    })
+                  }
+                />
+              )}
+            </View>
+          )}
+        </Card>
+      ))}
+      <PrimaryButton
+        title="Ghép hai thiết bị"
         icon="link-outline"
         onPress={() => router.push("/family/connect")}
       />
-
-      <SectionHeader
-        title="Việc chung"
-        action={
-          <LinkButton
-            title="Tạo việc"
-            onPress={() => router.push("/reminder/new")}
-          />
-        }
-      />
-      <Card>
-        {reminders.length ? (
-          reminders.map((item) => (
-            <Pressable
-              key={item.id}
-              disabled={Boolean(item.completed_at)}
-              onLongPress={() =>
-                router.push({
-                  pathname: "/reminder/new",
-                  params: { id: item.id },
-                })
-              }
-              onPress={() =>
-                Alert.alert(item.title, "Chọn thao tác với nhắc việc.", [
-                  { text: "Đóng", style: "cancel" },
-                  {
-                    text: "Sửa giờ hẹn",
-                    onPress: () =>
-                      router.push({
-                        pathname: "/reminder/new",
-                        params: { id: item.id },
-                      }),
-                  },
-                  {
-                    text: "Đã hoàn thành",
-                    onPress: () => {
-                      void completeReminder(item).catch(() =>
-                        Alert.alert("Chưa cập nhật được"),
-                      );
-                    },
-                  },
-                ])
-              }
-              style={styles.taskRow}
-            >
-              <Ionicons
-                name={
-                  item.completed_at ? "checkmark-circle" : "ellipse-outline"
-                }
-                size={24}
-                color={item.completed_at ? colors.sage : colors.amber}
-              />
-              <View style={styles.grow}>
-                <Text
-                  style={[styles.taskTitle, item.completed_at && styles.done]}
-                >
-                  {item.title}
-                </Text>
-                <Text style={styles.taskMeta}>
-                  {formatDateTime(item.due_at)} · {item.created_by_name}
-                </Text>
-              </View>
-            </Pressable>
-          ))
-        ) : (
-          <EmptyState
-            icon="checkbox-outline"
-            title="Chưa có việc chung"
-            body="Tạo lịch tiêm, mua đồ hoặc việc cần người còn lại thực hiện."
-          />
-        )}
-      </Card>
-
-      <SectionHeader
-        title="Lời nhắn"
-        action={
-          <LinkButton
-            title="Viết lời nhắn"
-            onPress={() => router.push("/family/message")}
-          />
-        }
-      />
-      <View style={styles.messages}>
-        {messages.map((message) => (
-          <View key={message.id} style={styles.messageBubble}>
-            <Text style={styles.messageBody}>{message.body}</Text>
-            <Text style={styles.messageMeta}>
-              {message.created_by_name} · {formatDateTime(message.created_at)}
-            </Text>
-          </View>
-        ))}
-      </View>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  familyCard: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  familyIcon: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: colors.sageSoft,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  grow: { flex: 1 },
-  familyName: { color: colors.ink, fontWeight: "900", fontSize: 18 },
-  codeLabel: { color: colors.inkMuted, fontSize: 11, marginTop: 4 },
-  code: {
-    color: colors.primary,
-    fontWeight: "900",
-    letterSpacing: 1.2,
-    marginTop: 2,
-  },
-  memberStack: { flexDirection: "row", width: 66 },
-  member: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  memberSecond: {
-    marginLeft: -10,
-    borderWidth: 2,
-    borderColor: colors.surface,
-  },
-  taskRow: {
-    flexDirection: "row",
-    gap: spacing.md,
-    alignItems: "center",
-    paddingVertical: spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
-  },
-  taskTitle: { color: colors.ink, fontWeight: "800" },
-  taskMeta: { color: colors.inkMuted, fontSize: 12, marginTop: 4 },
-  done: { textDecorationLine: "line-through", color: colors.inkMuted },
-  messages: { gap: spacing.md },
-  messageBubble: {
-    alignSelf: "stretch",
-    padding: spacing.lg,
-    backgroundColor: colors.sageSoft,
-    borderRadius: radius.lg,
-    borderBottomLeftRadius: radius.sm,
-  },
-  messageBody: { color: colors.ink, lineHeight: 21, fontSize: 15 },
-  messageMeta: { color: colors.inkMuted, fontSize: 11, marginTop: spacing.sm },
-});

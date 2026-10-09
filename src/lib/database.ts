@@ -114,6 +114,12 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
     children: ["avatar_path TEXT", "cover_path TEXT"],
     family_messages: ["attachments TEXT NOT NULL DEFAULT '[]'"],
     care_entries: ["details TEXT NOT NULL DEFAULT '{}'", "deleted_at TEXT"],
+    reminders: [
+      "reminder_kind TEXT NOT NULL DEFAULT 'calendar'",
+      "acknowledged_by TEXT",
+      "acknowledged_at TEXT",
+      "schedule_version INTEGER NOT NULL DEFAULT 1",
+    ],
   })) {
     const columns = await db.getAllAsync<{ name: string }>(
       `PRAGMA table_info(${table})`,
@@ -220,9 +226,10 @@ export async function loadSnapshot(db: SQLiteDatabase): Promise<AppSnapshot> {
   const reminders = family
     ? await db.getAllAsync<Reminder>(
         `SELECT id, family_id, child_id, title, details, due_at, completed_at,
-                created_by, created_by_name, local_notification_id
+                created_by, created_by_name, local_notification_id, reminder_kind,
+                acknowledged_by, acknowledged_at, schedule_version, sync_state
          FROM reminders WHERE family_id = ?
-         ORDER BY completed_at IS NOT NULL, due_at ASC LIMIT 50`,
+         ORDER BY completed_at IS NOT NULL, due_at ASC`,
         family.id,
       )
     : [];
@@ -477,7 +484,7 @@ export async function completeReminder(
 
 export async function getPendingSyncCount(db: SQLiteDatabase): Promise<number> {
   const row = await db.getFirstAsync<{ count: number }>(
-    "SELECT COUNT(*) AS count FROM sync_outbox",
+    "SELECT COUNT(*) AS count FROM sync_outbox WHERE entity_type <> 'family_messages'",
   );
   return row?.count ?? 0;
 }
@@ -800,6 +807,15 @@ export async function mergeRemoteSnapshot(
         reminder.created_by,
         reminder.created_by_name,
         reminder.updated_at,
+      );
+      // Acknowledgement is server-owned and must not be overwritten by offline edits.
+      await db.runAsync(
+        "UPDATE reminders SET acknowledged_by=?, acknowledged_at=?, schedule_version=?, reminder_kind=? WHERE id=? AND sync_state <> 'pending'",
+        reminder.acknowledged_by ?? null,
+        reminder.acknowledged_at ?? null,
+        reminder.schedule_version ?? 1,
+        reminder.reminder_kind ?? "calendar",
+        reminder.id,
       );
     }
   });
