@@ -4,6 +4,10 @@
 
 Phiên bản mã nguồn là **0.5.0, build 5**. Trạng thái build và IPA nằm tại [Build IPA for ESign](https://github.com/lelylinhchau2027/Gia-dinh-An-Nam/actions/workflows/build-unsigned-ios.yml); chọn lượt thành công đúng commit/phiên bản, tải artifact `gia-dinh-an-nam-unsigned-ipa` và giải nén. IPA chưa ký, giữ nguyên Bundle ID khi ký/cài đè.
 
+**IPA 0.5 đã build thành công** từ commit `df1813b`: [lượt 37873030940](https://github.com/lelylinhchau2027/Gia-dinh-An-Nam/actions/runs/37873030940). Đã tải artifact về, kiểm tra toàn vẹn ZIP, checksum, phiên bản `0.5.0`/build `5` và Bundle ID `vn.giadinhanam.family`. SHA-256: `a07ffc48c6cef9b903cf398d4c3047cad5ef67280d16d6e582137365b5cb228e`.
+
+**Yêu cầu iOS 16.4 trở lên**, theo `MinimumOSVersion` trong Info.plist của IPA thực tế. IPA 0.4 từ lượt `37804028005` cũng là 16.4, không phải yêu cầu mới phát sinh ở bản 0.5. Cần biết chính xác iOS trên iPhone 11 để đánh giá tương thích; việc TrollStore cho cài không đủ chứng minh app chạy được trên iOS thấp hơn. Chưa hạ SDK/đổi deployment target hoặc khẳng định đây là nguyên nhân crash.
+
 Người dùng báo máy iPhone 11 jailbreak/cài TrollStore ghép gia đình thành công nhưng tắt app khi mở Em bé hoặc đăng bài. Chưa có phiên bản iOS và file crash `.ips`, nên **chưa xác định nguyên nhân native và chưa xác nhận đã sửa dứt điểm**. Không quy lỗi cho TrollStore chỉ từ cách cài đặt.
 
 Các thay đổi phòng vệ đã làm:
@@ -79,5 +83,7 @@ Test gồm migration giữ dữ liệu cũ, chọn hai bé và tách nhật ký,
 Kiểm thử tại máy phát triển ngày 09/10/2026: TypeScript đạt; **23/23 test đạt**; browser smoke test đạt các luồng nhật ký, E.A.S.Y, huy chương/răng, thêm/chuyển hai bé không lẫn dữ liệu, tin nhắn cục bộ còn sau tải lại, bố cục 320 px và không có lỗi JavaScript chưa bắt. Đây không phải kiểm thử đồng bộ trên hai iPhone thật.
 
 Browser test không dùng tài khoản gia đình thật; không thay thế việc thử native. Có thể chạy `Check iOS UI` và `Build IPA for ESign` sau khi push. Bản mới thêm module native phát video, nên phải build/cài IPA mới; bundle JS riêng không đủ.
+
+Lượt Simulator `37872618539` dừng ở tải npm do `ECONNRESET`, chưa chạy ứng dụng. [Lượt kiểm tra thay thế 37873033281](https://github.com/lelylinhchau2027/Gia-dinh-An-Nam/actions/runs/37873033281) dùng commit `df1813b`; lúc xác minh IPA, lượt này còn đang chạy. Vì vậy chưa ghi nhận bàn phím/native UI đã đạt chỉ dựa vào build IPA thành công.
 
 Trên máy thật: thử mở Em bé ngay sau ghép; chuyển qua lại hai bé; tạo một bản ghi ở mỗi bé và so trên máy kia; xem ảnh bài đăng ngang/dọc và toàn màn hình; gửi tin khi mất mạng; gửi ảnh/video và kiểm tra ở máy kia; thử bàn phím số/multiline; thử cả hai nút thông báo. Giữ Bundle ID và cài đè, không gỡ app trước khi bảo đảm dữ liệu đã đồng bộ.
