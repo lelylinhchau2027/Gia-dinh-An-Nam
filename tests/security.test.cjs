@@ -62,7 +62,7 @@ test("migrations execute and enforce family isolation for posts, likes, comments
     },
   ];
   await pg.query(
-    "insert into public.family_messages(id,family_id,created_by,created_by_name,body,attachments) values ('media-message',$1,$2,'Ba','Video',$3)",
+    "insert into public.family_messages(id,family_id,created_by,created_by_name,body,attachments,created_at) values ('media-message',$1,$2,'Ba','Video',$3,'2026-10-08T10:00:00Z')",
     [f, a, JSON.stringify(media)],
   );
   await assert.rejects(() =>
@@ -99,12 +99,45 @@ test("migrations execute and enforce family isolation for posts, likes, comments
       .attachments[0].path,
     media[0].path,
   );
-  await pg.query("select public.mark_family_messages_read($1)", [f]);
+  await pg.query(
+    "select public.mark_family_messages_read($1,'media-message')",
+    [f],
+  );
   assert.equal(
     (await pg.query("select user_id from public.family_message_reads")).rows[0]
       .user_id,
     b,
   );
+  assert.equal(
+    new Date(
+      (await pg.query("select last_read_at from public.family_message_reads"))
+        .rows[0].last_read_at,
+    ).toISOString(),
+    "2026-10-08T10:00:00.000Z",
+    "reading cached history acknowledges only the displayed message, not the current server time",
+  );
+  await asUser(a);
+  await assert.rejects(() =>
+    pg.query("select public.mark_family_messages_read($1,'media-message')", [
+      f,
+    ]),
+  );
+  await pg.query(
+    "insert into public.family_messages(id,family_id,created_by,created_by_name,body,created_at) values ('newer-message',$1,$2,'Ba','Mới','2026-10-08T11:00:00Z')",
+    [f, a],
+  );
+  await asUser(b);
+  for (const id of ["newer-message", "media-message"]) {
+    await pg.query("select public.mark_family_messages_read($1,$2)", [f, id]);
+    assert.equal(
+      new Date(
+        (await pg.query("select last_read_at from public.family_message_reads"))
+          .rows[0].last_read_at,
+      ).toISOString(),
+      "2026-10-08T11:00:00.000Z",
+      "stale acknowledgements cannot move the read receipt backwards",
+    );
+  }
   await assert.rejects(() =>
     pg.query(
       "insert into public.family_message_reads(family_id,user_id) values ($1,$2)",
@@ -166,7 +199,9 @@ test("migrations execute and enforce family isolation for posts, likes, comments
     ),
   );
   await assert.rejects(() =>
-    pg.query("select public.mark_family_messages_read($1)", [f]),
+    pg.query("select public.mark_family_messages_read($1,'media-message')", [
+      f,
+    ]),
   );
   await asUser(a);
   await pg.query("delete from public.family_posts where id=$1", [post]);

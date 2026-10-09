@@ -47,13 +47,22 @@ create policy "member updates own read time" on public.family_message_reads for 
 using (public.is_family_member(family_id) and user_id=auth.uid())
 with check (public.is_family_member(family_id) and user_id=auth.uid());
 
-create function public.mark_family_messages_read(p_family_id uuid) returns void
-language sql security invoker set search_path='' as $$
+create function public.mark_family_messages_read(p_family_id uuid, p_last_message_id text) returns void
+language plpgsql security invoker set search_path='' as $$
+declare seen_at timestamptz;
+begin
+  -- A device opening cached history must not mark unseen server messages read.
+  -- Resolve the last displayed incoming message under the caller's RLS policy.
+  select created_at into seen_at from public.family_messages
+  where id=p_last_message_id and family_id=p_family_id and created_by<>auth.uid();
+  if not found then raise exception 'Không tìm thấy tin nhắn đã xem trong gia đình'; end if;
   insert into public.family_message_reads(family_id,user_id,last_read_at)
-  values(p_family_id,auth.uid(),now())
-  on conflict(family_id,user_id) do update set last_read_at=excluded.last_read_at;
+  values(p_family_id,auth.uid(),seen_at)
+  on conflict(family_id,user_id) do update
+  set last_read_at=greatest(public.family_message_reads.last_read_at,excluded.last_read_at);
+end;
 $$;
-revoke all on function public.mark_family_messages_read(uuid) from public,anon;
-grant execute on function public.mark_family_messages_read(uuid) to authenticated;
+revoke all on function public.mark_family_messages_read(uuid,text) from public,anon;
+grant execute on function public.mark_family_messages_read(uuid,text) to authenticated;
 alter publication supabase_realtime add table public.family_message_reads;
 commit;

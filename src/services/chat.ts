@@ -113,9 +113,10 @@ export async function partnerReadTime(
   return data?.[0]?.last_read_at ?? null;
 }
 
-export async function markChatRead(familyId: string) {
+export async function markChatRead(familyId: string, lastMessageId: string) {
   const { error } = await client().rpc("mark_family_messages_read", {
     p_family_id: familyId,
+    p_last_message_id: lastMessageId,
   });
   if (error) throw error;
 }

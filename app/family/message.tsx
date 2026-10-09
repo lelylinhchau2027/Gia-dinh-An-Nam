@@ -131,7 +131,7 @@ export default function MessageScreen() {
   }, [focused, paired, familyId, syncNow, refreshRead]);
   useEffect(() => {
     if (focused && active && paired && nearBottom && familyId && latestIncoming)
-      void markChatRead(familyId).catch(() => undefined);
+      void markChatRead(familyId, latestIncoming).catch(() => undefined);
   }, [focused, active, paired, nearBottom, familyId, latestIncoming]);
   const addMedia = async (kind: "image" | "video") => {
     if (lock.current) return;

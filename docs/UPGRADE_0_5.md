@@ -44,6 +44,7 @@ Chưa áp dụng migration lên Supabase thật từ môi trường phát triể
 - Chạm ảnh để mở toàn màn hình; iOS hỗ trợ chụm hai ngón phóng to. Ảnh tải lên vẫn được nén để chia sẻ, không phải bản gốc nguyên byte.
 - Nút trò chuyện trên Bảng tin/Em bé mở cuộc trò chuyện hai người: bong bóng trái/phải, giờ gửi, chờ gửi/đã gửi/đã đọc, tải tin cũ hơn.
 - Tin văn bản lưu vào SQLite trước, còn khi mất mạng sẽ chờ đồng bộ. “Đã gửi” nghĩa là server đã nhận, không tự coi là người kia đã đọc.
+- Trạng thái đọc chỉ xác nhận đến tin đã tải và hiển thị khi hội thoại đang mở ở cuối danh sách, không xác nhận mọi tin trên server chỉ vì mở lịch sử lưu trên máy.
 - Mỗi tin tối đa 4 ảnh/video; video MP4/MOV tối đa 25 MB. Media cần mạng để tải lên trước khi gửi. Video trên iOS dùng upload nhị phân native, không chuyển toàn bộ video thành base64 trong JavaScript.
 - Video chỉ khởi tạo trình phát khi mở toàn màn hình; đóng màn hình sẽ giải phóng trình phát. Không tự phát mọi video trong danh sách.
 - Ô soạn nằm ở đáy và có xử lý nâng lên cùng bàn phím. Cần nghiệm thu lại trên hai iPhone thật.
