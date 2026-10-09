@@ -54,6 +54,17 @@ export function notificationAllowed(
   );
 }
 
+export function notificationPermissionLabel(
+  value: Notifications.NotificationPermissionsStatus,
+) {
+  if (value.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL)
+    return "Tạm thời: có thể chỉ vào trung tâm thông báo, không báo ngay";
+  if (!notificationAllowed(value)) return "Chưa cho phép";
+  if (value.ios?.allowsAlert === false || value.ios?.allowsSound === false)
+    return "Đã cấp quyền nhưng đang tắt cảnh báo hoặc âm thanh";
+  return "Đã cho phép; cần kiểm tra thêm Focus/Tóm tắt thông báo";
+}
+
 export async function testLocalNotification() {
   await prepareNotifications();
   if (!(await requestNotificationPermission()))
@@ -106,14 +117,16 @@ export async function cancelLocalReminder(id: string | null): Promise<void> {
   if (id) await Notifications.cancelScheduledNotificationAsync(id);
 }
 
-export async function getRemotePushToken(): Promise<{
+export async function getRemotePushToken(askPermission = true): Promise<{
   token: string | null;
   reason: string | null;
 }> {
   if (!Device.isDevice) {
     return { token: null, reason: "Cần chạy trên iPhone thật." };
   }
-  const granted = await requestNotificationPermission();
+  const granted = askPermission
+    ? await requestNotificationPermission()
+    : notificationAllowed(await Notifications.getPermissionsAsync());
   if (!granted) {
     return { token: null, reason: "Người dùng chưa cho phép thông báo." };
   }

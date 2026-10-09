@@ -11,6 +11,7 @@ import {
 } from "../lib/database";
 import { makeId } from "../lib/ids";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
+import { assertPushAccepted } from "../lib/pushResult";
 import {
   getRemotePushToken,
   reconcileSyncedReminders,
@@ -183,7 +184,7 @@ async function notifyPartner(
   } else {
     return;
   }
-  const { error } = await client.functions.invoke("notify-family", {
+  const { data, error } = await client.functions.invoke("notify-family", {
     body: {
       family_id: payload.family_id,
       title,
@@ -192,15 +193,17 @@ async function notifyPartner(
     },
   });
   if (error) throw error;
+  assertPushAccepted(data);
 }
 
 async function registerThisDevice(
   familyId: string,
   userId: string,
+  askPermission = true,
 ): Promise<void> {
   if (Platform.OS !== "ios" && Platform.OS !== "android")
     throw new Error("Đăng ký thông báo trên điện thoại.");
-  const result = await getRemotePushToken();
+  const result = await getRemotePushToken(askPermission);
   if (!result.token)
     throw new Error(result.reason ?? "Chưa lấy được mã nhận thông báo.");
   let deviceId = await SecureStore.getItemAsync("an_nam_device_id");
@@ -209,6 +212,16 @@ async function registerThisDevice(
     await SecureStore.setItemAsync("an_nam_device_id", deviceId);
   }
   const client = configuredClient();
+  if (!askPermission) {
+    const { data: existing, error: readError } = await client
+      .from("push_tokens")
+      .select("enabled")
+      .eq("user_id", userId)
+      .eq("device_id", deviceId)
+      .maybeSingle();
+    if (readError) throw readError;
+    if (existing?.enabled === false) return;
+  }
   const { error } = await client.from("push_tokens").upsert(
     {
       family_id: familyId,
@@ -224,16 +237,19 @@ async function registerThisDevice(
   if (error) throw error;
 }
 
-export async function registerFamilyPush(): Promise<string> {
+export async function registerFamilyPush(
+  askPermission = true,
+): Promise<string> {
   const user = await currentUser();
   const membership = await getMembership(user.id);
   if (!membership) throw new Error("Hãy ghép thiết bị vào gia đình trước");
-  await registerThisDevice(membership.familyId, user.id);
-  return "Thiết bị đã đăng ký nhận thông báo từ người còn lại.";
+  await registerThisDevice(membership.familyId, user.id, askPermission);
+  return "Đã lưu token thiết bị. Cần thử push máy chủ để xác nhận đường Expo/APNs; đăng ký token chưa chứng minh thông báo đến máy.";
 }
 
 export async function synchronizeFamily(
   db: SQLiteDatabase,
+  onDataReady?: () => Promise<void>,
 ): Promise<SyncResult> {
   if (!isSupabaseConfigured) {
     return {
@@ -327,24 +343,6 @@ export async function synchronizeFamily(
     uploaded += 1;
   }
 
-  let pushFailed = 0;
-  for (const row of await db.getAllAsync<{ id: string; payload: string }>(
-    "SELECT id, payload FROM push_outbox WHERE attempts < 8 LIMIT 20",
-  )) {
-    try {
-      const task = JSON.parse(row.payload);
-      await notifyPartner(task.item, task.payload);
-      await db.runAsync("DELETE FROM push_outbox WHERE id = ?", row.id);
-    } catch (e) {
-      pushFailed += 1;
-      await db.runAsync(
-        "UPDATE push_outbox SET attempts = attempts + 1, last_error = ? WHERE id = ?",
-        e instanceof Error ? e.message : "Không gửi được push",
-        row.id,
-      );
-    }
-  }
-
   const pull = async (table: string) => {
     const rows: Record<string, unknown>[] = [];
     for (let offset = 0; ; offset += 500) {
@@ -369,7 +367,29 @@ export async function synchronizeFamily(
     messages: messages as never[],
     reminders: reminders as never[],
   });
+  // Show synced chat immediately; don't wait behind slow push HTTP calls.
+  await onDataReady?.();
+  let pushFailed = 0;
+  for (const row of await db.getAllAsync<{ id: string; payload: string }>(
+    "SELECT id, payload FROM push_outbox WHERE attempts < 8 LIMIT 20",
+  )) {
+    try {
+      const task = JSON.parse(row.payload);
+      await notifyPartner(task.item, task.payload);
+      await db.runAsync("DELETE FROM push_outbox WHERE id = ?", row.id);
+    } catch (e) {
+      pushFailed += 1;
+      await db.runAsync(
+        "UPDATE push_outbox SET attempts = attempts + 1, last_error = ? WHERE id = ?",
+        e instanceof Error ? e.message : "Không gửi được push",
+        row.id,
+      );
+    }
+  }
   await reconcileSyncedReminders(db);
+  const stalledPush = await db.getFirstAsync<{ count: number }>(
+    "SELECT count(*) AS count FROM push_outbox WHERE attempts >= 8",
+  );
   return {
     state: "synced",
     uploaded,
@@ -380,9 +400,11 @@ export async function synchronizeFamily(
       reminders!.length,
     message: failed
       ? `Còn ${failed} thay đổi chưa gửi được. Dữ liệu vẫn lưu trên máy; hãy thử đồng bộ lại.`
-      : pushFailed
-        ? "Dữ liệu đã đồng bộ; thông báo đang chờ gửi lại."
-        : "Đã đồng bộ dữ liệu gia đình.",
+      : (stalledPush?.count ?? 0) > 0
+        ? "Dữ liệu đã đồng bộ; có thông báo đã dừng thử lại vì lỗi cấu hình. Hãy kiểm tra push ở cả hai máy."
+        : pushFailed
+          ? "Dữ liệu đã đồng bộ; thông báo đang chờ gửi lại."
+          : "Đã đồng bộ dữ liệu gia đình.",
   };
 }
 

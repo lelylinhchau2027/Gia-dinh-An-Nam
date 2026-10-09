@@ -1,7 +1,7 @@
 {
   "name": "gia-dinh-an-nam",
-  "version": "0.5.0",
-  "main": "expo-router/entry",
+  "version": "0.5.1",
+  "main": "index.js",
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",

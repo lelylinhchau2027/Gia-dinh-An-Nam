@@ -151,7 +151,7 @@ export default function EasyDetailsScreen() {
           </Text>
         ) : null}
         <PrimaryButton
-          disabled={saving || !!timeError}
+          disabled={saving || !!timeError || !child}
           title={saving ? "Đang lưu…" : "Dùng lịch này cho bé"}
           onPress={save}
         />

@@ -12,13 +12,14 @@ async function main() {
       execFileSync("which", ["chromium"], { encoding: "utf8" }).trim(),
     args: ["--no-sandbox", "--enable-features=SharedArrayBuffer"],
   });
+  let page;
+  const errors = [];
   try {
     // Fresh isolated profile: never read the user's signed-in browser or family.
-    const page = await browser.newPage({
+    page = await browser.newPage({
       viewport: { width: 390, height: 844 },
     });
     page.setDefaultTimeout(60000);
-    const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     const go = async (path) => {
       await page.goto(base + path, { timeout: 120000 });
@@ -123,6 +124,8 @@ async function main() {
     await snapshot("assistant-04-teeth");
     console.log("PASS: original tooth shape maps to persisted position");
     await go("/easy/1");
+    // A direct reload renders the template before the local baby is loaded.
+    await page.getByText("An Nam", { exact: true }).waitFor();
     await page.getByLabel("Giờ bắt đầu E.A.S.Y").fill("07:30");
     await page.getByText("07:30", { exact: true }).first().waitFor();
     await page.getByText("Dùng lịch này cho bé", { exact: true }).click();
@@ -194,6 +197,14 @@ async function main() {
     console.log(
       "PASS: 320px layout, handbook input, no uncaught browser errors",
     );
+  } catch (error) {
+    // This is an isolated demo profile; never inspect a signed-in family.
+    console.error("Browser errors:", errors);
+    if (page) {
+      console.error("Screen:", (await page.locator("body").innerText()).slice(-4000));
+      await page.screenshot({ path: "build/preview/ui-smoke-failure.png" });
+    }
+    throw error;
   } finally {
     await browser.close();
   }

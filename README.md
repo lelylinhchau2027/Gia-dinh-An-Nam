@@ -1,5 +1,7 @@
 # Gia Đình An Nam
 
+**0.5.1 (build 6)** cải thiện hàng đợi thông báo chat và chẩn đoán lỗi JS. Xem [hướng dẫn nâng cấp](docs/UPGRADE_0_5_1.md) và [triển khai push](docs/PUSH_NOTIFICATIONS.md). Cần migration 0004, Function/webhook/Cron và profile/APNs hợp lệ; chỉ cài IPA không tự hoàn thành cấu hình push nền.
+
 Phiên bản **0.5.0 (build 5)** bổ sung nhiều hồ sơ bé, xem ảnh toàn màn hình, chat ảnh/video và tách kiểm tra thông báo cục bộ/push. **Chat media cần migration `0003_family_chat.sql`.** Xem [hướng dẫn nâng cấp và tình trạng lỗi iPhone 11](docs/UPGRADE_0_5.md). Chưa xác định nguyên nhân crash native khi thiếu file `.ips`. Tải IPA từ artifact của lượt [Build IPA for ESign](https://github.com/lelylinhchau2027/Gia-dinh-An-Nam/actions/workflows/build-unsigned-ios.yml) thành công tương ứng với phiên bản cần cài.
 
 IPA 0.5 từ commit `df1813b` đã [build và xác minh thành công](https://github.com/lelylinhchau2027/Gia-dinh-An-Nam/actions/runs/37873030940). **Yêu cầu iOS 16.4+** (đã đối chiếu Info.plist cả bản 0.4 và 0.5). Cài đè với Bundle ID cũ, không gỡ app khi chưa bảo đảm dữ liệu đã đồng bộ.

@@ -33,6 +33,7 @@ import type {
 } from "../types";
 import { selectActiveChild } from "../lib/childRecords";
 import { isSupabaseConfigured } from "../lib/supabase";
+import { coalescedTask } from "../lib/syncRunner";
 import {
   subscribeFamilyChanges,
   synchronizeFamily,
@@ -87,7 +88,6 @@ export function AppProvider({ children }: PropsWithChildren) {
   const [pendingSyncCount, setPendingSyncCount] = useState(0);
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
-  const syncingRef = useRef(false);
   const refreshSequence = useRef(0);
 
   const refresh = useCallback(async () => {
@@ -114,23 +114,26 @@ export function AppProvider({ children }: PropsWithChildren) {
     }
   }, [db]);
 
-  const syncNow = useCallback(async () => {
-    if (syncingRef.current) return;
-    syncingRef.current = true;
-    setSyncing(true);
-    try {
-      const result = await synchronizeFamily(db);
-      setSyncMessage(result.message);
-      await refresh();
-    } catch (nextError) {
-      setSyncMessage(
-        nextError instanceof Error ? nextError.message : "Không thể đồng bộ",
-      );
-    } finally {
-      syncingRef.current = false;
-      setSyncing(false);
-    }
-  }, [db, refresh]);
+  const syncNow = useMemo(
+    () =>
+      coalescedTask(async () => {
+        setSyncing(true);
+        try {
+          const result = await synchronizeFamily(db, refresh);
+          setSyncMessage(result.message);
+          await refresh();
+        } catch (nextError) {
+          setSyncMessage(
+            nextError instanceof Error
+              ? nextError.message
+              : "Không thể đồng bộ",
+          );
+        } finally {
+          setSyncing(false);
+        }
+      }),
+    [db, refresh],
+  );
 
   const selectChild = useCallback(
     async (id: string) => {

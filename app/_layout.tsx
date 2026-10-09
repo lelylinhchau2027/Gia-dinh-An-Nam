@@ -1,4 +1,4 @@
-import { router, Stack } from "expo-router";
+import { router, Stack, useSegments } from "expo-router";
 import * as Notifications from "expo-notifications";
 import { SQLiteProvider } from "expo-sqlite";
 import { useEffect, useRef } from "react";
@@ -9,6 +9,8 @@ import { StatusBar } from "expo-status-bar";
 import { AppProvider, useApp } from "../src/providers/AppProvider";
 import { migrateDatabase } from "../src/lib/database";
 import { colors } from "../src/theme";
+import { setDiagnosticScreen } from "../src/lib/crashReporting";
+import { PushRegistration } from "../src/components/PushRegistration";
 export { RecoverableError as ErrorBoundary } from "../src/components/RecoverableError";
 
 function NotificationNavigation() {
@@ -42,17 +44,25 @@ function NotificationNavigation() {
       ) {
         router.push(route as never);
       }
-      void Notifications.clearLastNotificationResponseAsync();
+      void Notifications.clearLastNotificationResponseAsync().catch(
+        () => undefined,
+      );
     };
     const subscription =
       Notifications.addNotificationResponseReceivedListener(handle);
-    void Notifications.getLastNotificationResponseAsync().then(handle);
+    void Notifications.getLastNotificationResponseAsync()
+      .then(handle)
+      .catch(() => undefined);
     return () => subscription.remove();
   }, [loading]);
   return null;
 }
 
 export default function RootLayout() {
+  const segments = useSegments();
+  useEffect(() => {
+    setDiagnosticScreen(segments.join("/"));
+  }, [segments]);
   const [fontsLoaded, fontError] = useFonts({
     Quicksand: require("../assets/legacy/Quicksand-Medium.ttf"),
     QuicksandSemiBold: require("../assets/legacy/Quicksand-SemiBold.ttf"),
@@ -63,6 +73,7 @@ export default function RootLayout() {
     <SQLiteProvider databaseName="gia-dinh-an-nam.db" onInit={migrateDatabase}>
       <AppProvider>
         <NotificationNavigation />
+        <PushRegistration />
         <StatusBar style="dark" />
         <Stack
           screenOptions={{

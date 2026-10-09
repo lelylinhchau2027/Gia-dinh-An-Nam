@@ -1,7 +1,9 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.117.3";
+import { processChatPush } from "../_shared/pushWorker.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "authorization, apikey, content-type",
 };
 
@@ -40,6 +42,40 @@ Deno.serve(async (request) => {
       .eq("user_id", userData.user.id)
       .maybeSingle();
     if (!membership) throw new Error("Bạn không thuộc gia đình này");
+
+    // Transactional queue from migration 0004. The webhook and cron keep
+    // working when the sender has closed the app; this is just a fast nudge.
+    if (input.data?.route === "/family/message") {
+      const { data: job, error: queueError } = await admin
+        .from("chat_push_jobs")
+        .select("id")
+        .eq("family_id", familyId)
+        .eq("sender_id", userData.user.id)
+        .eq("message_id", String(input.data?.entity_id ?? ""))
+        .maybeSingle();
+      if (!queueError) {
+        if (!job)
+          throw new Error(
+            "Không tìm thấy tin nhắn đã lưu trong hàng đợi push.",
+          );
+        try {
+          await processChatPush(admin, familyId);
+        } catch {
+          /* Durable job remains; cron retries. */
+        }
+        return Response.json(
+          {
+            managed_by_server: true,
+            job_id: job.id,
+            accepted_by_expo: 0,
+            target_devices: 0,
+          },
+          { headers: corsHeaders },
+        );
+      }
+      if (!["42P01", "PGRST205"].includes(queueError.code))
+        throw new Error("Chưa kiểm tra được hàng đợi push.");
+    }
 
     // Inspect previous tickets on each invocation; HTTP 200 alone is not delivery.
     const { data: pending } = await admin
@@ -121,13 +157,11 @@ Deno.serve(async (request) => {
         if (!token) continue;
         if (ticket.status === "ok" && ticket.id) {
           accepted++;
-          const { error } = await admin
-            .from("push_receipts")
-            .upsert({
-              ticket_id: ticket.id,
-              family_id: familyId,
-              expo_push_token: token,
-            });
+          const { error } = await admin.from("push_receipts").upsert({
+            ticket_id: ticket.id,
+            family_id: familyId,
+            expo_push_token: token,
+          });
           if (error) console.error("Cannot persist Expo ticket:", error.code);
         } else if (ticket.details?.error === "DeviceNotRegistered") {
           await admin
