@@ -173,7 +173,7 @@ async function notifyPartner(
   } else if (item.entity_type === "family_messages") {
     title = String(payload.created_by_name ?? "Người nhà");
     body = String(payload.body ?? body);
-    route = "/gia-dinh";
+    route = "/family/message";
   } else if (item.entity_type === "reminders") {
     title = payload.completed_at
       ? "Một việc chung đã hoàn thành"

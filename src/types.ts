@@ -43,6 +43,17 @@ export type FamilyMessage = {
   created_at: string;
   created_by: string;
   created_by_name: string;
+  attachments?: MessageAttachment[];
+  sync_state?: "pending" | "synced" | "error";
+};
+
+export type MessageAttachment = {
+  path: string;
+  type: "image" | "video";
+  mimeType: string;
+  width: number;
+  height: number;
+  size: number;
 };
 
 export type Reminder = {
@@ -67,6 +78,8 @@ export type Family = {
 export type AppSnapshot = {
   family: Family | null;
   child: Child | null;
+  children: Child[];
+  currentUserId: string | null;
   entries: CareEntry[];
   messages: FamilyMessage[];
   reminders: Reminder[];

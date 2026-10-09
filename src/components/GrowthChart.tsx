@@ -16,6 +16,8 @@ export function GrowthChart({
       (e) =>
         e.kind === "growth" &&
         e.amount !== null &&
+        Number.isFinite(e.amount) &&
+        Number.isFinite(Date.parse(e.occurred_at)) &&
         e.unit === unit &&
         (e.details?.metric ??
           (e.unit === "kg" ? "Cân nặng" : "Chiều dài / chiều cao")) === metric,

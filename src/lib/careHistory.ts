@@ -1,5 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite";
 import type { CareEntry } from "../types";
+import { stringDetails } from "./recordValidation";
 
 export async function readCareHistory(
   db: SQLiteDatabase,
@@ -13,7 +14,7 @@ export async function readCareHistory(
   );
   return rows.map((row) => ({
     ...row,
-    details: JSON.parse(row.details || "{}"),
+    details: stringDetails(row.details),
   }));
 }
 export function isPumpedMilk(entry: CareEntry) {

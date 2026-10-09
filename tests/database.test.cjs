@@ -23,8 +23,14 @@ const {
   acknowledgeOutbox,
   mergeRemoteSnapshot,
   attachRemoteFamily,
+  insertMessage,
 } = require("../src/lib/database.ts");
-const { editCare, saveChild, parseDay } = require("../src/lib/childRecords.ts");
+const {
+  editCare,
+  saveChild,
+  parseDay,
+  selectActiveChild,
+} = require("../src/lib/childRecords.ts");
 const { readCareHistory, summarizeCare } = require("../src/lib/careHistory.ts");
 function database() {
   const raw = new DatabaseSync(":memory:");
@@ -162,6 +168,153 @@ test("date validation rejects rollover and accepts leap dates", () => {
   assert.throws(() => parseDay("2026-13-01"));
   assert.equal(parseDay("2024-02-29"), "2024-02-29");
   assert.equal(parseDay(""), null);
+});
+
+test("multiple children keep independent diaries and device selection survives edits, merge and restart", async () => {
+  const db = database();
+  await migrateDatabase(db);
+  const first = await loadSnapshot(db);
+  await saveChild(db, {
+    ...first.child,
+    id: "second-child",
+    name: "Bé thứ hai",
+    nickname: "Em",
+  });
+  await selectActiveChild(db, first.family.id, "second-child");
+  await insertCareEntry(db, {
+    familyId: first.family.id,
+    childId: first.child.id,
+    kind: "milk",
+    amount: 100,
+  });
+  await insertCareEntry(db, {
+    familyId: first.family.id,
+    childId: "second-child",
+    kind: "milk",
+    amount: 60,
+  });
+  await saveChild(db, { ...first.child, name: "Đổi tên bé lớn" });
+  await migrateDatabase(db);
+  const next = await loadSnapshot(db);
+  assert.equal(next.children.length, 2);
+  assert.equal(next.child.id, "second-child");
+  assert.equal(next.entries[0].amount, 60);
+  await selectActiveChild(db, first.family.id, first.child.id);
+  assert.equal((await loadSnapshot(db)).entries[0].amount, 100);
+  await assert.rejects(selectActiveChild(db, "other-family", first.child.id));
+  await assert.rejects(
+    saveChild(db, { ...first.child, family_id: "other-family" }),
+  );
+  db.raw.close();
+});
+
+test("joining device receives both children and never defaults to a newly edited child", async () => {
+  const db = database();
+  await migrateDatabase(db);
+  await attachRemoteFamily(db, {
+    id: "shared-family",
+    name: "Nhà",
+    inviteCode: "ABCDEFGH",
+    userId: "parent-two",
+    displayName: "Mẹ",
+    preserveLocalData: false,
+  });
+  assert.equal((await loadSnapshot(db)).children.length, 0);
+  const child = {
+    id: "baby-a",
+    family_id: "shared-family",
+    name: "A",
+    nickname: null,
+    birthday: null,
+    due_date: null,
+    gender: null,
+    updated_at: new Date().toISOString(),
+  };
+  await mergeRemoteSnapshot(db, {
+    children: [child, { ...child, id: "baby-b", name: "B" }],
+    careEntries: [],
+    messages: [],
+    reminders: [],
+  });
+  await selectActiveChild(db, "shared-family", "baby-b");
+  await mergeRemoteSnapshot(db, {
+    children: [{ ...child, name: "Tên mới" }],
+    careEntries: [],
+    messages: [],
+    reminders: [],
+  });
+  const next = await loadSnapshot(db);
+  assert.equal(next.children.length, 2);
+  assert.equal(next.child.id, "baby-b");
+  assert.equal(next.currentUserId, "parent-two");
+  db.raw.close();
+});
+
+test("photo/video messages persist in offline outbox and survive remote merge without losing pending media", async () => {
+  const db = database();
+  await migrateDatabase(db);
+  const first = await loadSnapshot(db);
+  const attachment = {
+    path: `${first.family.id}/${first.currentUserId}/v.mp4`,
+    type: "video",
+    mimeType: "video/mp4",
+    width: 720,
+    height: 1280,
+    size: 1000,
+  };
+  await insertMessage(db, first.family.id, "", [attachment]);
+  const row = (await loadSnapshot(db)).messages.find(
+    (m) => m.attachments?.length,
+  );
+  assert.ok(row.body.length > 0);
+  assert.equal(row.sync_state, "pending");
+  const queued = (await getPendingOutbox(db)).find(
+    (r) => r.entity_id === row.id,
+  );
+  assert.deepEqual(JSON.parse(queued.payload).attachments, [attachment]);
+  await mergeRemoteSnapshot(db, {
+    children: [],
+    careEntries: [],
+    messages: [{ ...row, attachments: [] }],
+    reminders: [],
+  });
+  assert.deepEqual(
+    (await loadSnapshot(db)).messages.find((m) => m.id === row.id).attachments,
+    [attachment],
+  );
+  await acknowledgeOutbox(db, queued);
+  await mergeRemoteSnapshot(db, {
+    children: [],
+    careEntries: [],
+    messages: [row],
+    reminders: [],
+  });
+  assert.equal(
+    (await loadSnapshot(db)).messages.find((m) => m.id === row.id).sync_state,
+    "synced",
+  );
+  await assert.rejects(
+    insertMessage(db, first.family.id, "", [
+      { ...attachment, path: "other/user/v.mp4" },
+    ]),
+  );
+  db.raw.close();
+});
+
+test("malformed legacy JSON cannot break rendering a paired child's history", async () => {
+  const db = database();
+  await migrateDatabase(db);
+  const { family, child } = await loadSnapshot(db);
+  await insertCareEntry(db, {
+    familyId: family.id,
+    childId: child.id,
+    kind: "milk",
+    amount: 30,
+  });
+  await db.runAsync("UPDATE care_entries SET details=?", "{broken");
+  assert.deepEqual((await loadSnapshot(db)).entries[0].details, {});
+  assert.deepEqual((await readCareHistory(db, child.id))[0].details, {});
+  db.raw.close();
 });
 
 test("multi-metric measurement is atomic, including its sync queue", async () => {

@@ -23,6 +23,8 @@ import {
   getRemotePushToken,
   requestNotificationPermission,
   reconcileSyncedReminders,
+  testLocalNotification,
+  notificationAllowed,
 } from "../../src/services/notifications";
 import { useSQLiteContext } from "expo-sqlite";
 import Constants from "expo-constants";
@@ -35,36 +37,52 @@ export default function SettingsScreen() {
   const { pendingSyncCount, syncing, syncMessage, syncNow } = useApp();
   const [permission, setPermission] = useState("đang kiểm tra");
   const [pushState, setPushState] = useState<string | null>(null);
+  const [localState, setLocalState] = useState<string | null>(null);
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
-    Notifications.getPermissionsAsync().then((result) =>
-      setPermission(result.granted ? "đã cho phép" : "chưa cho phép"),
-    );
+    Notifications.getPermissionsAsync()
+      .then((result) =>
+        setPermission(
+          notificationAllowed(result) ? "đã cho phép" : "chưa cho phép",
+        ),
+      )
+      .catch(() => setPermission("chưa đọc được"));
   }, []);
 
   const testPushSetup = async () => {
-    await requestNotificationPermission();
-    await reconcileSyncedReminders(db);
-    if (isSupabaseConfigured) {
-      try {
-        setPushState(await registerFamilyPush());
-      } catch (error) {
+    if (checking) return;
+    setChecking(true);
+    try {
+      await requestNotificationPermission();
+      await reconcileSyncedReminders(db);
+      if (isSupabaseConfigured) {
+        try {
+          setPushState(await registerFamilyPush());
+        } catch (error) {
+          setPushState(
+            error instanceof Error
+              ? error.message
+              : "Chưa đăng ký được thiết bị.",
+          );
+        }
+      } else {
+        const result = await getRemotePushToken();
         setPushState(
-          error instanceof Error
-            ? error.message
-            : "Chưa đăng ký được thiết bị.",
+          result.token
+            ? "Thiết bị có token; cần cấu hình backend để lưu token."
+            : result.reason,
         );
       }
-    } else {
-      const result = await getRemotePushToken();
-      setPushState(
-        result.token
-          ? "Thiết bị có token; cần cấu hình backend để lưu token."
-          : result.reason,
+      const next = await Notifications.getPermissionsAsync();
+      setPermission(
+        notificationAllowed(next) ? "đã cho phép" : "chưa cho phép",
       );
+    } catch (e) {
+      setPushState(e instanceof Error ? e.message : "Chưa kiểm tra được push.");
+    } finally {
+      setChecking(false);
     }
-    const next = await Notifications.getPermissionsAsync();
-    setPermission(next.granted ? "đã cho phép" : "chưa cho phép");
   };
 
   return (
@@ -121,11 +139,37 @@ export default function SettingsScreen() {
           status={permission}
         />
         <PrimaryButton
-          title="Kiểm tra thông báo trên thiết bị"
+          title="Thử nhắc cục bộ sau 10 giây"
+          disabled={checking}
+          onPress={async () => {
+            setChecking(true);
+            try {
+              setLocalState(await testLocalNotification());
+              const p = await Notifications.getPermissionsAsync();
+              setPermission(
+                notificationAllowed(p) ? "đã cho phép" : "chưa cho phép",
+              );
+            } catch (e) {
+              setLocalState(
+                e instanceof Error ? e.message : "Chưa đặt được nhắc thử.",
+              );
+            } finally {
+              setChecking(false);
+            }
+          }}
+        />
+        {localState ? <Text style={styles.helper}>{localState}</Text> : null}
+        <PrimaryButton
+          title="Đăng ký push từ máy người còn lại"
+          disabled={checking}
           icon="shield-checkmark-outline"
           onPress={testPushSetup}
         />
         {pushState ? <Text style={styles.helper}>{pushState}</Text> : null}
+        <Text style={styles.helper}>
+          Nhắc đã đồng bộ được đặt lịch trên từng máy. Tin nhắn mới khi app đang
+          đóng vẫn cần push APNs; thông báo cục bộ không thay thế phần này.
+        </Text>
       </Card>
 
       <SectionHeader title="Bộ dữ liệu tham chiếu" />

@@ -38,11 +38,39 @@ export async function prepareNotifications(): Promise<void> {
 
 export async function requestNotificationPermission(): Promise<boolean> {
   const current = await Notifications.getPermissionsAsync();
-  if (current.granted) return true;
+  if (notificationAllowed(current)) return true;
   const next = await Notifications.requestPermissionsAsync({
     ios: { allowAlert: true, allowBadge: true, allowSound: true },
   });
-  return next.granted;
+  return notificationAllowed(next);
+}
+
+export function notificationAllowed(
+  value: Notifications.NotificationPermissionsStatus,
+) {
+  return (
+    value.granted ||
+    value.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+  );
+}
+
+export async function testLocalNotification() {
+  await prepareNotifications();
+  if (!(await requestNotificationPermission()))
+    throw new Error("Hãy bật thông báo cho app trong Cài đặt iPhone.");
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Gia Đình An Nam",
+      body: "Nhắc cục bộ hoạt động trên máy này. Đây không phải push từ điện thoại còn lại.",
+      sound: "default",
+      data: { route: "/cai-dat", localTest: true },
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: new Date(Date.now() + 10000),
+    },
+  });
+  return "Đã đặt thông báo thử sau 10 giây. Bạn có thể về màn hình chính để kiểm tra. Không cần aps-environment.";
 }
 
 export async function scheduleLocalReminder(input: {
@@ -99,8 +127,18 @@ export async function getRemotePushToken(): Promise<{
       reason: "Chưa liên kết EAS projectId; thông báo cục bộ vẫn hoạt động.",
     };
   }
-  const result = await Notifications.getExpoPushTokenAsync({ projectId });
-  return { token: result.data, reason: null };
+  try {
+    const result = await Notifications.getExpoPushTokenAsync({ projectId });
+    return { token: result.data, reason: null };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return {
+      token: null,
+      reason: /aps-environment|entitlement/i.test(message)
+        ? "Bản cài trên máy thiếu quyền push aps-environment hợp lệ. Nhắc cục bộ vẫn dùng được; push giữa hai máy cần App ID, provisioning profile và cấu hình APNs đúng. Cài bằng TrollStore/ESign không tự cấp quyền APNs."
+        : `Chưa đăng ký được push: ${message}. Bạn vẫn có thể thử nhắc cục bộ.`,
+    };
+  }
 }
 
 const reconciliation = new WeakMap<SQLiteDatabase, Promise<void>>();
@@ -121,7 +159,7 @@ export async function reconcileSyncedReminders(
 
 async function reconcileReminders(db: SQLiteDatabase): Promise<void> {
   const permission = await Notifications.getPermissionsAsync();
-  if (!permission.granted) return;
+  if (!notificationAllowed(permission)) return;
   const reminders = await db.getAllAsync<{
     id: string;
     title: string;

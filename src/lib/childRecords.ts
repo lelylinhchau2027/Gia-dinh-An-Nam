@@ -23,8 +23,17 @@ export async function saveChild(db: SQLiteDatabase, child: Child) {
     updated_at: new Date().toISOString(),
   };
   await db.withTransactionAsync(async () => {
+    const existing = await db.getFirstAsync<{ family_id: string }>(
+      "SELECT family_id FROM children WHERE id=?",
+      child.id,
+    );
+    if (existing && existing.family_id !== child.family_id)
+      throw new Error("Hồ sơ không thuộc gia đình này.");
     await db.runAsync(
-      "UPDATE children SET name=?, nickname=?, birthday=?, due_date=?, gender=?, avatar_path=?, cover_path=?, updated_at=?, sync_state='pending' WHERE id=?",
+      `INSERT INTO children(name,nickname,birthday,due_date,gender,avatar_path,cover_path,updated_at,id,family_id,sync_state)
+       VALUES (?,?,?,?,?,?,?,?,?,?,'pending') ON CONFLICT(id) DO UPDATE SET
+       name=excluded.name,nickname=excluded.nickname,birthday=excluded.birthday,due_date=excluded.due_date,
+       gender=excluded.gender,avatar_path=excluded.avatar_path,cover_path=excluded.cover_path,updated_at=excluded.updated_at,sync_state='pending'`,
       payload.name,
       payload.nickname,
       payload.birthday,
@@ -34,9 +43,28 @@ export async function saveChild(db: SQLiteDatabase, child: Child) {
       payload.cover_path ?? null,
       payload.updated_at,
       payload.id,
+      payload.family_id,
     );
     await enqueue(db, child.family_id, "children", child.id, payload);
   });
+}
+
+export async function selectActiveChild(
+  db: SQLiteDatabase,
+  familyId: string,
+  childId: string,
+) {
+  const child = await db.getFirstAsync(
+    "SELECT id FROM children WHERE id=? AND family_id=?",
+    childId,
+    familyId,
+  );
+  if (!child) throw new Error("Không tìm thấy bé trong gia đình này.");
+  await db.runAsync(
+    "INSERT INTO app_preferences(key,value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+    `active-child:${familyId}`,
+    childId,
+  );
 }
 export async function editCare(
   db: SQLiteDatabase,

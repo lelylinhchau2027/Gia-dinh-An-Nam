@@ -1,6 +1,6 @@
 import { FormInput as TextInput } from "../../src/components/FormInput";
 import { useState } from "react";
-import { router } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { Alert, Pressable, Text, View } from "react-native";
 import { useApp } from "../../src/providers/AppProvider";
@@ -9,9 +9,49 @@ import { FamilyPhoto } from "../../src/components/FamilyPhoto";
 import { formStyles as s } from "../../src/components/forms";
 import { parseDay, saveChild } from "../../src/lib/childRecords";
 import { pickPhoto, uploadPhoto } from "../../src/services/social";
+import { makeId } from "../../src/lib/ids";
+import type { Child } from "../../src/types";
 
 export default function EditChild() {
-  const { child, refresh, syncNow } = useApp();
+  const { mode, id } = useLocalSearchParams<{ mode?: string; id?: string }>();
+  const { children, child, family, loading } = useApp();
+  const target = id ? children.find((c) => c.id === id) : child;
+  if (loading || !family)
+    return (
+      <Screen>
+        <Text>Đang tải gia đình…</Text>
+      </Screen>
+    );
+  if (mode !== "new" && !target)
+    return (
+      <Screen>
+        <Text>Chưa có hồ sơ bé.</Text>
+        <PrimaryButton
+          title="Thêm bé"
+          onPress={() =>
+            router.replace({ pathname: "/child/edit", params: { mode: "new" } })
+          }
+        />
+      </Screen>
+    );
+  return (
+    <ChildEditor
+      key={mode === "new" ? `new:${family.id}` : target!.id}
+      child={mode === "new" ? null : target!}
+      familyId={family.id}
+    />
+  );
+}
+
+function ChildEditor({
+  child,
+  familyId,
+}: {
+  child: Child | null;
+  familyId: string;
+}) {
+  const { selectChild, refresh, syncNow } = useApp();
+  const [newId] = useState(() => makeId("child"));
   const db = useSQLiteContext();
   const [name, setName] = useState(child?.name ?? "");
   const [nickname, setNickname] = useState(child?.nickname ?? "");
@@ -41,7 +81,7 @@ export default function EditChild() {
     }
   };
   const save = async () => {
-    if (!child) return;
+    if (busy) return;
     setBusy(true);
     try {
       const born = parseDay(birthday.trim());
@@ -51,7 +91,8 @@ export default function EditChild() {
           "Ngày sinh không thể ở tương lai. Nếu đang mang thai, chỉ điền ngày dự sinh.",
         );
       await saveChild(db, {
-        ...child,
+        id: child?.id ?? newId,
+        family_id: familyId,
         name,
         nickname: nickname.trim() || null,
         birthday: born,
@@ -60,7 +101,8 @@ export default function EditChild() {
         avatar_path: avatar,
         cover_path: cover,
       });
-      await refresh();
+      if (!child) await selectChild(newId);
+      else await refresh();
       void syncNow();
       router.back();
     } catch (e) {
@@ -74,6 +116,9 @@ export default function EditChild() {
   };
   return (
     <Screen keyboardShouldPersistTaps="handled">
+      <Stack.Screen
+        options={{ title: child ? "Hồ sơ bé" : "Thêm bé vào gia đình" }}
+      />
       <Text style={s.title}>Hồ sơ của bé</Text>
       <Pressable disabled={busy} onPress={() => photo("cover")}>
         <FamilyPhoto
@@ -91,6 +136,8 @@ export default function EditChild() {
       </Pressable>
       <Text style={s.label}>Tên bé</Text>
       <TextInput
+        testID="child-name"
+        accessibilityLabel="Tên bé"
         style={s.input}
         value={name}
         onChangeText={setName}
@@ -137,8 +184,9 @@ export default function EditChild() {
         keyboardType="numbers-and-punctuation"
       />
       <PrimaryButton
+        testID="save-child"
         title={busy ? "Đang lưu…" : "Lưu hồ sơ"}
-        disabled={busy || !child || !name.trim()}
+        disabled={busy || !name.trim()}
         onPress={save}
       />
     </Screen>

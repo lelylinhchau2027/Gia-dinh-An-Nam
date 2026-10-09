@@ -34,5 +34,10 @@ export function useCareHistory() {
       };
     }, [db, child?.id, changes]),
   );
-  return { entries, loading, error, child };
+  return {
+    entries: entries.filter((e) => e.child_id === child?.id),
+    loading,
+    error,
+    child,
+  };
 }

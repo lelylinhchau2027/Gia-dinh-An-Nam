@@ -25,7 +25,13 @@ import {
   insertReminder,
   loadSnapshot,
 } from "../lib/database";
-import type { AppSnapshot, CareKind, Reminder } from "../types";
+import type {
+  AppSnapshot,
+  CareKind,
+  Reminder,
+  MessageAttachment,
+} from "../types";
+import { selectActiveChild } from "../lib/childRecords";
 import { isSupabaseConfigured } from "../lib/supabase";
 import {
   subscribeFamilyChanges,
@@ -39,6 +45,7 @@ type AppContextValue = AppSnapshot & {
   syncing: boolean;
   syncMessage: string | null;
   refresh: () => Promise<void>;
+  selectChild: (id: string) => Promise<void>;
   syncNow: () => Promise<void>;
   addCare: (input: {
     kind: CareKind;
@@ -48,7 +55,10 @@ type AppContextValue = AppSnapshot & {
     occurredAt?: string;
     details?: Record<string, string>;
   }) => Promise<void>;
-  sendMessage: (body: string) => Promise<void>;
+  sendMessage: (
+    body: string,
+    attachments?: MessageAttachment[],
+  ) => Promise<void>;
   addReminder: (input: {
     title: string;
     details?: string | null;
@@ -60,6 +70,8 @@ type AppContextValue = AppSnapshot & {
 const emptySnapshot: AppSnapshot = {
   family: null,
   child: null,
+  children: [],
+  currentUserId: null,
   entries: [],
   messages: [],
   reminders: [],
@@ -76,24 +88,29 @@ export function AppProvider({ children }: PropsWithChildren) {
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const syncingRef = useRef(false);
+  const refreshSequence = useRef(0);
 
   const refresh = useCallback(async () => {
+    const request = ++refreshSequence.current;
     try {
       setError(null);
       const [next, pending] = await Promise.all([
         loadSnapshot(db),
         getPendingSyncCount(db),
       ]);
-      setSnapshot(next);
-      setPendingSyncCount(pending);
+      if (request === refreshSequence.current) {
+        setSnapshot(next);
+        setPendingSyncCount(pending);
+      }
     } catch (nextError) {
-      setError(
-        nextError instanceof Error
-          ? nextError.message
-          : "Không thể đọc dữ liệu",
-      );
+      if (request === refreshSequence.current)
+        setError(
+          nextError instanceof Error
+            ? nextError.message
+            : "Không thể đọc dữ liệu",
+        );
     } finally {
-      setLoading(false);
+      if (request === refreshSequence.current) setLoading(false);
     }
   }, [db]);
 
@@ -114,6 +131,15 @@ export function AppProvider({ children }: PropsWithChildren) {
       setSyncing(false);
     }
   }, [db, refresh]);
+
+  const selectChild = useCallback(
+    async (id: string) => {
+      if (!snapshot.family) throw new Error("Chưa có gia đình.");
+      await selectActiveChild(db, snapshot.family.id, id);
+      await refresh();
+    },
+    [db, snapshot.family?.id, refresh],
+  );
 
   useEffect(() => {
     prepareNotifications().catch(() => undefined);
@@ -179,9 +205,9 @@ export function AppProvider({ children }: PropsWithChildren) {
   );
 
   const sendMessage = useCallback(
-    async (body: string) => {
+    async (body: string, attachments: MessageAttachment[] = []) => {
       if (!snapshot.family) throw new Error("Chưa có gia đình");
-      await insertMessage(db, snapshot.family.id, body.trim());
+      await insertMessage(db, snapshot.family.id, body.trim(), attachments);
       await refresh();
       if (isSupabaseConfigured) syncNow();
     },
@@ -238,6 +264,7 @@ export function AppProvider({ children }: PropsWithChildren) {
       syncing,
       syncMessage,
       refresh,
+      selectChild,
       syncNow,
       addCare,
       sendMessage,
@@ -252,6 +279,7 @@ export function AppProvider({ children }: PropsWithChildren) {
       syncing,
       syncMessage,
       refresh,
+      selectChild,
       syncNow,
       addCare,
       sendMessage,

@@ -6,8 +6,11 @@ import type {
   Child,
   FamilyMessage,
   Reminder,
+  MessageAttachment,
 } from "../types";
 import { makeId } from "./ids";
+import { stringDetails } from "./recordValidation";
+import { messageAttachments, validateMessage } from "./messageMedia";
 
 const DEMO_FAMILY_ID = "family_local_an_nam";
 const DEMO_USER_ID = "local_parent_1";
@@ -109,6 +112,7 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   // Add columns individually so upgrades from the installed 0.1 database preserve rows.
   for (const [table, definitions] of Object.entries({
     children: ["avatar_path TEXT", "cover_path TEXT"],
+    family_messages: ["attachments TEXT NOT NULL DEFAULT '[]'"],
     care_entries: ["details TEXT NOT NULL DEFAULT '{}'", "deleted_at TEXT"],
   })) {
     const columns = await db.getAllAsync<{ name: string }>(
@@ -120,6 +124,7 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
     }
   }
   await db.execAsync(`CREATE TABLE IF NOT EXISTS care_timers (child_id TEXT PRIMARY KEY, kind TEXT NOT NULL, started_at TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS app_preferences (key TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS push_outbox (id TEXT PRIMARY KEY, payload TEXT NOT NULL, attempts INTEGER NOT NULL DEFAULT 0, last_error TEXT);`);
 
   const family = await db.getFirstAsync<{ id: string }>(
@@ -179,13 +184,22 @@ export async function loadSnapshot(db: SQLiteDatabase): Promise<AppSnapshot> {
   const family = await db.getFirstAsync<AppSnapshot["family"]>(
     "SELECT id, name, pairing_code FROM families LIMIT 1",
   );
-  const child = family
-    ? await db.getFirstAsync<AppSnapshot["child"]>(
+  const children = family
+    ? await db.getAllAsync<Child>(
         `SELECT id, family_id, name, nickname, birthday, due_date, gender, avatar_path, cover_path
-         FROM children WHERE family_id = ? ORDER BY updated_at DESC LIMIT 1`,
+         FROM children WHERE family_id = ? ORDER BY id`,
         family.id,
       )
+    : [];
+  const selection = family
+    ? await db.getFirstAsync<{ value: string }>(
+        "SELECT value FROM app_preferences WHERE key=?",
+        `active-child:${family.id}`,
+      )
     : null;
+  const child =
+    children.find((c) => c.id === selection?.value) ?? children[0] ?? null;
+  const author = await currentAuthor(db);
   const entries = child
     ? await db.getAllAsync<CareEntry>(
         `SELECT id, family_id, child_id, kind, amount, unit, note, occurred_at,
@@ -197,7 +211,7 @@ export async function loadSnapshot(db: SQLiteDatabase): Promise<AppSnapshot> {
     : [];
   const messages = family
     ? await db.getAllAsync<FamilyMessage>(
-        `SELECT id, family_id, body, created_at, created_by, created_by_name
+        `SELECT id, family_id, body, created_at, created_by, created_by_name, attachments, sync_state
          FROM family_messages WHERE family_id = ?
          ORDER BY created_at DESC LIMIT 30`,
         family.id,
@@ -215,12 +229,16 @@ export async function loadSnapshot(db: SQLiteDatabase): Promise<AppSnapshot> {
   return {
     family,
     child,
+    children,
+    currentUserId: author.id,
     entries: entries.map((e) => ({
       ...e,
-      details:
-        typeof e.details === "string" ? JSON.parse(e.details) : e.details,
+      details: stringDetails(e.details),
     })),
-    messages,
+    messages: messages.map((m) => ({
+      ...m,
+      attachments: messageAttachments(m.attachments),
+    })),
     reminders,
   };
 }
@@ -336,17 +354,22 @@ export async function insertMessage(
   db: SQLiteDatabase,
   familyId: string,
   body: string,
+  attachments: MessageAttachment[] = [],
 ): Promise<void> {
   const id = makeId("msg");
   const now = new Date().toISOString();
   const author = await currentAuthor(db);
+  validateMessage(body, attachments, familyId, author.id);
   const payload = {
     id,
     family_id: familyId,
-    body,
+    body:
+      body.trim() ||
+      (attachments.some((a) => a.type === "video") ? "🎬 Video" : "📷 Ảnh"),
     created_at: now,
     created_by: author.id,
     created_by_name: author.displayName,
+    ...(attachments.length ? { attachments } : {}),
   };
   await db.withTransactionAsync(async () => {
     await db.runAsync(
@@ -359,6 +382,11 @@ export async function insertMessage(
       payload.created_at,
       payload.created_by,
       payload.created_by_name,
+    );
+    await db.runAsync(
+      "UPDATE family_messages SET attachments=? WHERE id=?",
+      JSON.stringify(attachments),
+      id,
     );
     await enqueue(db, familyId, "family_messages", id, payload);
   });
@@ -744,6 +772,11 @@ export async function mergeRemoteSnapshot(
         message.created_at,
         message.created_by,
         message.created_by_name,
+      );
+      await db.runAsync(
+        "UPDATE family_messages SET attachments=? WHERE id=? AND sync_state <> 'pending'",
+        JSON.stringify(messageAttachments(message.attachments)),
+        message.id,
       );
     }
     for (const reminder of snapshot.reminders) {

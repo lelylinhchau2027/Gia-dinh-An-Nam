@@ -18,6 +18,11 @@ let sequence = 0;
 let rows = [];
 const notifications = {
   setNotificationHandler() {},
+  setNotificationCategoryAsync: async () => {},
+  getExpoPushTokenAsync: async () => {
+    throw new Error("no valid aps-environment entitlement string found");
+  },
+  IosAuthorizationStatus: { PROVISIONAL: 3 },
   getPermissionsAsync: async () => ({ granted: true }),
   getAllScheduledNotificationsAsync: async () => Array.from(scheduled.values()),
   cancelScheduledNotificationAsync: async (id) => {
@@ -34,12 +39,21 @@ const load = Module._load;
 Module._load = function (id, ...args) {
   if (id === "expo-notifications") return notifications;
   if (id === "expo-device") return { isDevice: true };
-  if (id === "expo-constants") return {};
+  if (id === "expo-constants")
+    return {
+      __esModule: true,
+      default: {
+        expoConfig: { extra: { eas: { projectId: "test-project" } } },
+      },
+    };
   if (id === "react-native") return { Platform: { OS: "ios" } };
   return load.call(this, id, ...args);
 };
 const {
   reconcileSyncedReminders,
+  getRemotePushToken,
+  testLocalNotification,
+  notificationAllowed,
 } = require("../src/services/notifications.ts");
 const db = { getAllAsync: async () => rows, runAsync: async () => {} };
 test("local reminders update changed times, cancel completed work and restore missing OS requests without duplicates", async () => {
@@ -70,4 +84,20 @@ test("local reminders update changed times, cancel completed work and restore mi
   rows = [];
   await reconcileSyncedReminders(db);
   assert.equal(scheduled.size, 0);
+});
+
+test("missing APNs entitlement does not prevent local tests or reminder reconciliation", async () => {
+  const push = await getRemotePushToken();
+  assert.equal(push.token, null);
+  assert.match(push.reason, /Nhắc cục bộ vẫn dùng được/);
+  await testLocalNotification();
+  const local = [...scheduled.values()].find((n) => n.content.data.localTest);
+  assert.ok(local);
+  assert.ok(local.trigger.date.getTime() > Date.now());
+  await reconcileSyncedReminders(db);
+  assert.ok(scheduled.has(local.identifier));
+  assert.equal(
+    notificationAllowed({ granted: false, ios: { status: 3 } }),
+    true,
+  );
 });

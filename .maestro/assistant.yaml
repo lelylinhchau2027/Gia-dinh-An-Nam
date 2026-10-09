@@ -8,7 +8,8 @@ appId: vn.giadinhanam.family
     text: 'Open'
     optional: true
 - extendedWaitUntil:
-    visible: 'An Nam'
+    visible:
+      id: assistant-scroll
     timeout: 30000
 - takeScreenshot: assistant-profile
 - scrollUntilVisible:
@@ -66,3 +67,54 @@ appId: vn.giadinhanam.family
 - openLink: giadinhannam://assistant/teeth
 - assertVisible: '0 / 20 răng đã ghi'
 - takeScreenshot: teeth-original-shapes
+- openLink: giadinhannam://em-be
+- tapOn:
+    id: choose-child
+- tapOn:
+    id: add-child
+- tapOn:
+    id: child-name
+- inputText: 'Be Hai'
+- tapOn:
+    id: keyboard-done
+- scrollUntilVisible:
+    element:
+      id: save-child
+- tapOn:
+    id: save-child
+- extendedWaitUntil:
+    visible:
+      id: choose-child
+    timeout: 30000
+- takeScreenshot: second-child
+- openLink: giadinhannam://assistant/milk
+- extendedWaitUntil:
+    visible:
+      id: add-care-record
+    timeout: 30000
+- assertNotVisible: '120 ml'
+- openLink: giadinhannam://family/message
+- tapOn:
+    id: chat-input
+- inputText: 'Native chat check'
+- assertVisible:
+    id: chat-input
+    focused: true
+- takeScreenshot: chat-keyboard
+- tapOn:
+    id: send-chat
+- extendedWaitUntil:
+    visible:
+      id: 'chat-message-.*'
+    timeout: 30000
+- tapOn:
+    id: chat-keyboard-done
+- takeScreenshot: chat-saved
+- stopApp
+- launchApp
+- openLink: giadinhannam://family/message
+- extendedWaitUntil:
+    visible:
+      id: 'chat-message-.*'
+    timeout: 30000
+- takeScreenshot: chat-restored

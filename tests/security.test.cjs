@@ -30,7 +30,10 @@ test("migrations execute and enforce family isolation for posts, likes, comments
     fs.readFileSync("supabase/migrations/0002_family_social.sql", "utf8"),
   );
   await pg.exec(
-    "grant select,insert,update,delete on public.family_members, public.families, public.children, public.care_entries to authenticated",
+    fs.readFileSync("supabase/migrations/0003_family_chat.sql", "utf8"),
+  );
+  await pg.exec(
+    "grant select,insert,update,delete on public.family_members, public.families, public.children, public.care_entries, public.family_messages to authenticated",
   );
   const a = "00000000-0000-0000-0000-000000000001",
     b = "00000000-0000-0000-0000-000000000002",
@@ -48,6 +51,32 @@ test("migrations execute and enforce family isolation for posts, likes, comments
     );
   };
   await asUser(a);
+  const media = [
+    {
+      path: `${f}/${a}/v.mp4`,
+      type: "video",
+      mimeType: "video/mp4",
+      width: 720,
+      height: 1280,
+      size: 1000,
+    },
+  ];
+  await pg.query(
+    "insert into public.family_messages(id,family_id,created_by,created_by_name,body,attachments) values ('media-message',$1,$2,'Ba','Video',$3)",
+    [f, a, JSON.stringify(media)],
+  );
+  await assert.rejects(() =>
+    pg.query(
+      "insert into public.family_messages(id,family_id,created_by,created_by_name,body,attachments) values ('bad-media',$1,$2,'Ba','Video',$3)",
+      [f, a, JSON.stringify([{ ...media[0], path: `${other}/${a}/v.mp4` }])],
+    ),
+  );
+  await assert.rejects(() =>
+    pg.query(
+      "insert into public.family_messages(id,family_id,created_by,created_by_name,body,attachments) values ('big-media',$1,$2,'Ba','Video',$3)",
+      [f, a, JSON.stringify([{ ...media[0], size: 30 * 1024 * 1024 }])],
+    ),
+  );
   const post = (
     await pg.query(
       `insert into public.family_posts(family_id,author_id,body) values ($1,$2,'Một ngày vui') returning id`,
@@ -65,6 +94,23 @@ test("migrations execute and enforce family isolation for posts, likes, comments
     [`${f}/${a}/photo.jpg`],
   );
   await asUser(b);
+  assert.equal(
+    (await pg.query("select attachments from public.family_messages")).rows[0]
+      .attachments[0].path,
+    media[0].path,
+  );
+  await pg.query("select public.mark_family_messages_read($1)", [f]);
+  assert.equal(
+    (await pg.query("select user_id from public.family_message_reads")).rows[0]
+      .user_id,
+    b,
+  );
+  await assert.rejects(() =>
+    pg.query(
+      "insert into public.family_message_reads(family_id,user_id) values ($1,$2)",
+      [f, a],
+    ),
+  );
   assert.equal(
     (await pg.query("select * from public.family_posts")).rows.length,
     1,
@@ -99,6 +145,8 @@ test("migrations execute and enforce family isolation for posts, likes, comments
     "public.post_comments",
     "public.post_likes",
     "storage.objects",
+    "public.family_messages",
+    "public.family_message_reads",
   ])
     assert.equal(
       (await pg.query(`select * from ${table}`)).rows.length,
@@ -116,6 +164,9 @@ test("migrations execute and enforce family isolation for posts, likes, comments
       `insert into storage.objects(bucket_id,name) values ('family-media',$1)`,
       [`${f}/${outsider}/photo.jpg`],
     ),
+  );
+  await assert.rejects(() =>
+    pg.query("select public.mark_family_messages_read($1)", [f]),
   );
   await asUser(a);
   await pg.query("delete from public.family_posts where id=$1", [post]);

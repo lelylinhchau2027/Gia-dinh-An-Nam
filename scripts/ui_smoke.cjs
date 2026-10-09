@@ -130,6 +130,55 @@ async function main() {
     await go("/easy");
     await page.getByText("Giờ bắt đầu: 07:30", { exact: true }).waitFor();
     console.log("PASS: customized EASY wake time persists");
+    await go("/em-be");
+    await page.getByTestId("choose-child").click();
+    await page.getByTestId("add-child").click();
+    await page.getByTestId("child-name").fill("Bé thứ hai");
+    await page.getByTestId("save-child").click();
+    await page.waitForURL((url) => url.pathname === "/em-be");
+    await page.getByText("Đổi bé · 2 hồ sơ", { exact: true }).waitFor();
+    await go("/assistant/milk");
+    await page.getByText("Bé thứ hai", { exact: true }).waitFor();
+    assert.ok(
+      !(await page.locator("body").innerText()).includes("150 ml"),
+      "new baby's diary must not show older baby's milk",
+    );
+    await page.getByTestId("add-care-record").click();
+    await page.getByLabel("Số lượng", { exact: true }).fill("45");
+    await saveRecord("/assistant/milk");
+    await page.getByText("45 ml", { exact: true }).first().waitFor();
+    await go("/em-be");
+    await page.getByTestId("choose-child").click();
+    await page.getByLabel("Chọn bé An Nam", { exact: true }).click();
+    await page
+      .getByLabel("Chọn bé An Nam", { exact: true })
+      .waitFor({ state: "hidden" });
+    await go("/assistant/milk");
+    await page.getByText("An Nam", { exact: true }).waitFor();
+    await page.getByText("150 ml", { exact: true }).first().waitFor();
+    assert.ok(!(await page.locator("body").innerText()).includes("45 ml"));
+    console.log(
+      "PASS: add/switch babies, isolated diaries, selected baby survives reload",
+    );
+    await go("/family/message");
+    await page.getByTestId("chat-input").fill("Tin nhắn kiểm thử 0.5");
+    await page.getByTestId("send-chat").click();
+    // The textarea also contains the message while SQLite is saving. Wait for
+    // the cleared composer and a committed message bubble before reloading.
+    await page.waitForFunction(
+      () => document.querySelector('[data-testid="chat-input"]')?.value === "",
+    );
+    await page
+      .getByTestId(/^chat-message-/)
+      .filter({ hasText: "Tin nhắn kiểm thử 0.5" })
+      .waitFor();
+    await go("/family/message");
+    await page
+      .getByTestId(/^chat-message-/)
+      .filter({ hasText: "Tin nhắn kiểm thử 0.5" })
+      .waitFor();
+    await snapshot("chat-05-offline");
+    console.log("PASS: chat text persists offline after reopening");
     await page.setViewportSize({ width: 320, height: 740 });
     await go("/em-be");
     await page.getByTestId("tool-milk").scrollIntoViewIfNeeded();

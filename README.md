@@ -1,6 +1,8 @@
 # Gia Đình An Nam
 
-Bản đang phát triển **0.4.0 (build 4)** làm lại tab Em bé theo ảnh/video gốc, khôi phục 64 huy chương và sơ đồ răng, cải thiện trang theo ngày, lịch E.A.S.Y và nhập liệu với bàn phím iOS. Xem [thay đổi, giới hạn và kiểm thử](docs/ASSISTANT_REDESIGN.md). Chưa tuyên bố tương đương toàn bộ app gốc.
+Phiên bản **0.5.0 (build 5)** bổ sung nhiều hồ sơ bé, xem ảnh toàn màn hình, chat ảnh/video và tách kiểm tra thông báo cục bộ/push. **Chat media cần migration `0003_family_chat.sql`.** Xem [hướng dẫn nâng cấp và tình trạng lỗi iPhone 11](docs/UPGRADE_0_5.md). Chưa xác định nguyên nhân crash native khi thiếu file `.ips`. Tải IPA từ artifact của lượt [Build IPA for ESign](https://github.com/lelylinhchau2027/Gia-dinh-An-Nam/actions/workflows/build-unsigned-ios.yml) thành công tương ứng với phiên bản cần cài.
+
+Bản **0.4.0 (build 4)** làm lại tab Em bé theo ảnh/video gốc, khôi phục 64 huy chương và sơ đồ răng, cải thiện trang theo ngày, lịch E.A.S.Y và nhập liệu với bàn phím iOS. Xem [thay đổi, giới hạn và kiểm thử](docs/ASSISTANT_REDESIGN.md). Chưa tuyên bố tương đương toàn bộ app gốc.
 
 Ba tab Bảng tin / Em bé / Cẩm nang tiếp tục giữ ảnh gia đình, bình luận, like, hồ sơ ảnh bìa/đại diện và email OTP. Nếu chưa nâng Supabase từ bản đầu, làm theo [hướng dẫn 0.2](docs/UPGRADE_0_2.md); bản 0.4 không cần migration mới.
 
@@ -40,7 +42,7 @@ Hướng dẫn tạo backend và ghép hai máy: [`docs/SUPABASE_SETUP.md`](docs
 
 Build IPA chưa ký để ký lại bằng ESign: [`docs/BUILD_UNSIGNED_IPA.md`](docs/BUILD_UNSIGNED_IPA.md). Trên Mac chạy `npm run build:ios:unsigned`; nếu không có Mac, dùng workflow GitHub Actions đã chuẩn bị ở thư mục `.github/workflows` của repository.
 
-Workflow **Check iOS UI** kiểm tra riêng bản Release trên iPhone Simulator bằng dữ liệu demo, chụp giao diện và bàn phím. Không cần Apple certificate hoặc Supabase secrets, không tạo IPA cài lên máy thật. Workflow này đã được thêm nhưng chưa chạy xác nhận; vẫn cần xem ảnh native và thử trên iPhone.
+Workflow **Check iOS UI** kiểm tra riêng bản Release trên iPhone Simulator bằng dữ liệu demo, chụp giao diện và bàn phím. Không cần Apple certificate hoặc Supabase secrets, không tạo IPA cài lên máy thật. Lượt 0.4 dừng ở selector tên bé; đã sửa selector, cần chạy lại và thử trên iPhone.
 
 Quy trình chi tiết từ tạo Supabase, Expo project, repository và GitHub secrets đến ký/cài trên hai iPhone: [`docs/GITHUB_ACTIONS_ESIGN_TUNG_BUOC.md`](docs/GITHUB_ACTIONS_ESIGN_TUNG_BUOC.md).
 

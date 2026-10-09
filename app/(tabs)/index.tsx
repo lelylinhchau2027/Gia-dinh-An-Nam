@@ -1,5 +1,5 @@
 import { FormInput as TextInput } from "../../src/components/FormInput";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect, router } from "expo-router";
 import {
   Alert,
@@ -8,6 +8,11 @@ import {
   RefreshControl,
   Text,
   View,
+  FlatList,
+  Platform,
+  Keyboard,
+  TextInput as NativeTextInput,
+  type ScrollView,
 } from "react-native";
 import { TabHeading } from "../../src/components/TabHeading";
 import { FamilyPhoto } from "../../src/components/FamilyPhoto";
@@ -32,9 +37,11 @@ import {
   type Post,
 } from "../../src/services/social";
 import { useApp } from "../../src/providers/AppProvider";
+export { RecoverableError as ErrorBoundary } from "../../src/components/RecoverableError";
 import { formStyles as s } from "../../src/components/forms";
 
 export default function FeedScreen() {
+  const listRef = useRef<FlatList<Post>>(null);
   const { family } = useApp();
   const [feed, setFeed] = useState<Awaited<ReturnType<typeof loadFeed>> | null>(
     null,
@@ -63,7 +70,7 @@ export default function FeedScreen() {
     } finally {
       setRefreshing(false);
     }
-  }, [paired]);
+  }, [paired, family?.id]);
   useFocusEffect(
     useCallback(() => {
       void reload();
@@ -91,6 +98,7 @@ export default function FeedScreen() {
     };
   }, [family?.id, paired, reload]);
   const publish = async () => {
+    if (busy) return;
     setBusy(true);
     try {
       const uploaded: string[] = [];
@@ -139,7 +147,8 @@ export default function FeedScreen() {
   };
   return (
     <Screen
-      stickyHeaderIndices={[0]}
+      scroll={false}
+      keyboardAccessory
       safeAreaStyle={{ backgroundColor: "#7771BC" }}
       contentStyle={{
         paddingHorizontal: 0,
@@ -148,112 +157,146 @@ export default function FeedScreen() {
         flexGrow: 1,
         backgroundColor: "#F1F2F5",
       }}
-      keyboardShouldPersistTaps="handled"
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={reload} />
-      }
     >
       <TabHeading title="Bảng tin gia đình" />
-      {!paired ? (
-        <Card>
-          <EmptyState
-            icon="heart-outline"
-            title="Kết nối hai người"
-            body="Tạo gia đình hoặc nhập mã ghép để cùng đăng ảnh và trò chuyện."
-          />
-          <PrimaryButton
-            title="Kết nối gia đình"
-            onPress={() => router.push("/family/connect")}
-          />
-        </Card>
-      ) : (
-        <>
-          <Card
-            style={[
-              s.gap,
-              {
-                borderRadius: 0,
-                borderWidth: 0,
-                elevation: 0,
-                shadowOpacity: 0,
-              },
-            ]}
-          >
-            <TextInput
-              style={s.input}
-              placeholder="Hôm nay nhà mình có gì vui?"
-              multiline
-              value={body}
-              onChangeText={setBody}
-              maxLength={5000}
-              editable={!busy}
-            />
-            <View style={s.wrap}>
-              {images.map((uri, i) => (
-                <Pressable
-                  key={`${uri}:${i}`}
-                  disabled={busy}
-                  accessibilityLabel="Bỏ ảnh"
-                  onPress={() =>
-                    setImages((list) => list.filter((_, n) => n !== i))
-                  }
+      <FlatList
+        ref={listRef}
+        data={paired ? (feed?.posts ?? []) : []}
+        keyExtractor={(post) => post.id}
+        renderItem={({ item }) =>
+          feed ? <PostCard post={item} feed={feed} reload={reload} /> : null
+        }
+        initialNumToRender={2}
+        maxToRenderPerBatch={2}
+        windowSize={3}
+        contentContainerStyle={{ gap: 10, paddingBottom: 24 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
+        automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
+        onFocus={() => {
+          if (Platform.OS !== "ios" || !Keyboard.isVisible()) return;
+          requestAnimationFrame(() => {
+            const input = NativeTextInput.State.currentlyFocusedInput();
+            const scroll =
+              listRef.current?.getScrollResponder() as ScrollView | null;
+            if (input)
+              scroll?.scrollResponderScrollNativeHandleToKeyboard(
+                input,
+                16,
+                true,
+              );
+          });
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={reload} />
+        }
+        ListHeaderComponent={
+          <>
+            {!paired ? (
+              <Card>
+                <EmptyState
+                  icon="heart-outline"
+                  title="Kết nối hai người"
+                  body="Tạo gia đình hoặc nhập mã ghép để cùng đăng ảnh và trò chuyện."
+                />
+                <PrimaryButton
+                  title="Kết nối gia đình"
+                  onPress={() => router.push("/family/connect")}
+                />
+              </Card>
+            ) : (
+              <>
+                <Card
+                  style={[
+                    s.gap,
+                    {
+                      borderRadius: 0,
+                      borderWidth: 0,
+                      elevation: 0,
+                      shadowOpacity: 0,
+                    },
+                  ]}
                 >
-                  <Image
-                    source={{ uri }}
-                    style={{ width: 80, height: 80, borderRadius: 12 }}
+                  <TextInput
+                    style={s.input}
+                    placeholder="Hôm nay nhà mình có gì vui?"
+                    multiline
+                    value={body}
+                    onChangeText={setBody}
+                    maxLength={5000}
+                    editable={!busy}
                   />
-                  <Text style={s.hint}>Bỏ ảnh ×</Text>
-                </Pressable>
-              ))}
-            </View>
+                  <View style={s.wrap}>
+                    {images.map((uri, i) => (
+                      <Pressable
+                        key={`${uri}:${i}`}
+                        disabled={busy}
+                        accessibilityLabel="Bỏ ảnh"
+                        onPress={() =>
+                          setImages((list) => list.filter((_, n) => n !== i))
+                        }
+                      >
+                        <Image
+                          source={{ uri }}
+                          style={{ width: 80, height: 80, borderRadius: 12 }}
+                        />
+                        <Text style={s.hint}>Bỏ ảnh ×</Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                  <LinkButton
+                    disabled={busy || images.length >= 6}
+                    title={`Thêm ảnh (${images.length}/6)`}
+                    onPress={async () => {
+                      try {
+                        const uri = await pickPhoto();
+                        if (uri) setImages((v) => [...v, uri].slice(0, 6));
+                      } catch {
+                        Alert.alert("Chưa chọn được ảnh");
+                      }
+                    }}
+                  />
+                  <PrimaryButton
+                    title={busy ? "Đang đăng…" : "Đăng khoảnh khắc"}
+                    disabled={busy || (!body.trim() && !images.length)}
+                    onPress={publish}
+                  />
+                  <Text style={s.hint}>
+                    Chỉ hai thành viên gia đình xem được. Cần mạng để đăng bài
+                    và ảnh.
+                  </Text>
+                </Card>
+                {error ? (
+                  <Text accessibilityRole="alert" style={s.error}>
+                    {error}
+                  </Text>
+                ) : null}
+                {feed && !feed.posts.length ? (
+                  <EmptyState
+                    icon="images-outline"
+                    title="Khoảnh khắc đầu tiên"
+                    body="Đăng một tấm ảnh hoặc đôi dòng để bắt đầu album của nhà mình."
+                  />
+                ) : null}
+              </>
+            )}
+          </>
+        }
+        ListFooterComponent={
+          <>
+            {more ? (
+              <PrimaryButton
+                title="Xem bài cũ hơn"
+                disabled={refreshing}
+                onPress={loadMore}
+              />
+            ) : null}
             <LinkButton
-              disabled={busy || images.length >= 6}
-              title={`Thêm ảnh (${images.length}/6)`}
-              onPress={async () => {
-                try {
-                  const uri = await pickPhoto();
-                  if (uri) setImages((v) => [...v, uri].slice(0, 6));
-                } catch {
-                  Alert.alert("Chưa chọn được ảnh");
-                }
-              }}
+              title="Cài đặt & thông báo"
+              onPress={() => router.push("/cai-dat")}
             />
-            <PrimaryButton
-              title={busy ? "Đang đăng…" : "Đăng khoảnh khắc"}
-              disabled={busy || (!body.trim() && !images.length)}
-              onPress={publish}
-            />
-            <Text style={s.hint}>
-              Chỉ hai thành viên gia đình xem được. Cần mạng để đăng bài và ảnh.
-            </Text>
-          </Card>
-          {error ? (
-            <Text accessibilityRole="alert" style={s.error}>
-              {error}
-            </Text>
-          ) : null}
-          {feed?.posts.map((post) => (
-            <PostCard key={post.id} post={post} feed={feed} reload={reload} />
-          ))}
-          {feed && !feed.posts.length ? (
-            <EmptyState
-              icon="images-outline"
-              title="Khoảnh khắc đầu tiên"
-              body="Đăng một tấm ảnh hoặc đôi dòng để bắt đầu album của nhà mình."
-            />
-          ) : null}
-          {more ? (
-            <PrimaryButton
-              title="Xem bài cũ hơn"
-              disabled={refreshing}
-              onPress={loadMore}
-            />
-          ) : null}
-        </>
-      )}
-      <LinkButton
-        title="Cài đặt & thông báo"
-        onPress={() => router.push("/cai-dat")}
+          </>
+        }
       />
     </Screen>
   );
@@ -332,7 +375,9 @@ function PostCard({
         <FamilyPhoto
           key={path}
           path={path}
-          style={{ width: "100%", height: 260, borderRadius: 16 }}
+          fullImage
+          zoomable
+          style={{ width: "100%", borderRadius: 8 }}
         />
       ))}
       <View style={s.row}>

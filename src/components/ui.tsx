@@ -25,16 +25,19 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors, radius, shadow, spacing } from "../theme";
+import { validDate } from "../lib/recordValidation";
 
 export function Screen({
   children,
   scroll = true,
+  keyboardAccessory = scroll,
   contentStyle,
   safeAreaStyle,
   ...scrollProps
 }: PropsWithChildren<
   ScrollViewProps & {
     scroll?: boolean;
+    keyboardAccessory?: boolean;
     contentStyle?: ViewStyle;
     safeAreaStyle?: ViewStyle;
   }
@@ -86,7 +89,7 @@ export function Screen({
       >
         {content}
       </SafeAreaView>
-      {Platform.OS === "ios" && scroll ? (
+      {Platform.OS === "ios" && keyboardAccessory ? (
         <InputAccessoryView nativeID={accessoryID}>
           <View
             style={{
@@ -219,20 +222,24 @@ export function EmptyState({
 }
 
 export function formatClock(iso: string): string {
+  const date = validDate(iso);
+  if (!date) return "Chưa rõ giờ";
   return new Intl.DateTimeFormat("vi-VN", {
     hour: "2-digit",
     minute: "2-digit",
-  }).format(new Date(iso));
+  }).format(date);
 }
 
 export function formatDateTime(iso: string): string {
+  const date = validDate(iso);
+  if (!date) return "Chưa rõ thời gian";
   return new Intl.DateTimeFormat("vi-VN", {
     weekday: "short",
     day: "2-digit",
     month: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(new Date(iso));
+  }).format(date);
 }
 
 const styles = StyleSheet.create({

@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import { AppProvider, useApp } from "../src/providers/AppProvider";
 import { migrateDatabase } from "../src/lib/database";
 import { colors } from "../src/theme";
+export { RecoverableError as ErrorBoundary } from "../src/components/RecoverableError";
 
 function NotificationNavigation() {
   const { reminders, completeReminder, loading } = useApp();
@@ -30,7 +31,14 @@ function NotificationNavigation() {
       const route = response.notification.request.content.data?.route;
       if (
         typeof route === "string" &&
-        ["/", "/gia-dinh", "/theo-doi", "/em-be"].includes(route)
+        [
+          "/",
+          "/gia-dinh",
+          "/theo-doi",
+          "/em-be",
+          "/family/message",
+          "/cai-dat",
+        ].includes(route)
       ) {
         router.push(route as never);
       }
@@ -80,7 +88,7 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="family/message"
-            options={{ title: "Nhắn cho người nhà", presentation: "modal" }}
+            options={{ title: "Tin nhắn gia đình" }}
           />
           <Stack.Screen
             name="family/connect"

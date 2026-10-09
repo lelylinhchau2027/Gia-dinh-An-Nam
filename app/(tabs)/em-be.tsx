@@ -31,17 +31,21 @@ import {
 } from "../../src/data/assistant";
 import images from "../../src/data/legacyImageSources.json";
 import { useApp } from "../../src/providers/AppProvider";
+export { RecoverableError as ErrorBoundary } from "../../src/components/RecoverableError";
 import { useCareHistory } from "../../src/lib/useCareHistory";
 import { GrowthChart } from "../../src/components/GrowthChart";
 
 export default function BabyScreen() {
-  const { child } = useApp();
+  const { child, children, selectChild } = useApp();
   const { entries } = useCareHistory();
   const { width, fontScale } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const focused = useIsFocused();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [branch, setBranch] = useState<"pregnancy" | "born" | null>(null);
+  useEffect(() => {
+    setBranch(null);
+  }, [child?.id]);
   const [sheet, setSheet] = useState<"profile" | "tools" | null>(null);
   const [hidden, setHidden] = useState<string[]>([]);
   const [hiddenDraft, setHiddenDraft] = useState<string[]>([]);
@@ -215,19 +219,18 @@ export default function BabyScreen() {
               />
             </Svg>
           ) : null}
-          <View style={[s.heroProfile, { top: insets.top + 28 }]}>
-            <Pressable
-              onPress={() => setSheet("profile")}
-              accessibilityLabel="Hồ sơ và giai đoạn của bé"
-              style={s.avatarFrame}
-            >
-              {avatar(114)}
-              <View style={s.avatarArrow}>
-                <Ionicons name="chevron-down" color="#fff" size={24} />
-              </View>
-            </Pressable>
-            <Text style={s.heroName}>{child?.name || "Bé yêu"}</Text>
-          </View>
+        </View>
+        <View style={s.heroProfile}>
+          <Pressable
+            onPress={() => setSheet("profile")}
+            accessibilityLabel="Hồ sơ và giai đoạn của bé"
+            style={s.avatarFrame}
+          >
+            {avatar(114)}
+            <View style={s.avatarArrow}>
+              <Ionicons name="chevron-down" color="#fff" size={24} />
+            </View>
+          </Pressable>
         </View>
         <Pressable
           accessibilityLabel="Sửa hồ sơ bé"
@@ -254,6 +257,25 @@ export default function BabyScreen() {
                   : `${Math.floor(age / 365.25)} tuổi ${Math.floor(age / 30.4375) % 12} tháng`}
             </Text>
           ) : null}
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Đổi bé hoặc thêm bé"
+          testID="choose-child"
+          onPress={() => setSheet("profile")}
+          style={{
+            alignSelf: "center",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            padding: 12,
+          }}
+        >
+          <Ionicons name="people-outline" color="#8E70CA" size={20} />
+          <Text style={{ fontFamily: "QuicksandSemiBold", color: "#8E70CA" }}>
+            Đổi bé · {children.length} hồ sơ
+          </Text>
+          <Ionicons name="chevron-down" color="#8E70CA" size={16} />
         </Pressable>
         {stage === "born" ? (
           <Pressable
@@ -395,7 +417,7 @@ export default function BabyScreen() {
         </Animated.View>
         <Pressable
           accessibilityLabel="Nhắn cho người nhà"
-          onPress={() => router.push("/gia-dinh")}
+          onPress={() => router.push("/family/message")}
           style={s.navButton}
         >
           <Ionicons name="chatbubbles-outline" color="#fff" size={26} />
@@ -437,6 +459,55 @@ export default function BabyScreen() {
             <ScrollView keyboardShouldPersistTaps="handled">
               {sheet === "profile" ? (
                 <>
+                  {children.map((baby) => (
+                    <Pressable
+                      key={baby.id}
+                      accessibilityLabel={`Chọn bé ${baby.nickname || baby.name}`}
+                      testID={`choose-child-${baby.id}`}
+                      style={s.sheetRow}
+                      onPress={() => {
+                        void selectChild(baby.id)
+                          .then(() => setSheet(null))
+                          .catch(() =>
+                            Alert.alert(
+                              "Chưa chuyển được hồ sơ",
+                              "Hãy thử lại.",
+                            ),
+                          );
+                      }}
+                    >
+                      <Text style={[s.rowText, { flex: 1 }]}>
+                        {baby.nickname || baby.name}
+                      </Text>
+                      <Ionicons
+                        name={
+                          baby.id === child?.id
+                            ? "checkmark-circle"
+                            : "ellipse-outline"
+                        }
+                        size={24}
+                        color="#8E70CA"
+                      />
+                    </Pressable>
+                  ))}
+                  <Pressable
+                    testID="add-child"
+                    style={s.sheetRow}
+                    onPress={() => {
+                      setSheet(null);
+                      router.push({
+                        pathname: "/child/edit",
+                        params: { mode: "new" },
+                      });
+                    }}
+                  >
+                    <Ionicons
+                      name="add-circle-outline"
+                      size={25}
+                      color="#8E70CA"
+                    />
+                    <Text style={s.rowText}>Thêm bé vào gia đình</Text>
+                  </Pressable>
                   <Pressable
                     style={s.sheetRow}
                     onPress={() => {
@@ -571,7 +642,7 @@ const s = StyleSheet.create({
   page: { paddingBottom: 24 },
   coverCurve: { position: "absolute", bottom: -1 },
   heroProfile: {
-    position: "absolute",
+    marginTop: -64,
     alignSelf: "center",
     alignItems: "center",
     gap: 8,

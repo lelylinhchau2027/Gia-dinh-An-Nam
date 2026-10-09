@@ -38,8 +38,8 @@ export function TabHeading({ title }: { title: string }) {
         {title}
       </Text>
       <Pressable
-        accessibilityLabel="Việc chung và lời nhắn"
-        onPress={() => router.push("/gia-dinh")}
+        accessibilityLabel="Nhắn tin giữa bố mẹ"
+        onPress={() => router.push("/family/message")}
         style={{
           width: 44,
           height: 44,
